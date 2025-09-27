@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cow Details - Pig Farm Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    screens: {
+                        'xs': '475px',
+                        'sm': '640px',
+                        'md': '768px',
+                        'lg': '1024px',
+                        'xl': '1280px',
+                        '2xl': '1536px',
+                    },
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        },
+                        secondary: {
+                            50: '#fdf4ff',
+                            100: '#fae8ff',
+                            200: '#f5d0fe',
+                            300: '#f0abfc',
+                            400: '#e879f9',
+                            500: '#d946ef',
+                            600: '#c026d3',
+                            700: '#a21caf',
+                            800: '#86198f',
+                            900: '#701a75',
+                        },
+                        success: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            300: '#86efac',
+                            400: '#4ade80',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        },
+                        warning: {
+                            50: '#fffbeb',
+                            100: '#fef3c7',
+                            200: '#fde68a',
+                            300: '#fcd34d',
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309',
+                            800: '#92400e',
+                            900: '#78350f',
+                        },
+                        danger: {
+                            50: '#fef2f2',
+                            100: '#fee2e2',
+                            200: '#fecaca',
+                            300: '#fca5a5',
+                            400: '#f87171',
+                            500: '#ef4444',
+                            600: '#dc2626',
+                            700: '#b91c1c',
+                            800: '#991b1b',
+                            900: '#7f1d1d',
+                        },
+                        rose: {
+                            50: '#fff1f2',
+                            100: '#ffe4e6',
+                            200: '#fecdd3',
+                            300: '#fda4af',
+                            400: '#fb7185',
+                            500: '#f43f5e',
+                            600: '#e11d48',
+                            700: '#be123c',
+                            800: '#9f1239',
+                            900: '#881337',
+                        },
+                        pink: {
+                            50: '#fdf2f8',
+                            100: '#fce7f3',
+                            200: '#fbcfe8',
+                            300: '#f9a8d4',
+                            400: '#f472b6',
+                            500: '#ec4899',
+                            600: '#db2777',
+                            700: '#be185d',
+                            800: '#9d174d',
+                            900: '#831843',
+                        },
+                        blue: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        },
+                        cyan: {
+                            50: '#ecfeff',
+                            100: '#cffafe',
+                            200: '#a5f3fc',
+                            300: '#67e8f9',
+                            400: '#22d3ee',
+                            500: '#06b6d4',
+                            600: '#0891b2',
+                            700: '#0e7490',
+                            800: '#155e75',
+                            900: '#164e63',
+                        },
+                        yellow: {
+                            50: '#fefce8',
+                            100: '#fef3c7',
+                            200: '#fde68a',
+                            300: '#fcd34d',
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309',
+                            800: '#92400e',
+                            900: '#78350f',
+                        },
+                        orange: {
+                            50: '#fff7ed',
+                            100: '#ffedd5',
+                            200: '#fed7aa',
+                            300: '#fdba74',
+                            400: '#fb923c',
+                            500: '#f97316',
+                            600: '#ea580c',
+                            700: '#c2410c',
+                            800: '#9a3412',
+                            900: '#7c2d12',
+                        },
+                        green: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            300: '#86efac',
+                            400: '#4ade80',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-in': 'slideIn 0.3s ease-out',
+                        'scale-in': 'scaleIn 0.2s ease-out',
+                        'bounce-in': 'bounceIn 0.6s ease-out',
+                        'pulse-slow': 'pulse 3s infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideIn: {
+                            '0%': { transform: 'translateY(-10px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        scaleIn: {
+                            '0%': { transform: 'scale(0.9)', opacity: '0' },
+                            '100%': { transform: 'scale(1)', opacity: '1' },
+                        },
+                        bounceIn: {
+                            '0%': { transform: 'scale(0.3)', opacity: '0' },
+                            '50%': { transform: 'scale(1.05)' },
+                            '70%': { transform: 'scale(0.9)' },
+                            '100%': { transform: 'scale(1)', opacity: '1' },
+                        },
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        
+        .animate-scale-in {
+            animation: scaleIn 0.2s ease-out;
+        }
+        
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .dark .glass-effect {
+            background: rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-rose-50 via-pink-50 to-red-50 dark:from-gray-900 dark:via-rose-900/20 dark:to-red-900/20 min-h-screen">
+    <!-- Sidebar -->
+    <div class="fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 shadow-xl transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out" id="sidebar">
+        <!-- Sidebar Header -->
+        <div class="flex items-center justify-between h-16 px-4 bg-gradient-to-r from-rose-500 via-pink-500 to-red-500">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-cow text-white text-sm"></i>
+                </div>
+                <div>
+                    <h1 class="text-white font-bold text-sm">Cow Details</h1>
+                    <p class="text-white/80 text-xs">Individual Animal</p>
+                </div>
+            </div>
+            <button id="sidebarToggle" class="lg:hidden text-white/80 hover:text-white">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- Sidebar Navigation -->
+        <nav class="mt-4 px-4 space-y-2">
+            <!-- Back to Milk Management -->
+            <a href="/admin/farm/cow-milk" class="group flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-xl transition-all duration-200 hover:shadow-md" role="menuitem">
+                <div class="w-10 h-10 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/30 dark:to-blue-800/30 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-200">
+                    <i class="fas fa-arrow-left text-blue-600 dark:text-blue-400 text-lg"></i>
+                </div>
+                <div class="flex-1">
+                    <span class="font-semibold text-sm">Back to Milk Management</span>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Return to main page</p>
+                </div>
+            </a>
+
+            <!-- Dashboard -->
+            <a href="/admin/dashboard" class="group flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-xl transition-all duration-200 hover:shadow-md" role="menuitem">
+                <div class="w-10 h-10 bg-gradient-to-br from-green-100 to-green-200 dark:from-green-900/30 dark:to-green-800/30 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-200">
+                    <i class="fas fa-tachometer-alt text-green-600 dark:text-green-400 text-lg"></i>
+                </div>
+                <div class="flex-1">
+                    <span class="font-semibold text-sm">Dashboard</span>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Overview</p>
+                </div>
+            </a>
+
+            <!-- Milk Production Analytics -->
+            <a href="/admin/farm/milk-production-analytics" class="group flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-xl transition-all duration-200 hover:shadow-md" role="menuitem">
+                <div class="w-10 h-10 bg-gradient-to-br from-purple-100 to-purple-200 dark:from-purple-900/30 dark:to-purple-800/30 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-200">
+                    <i class="fas fa-chart-bar text-purple-600 dark:text-purple-400 text-lg"></i>
+                </div>
+                <div class="flex-1">
+                    <span class="font-semibold text-sm">Production Analytics</span>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Analytics & Reports</p>
+                </div>
+            </a>
+        </nav>
+
+        <!-- Sidebar Footer -->
+        <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-gradient-to-br from-rose-500 to-pink-500 rounded-full flex items-center justify-center">
+                    <i class="fas fa-user text-white text-sm"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-900 dark:text-white truncate">Admin User</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Administrator</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="lg:ml-64 min-h-screen">
+        <!-- Top Navigation -->
+        <div class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+            <div class="flex items-center justify-between h-16 px-4 sm:px-6">
+                <div class="flex items-center space-x-4">
+                    <button id="mobileSidebarToggle" class="lg:hidden text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <div>
+                        <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white" id="pageTitle">Cow Details</h1>
+                        <p class="text-sm text-gray-600 dark:text-gray-400" id="pageSubtitle">Loading cow information...</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button onclick="refreshCowData()" class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors flex items-center space-x-2">
+                        <i class="fas fa-sync-alt"></i>
+                        <span class="hidden sm:inline">Refresh</span>
+                    </button>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-gradient-to-br from-rose-500 to-pink-500 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-white text-sm"></i>
+                        </div>
+                        <span class="hidden sm:block text-sm font-medium text-gray-900 dark:text-white">Admin</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page Content -->
+        <div class="p-4 sm:p-6">
+            <!-- Loading State -->
+            <div id="loadingState" class="flex items-center justify-center py-12">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-spinner fa-spin text-primary-600 dark:text-primary-400 text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Loading Cow Details</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Please wait while we fetch the cow information...</p>
+                </div>
+            </div>
+
+            <!-- Error State -->
+            <div id="errorState" class="hidden flex items-center justify-center py-12">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-exclamation-triangle text-red-600 dark:text-red-400 text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Error Loading Cow Details</h3>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4" id="errorMessage">Failed to load cow information</p>
+                    <button onclick="loadCowData()" class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
+                        Try Again
+                    </button>
+                </div>
+            </div>
+
+            <!-- Cow Details Content -->
+            <div id="cowDetailsContent" class="hidden space-y-6">
+                <!-- Cow Information Card -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                    <div class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/30 dark:to-blue-800/30 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-cow text-blue-600 dark:text-blue-400 text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white" id="cowName">Loading...</h2>
+                                    <p class="text-gray-600 dark:text-gray-400" id="cowEarTag">Loading...</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <span id="cowStatus" class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                                    <i class="fas fa-check-circle mr-1"></i>
+                                    Active
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 sm:p-6">
+                        <!-- Cow Details Grid -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- Basic Information -->
+                            <div class="space-y-4">
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Basic Information</h3>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-500 dark:text-gray-400">Breed</label>
+                                        <p class="text-sm text-gray-900 dark:text-white" id="cowBreed">-</p>
+                                    </div>
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-500 dark:text-gray-400">Gender</label>
+                                        <p class="text-sm text-gray-900 dark:text-white" id="cowGender">-</p>
+                                    </div>
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-500 dark:text-gray-400">Age</label>
+                                        <p class="text-sm text-gray-900 dark:text-white" id="cowAge">-</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Physical Characteristics -->
+                            <div class="space-y-4">
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Physical Characteristics</h3>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-500 dark:text-gray-400">Color/Markings</label>
+                                        <p class="text-sm text-gray-900 dark:text-white" id="cowColor">-</p>
+                                    </div>
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-500 dark:text-gray-400">Birth Date</label>
+                                        <p class="text-sm text-gray-900 dark:text-white" id="cowBirthDate">-</p>
+                                    </div>
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-500 dark:text-gray-400">Source</label>
+                                        <p class="text-sm text-gray-900 dark:text-white" id="cowSource">-</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Parent Information -->
+                            <div class="space-y-4">
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Parent Information</h3>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-500 dark:text-gray-400">Sire (Father)</label>
+                                        <p class="text-sm text-gray-900 dark:text-white" id="cowSire">-</p>
+                                    </div>
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-500 dark:text-gray-400">Dam (Mother)</label>
+                                        <p class="text-sm text-gray-900 dark:text-white" id="cowDam">-</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Production Statistics -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                    <div class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
+                        <h2 class="text-xl font-bold text-gray-900 dark:text-white">Production Statistics</h2>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Milk production performance and quality metrics</p>
+                    </div>
+
+                    <div class="p-4 sm:p-6">
+                        <!-- Statistics Cards -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6">
+                            <!-- Total Production -->
+                            <div class="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-4 border border-blue-200 dark:border-blue-700">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm font-medium text-blue-600 dark:text-blue-400">Total Production</p>
+                                        <p class="text-2xl font-bold text-blue-900 dark:text-blue-100" id="totalProduction">0 L</p>
+                                        <p class="text-xs text-blue-600 dark:text-blue-400">All Time</p>
+                                    </div>
+                                    <i class="fas fa-tint text-blue-600 dark:text-blue-400 text-xl"></i>
+                                </div>
+                            </div>
+
+                            <!-- Average Production -->
+                            <div class="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-xl p-4 border border-green-200 dark:border-green-700">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm font-medium text-green-600 dark:text-green-400">Average Production</p>
+                                        <p class="text-2xl font-bold text-green-900 dark:text-green-100" id="avgProduction">0 L</p>
+                                        <p class="text-xs text-green-600 dark:text-green-400">Per Session</p>
+                                    </div>
+                                    <i class="fas fa-chart-line text-green-600 dark:text-green-400 text-xl"></i>
+                                </div>
+                            </div>
+
+                            <!-- Peak Production -->
+                            <div class="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 rounded-xl p-4 border border-orange-200 dark:border-orange-700">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm font-medium text-orange-600 dark:text-orange-400">Peak Production</p>
+                                        <p class="text-2xl font-bold text-orange-900 dark:text-orange-100" id="peakProduction">0 L</p>
+                                        <p class="text-xs text-orange-600 dark:text-orange-400">Best Session</p>
+                                    </div>
+                                    <i class="fas fa-trophy text-orange-600 dark:text-orange-400 text-xl"></i>
+                                </div>
+                            </div>
+
+                            <!-- Production Days -->
+                            <div class="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-xl p-4 border border-purple-200 dark:border-purple-700">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm font-medium text-purple-600 dark:text-purple-400">Production Days</p>
+                                        <p class="text-2xl font-bold text-purple-900 dark:text-purple-100" id="productionDays">0</p>
+                                        <p class="text-xs text-purple-600 dark:text-purple-400">Days Recorded</p>
+                                    </div>
+                                    <i class="fas fa-calendar text-purple-600 dark:text-purple-400 text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quality Metrics -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quality Metrics</h3>
+                                <div class="space-y-3">
+                                    <div class="flex justify-between">
+                                        <span class="text-sm text-gray-600 dark:text-gray-400">Average Fat Content</span>
+                                        <span class="text-sm font-medium text-gray-900 dark:text-white" id="avgFat">0%</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-sm text-gray-600 dark:text-gray-400">Average Protein Content</span>
+                                        <span class="text-sm font-medium text-gray-900 dark:text-white" id="avgProtein">0%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Production Trend (Last 7 Days)</h3>
+                                <div class="h-32">
+                                    <canvas id="productionTrendChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Production History -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                    <div class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
+                        <h2 class="text-xl font-bold text-gray-900 dark:text-white">Recent Production History</h2>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Last 30 production records</p>
+                    </div>
+
+                    <div class="p-4 sm:p-6">
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="border-b border-gray-200 dark:border-gray-600">
+                                        <th class="text-left py-3 px-4 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Date</th>
+                                        <th class="text-left py-3 px-4 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Session</th>
+                                        <th class="text-left py-3 px-4 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Quantity (L)</th>
+                                        <th class="text-left py-3 px-4 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Fat %</th>
+                                        <th class="text-left py-3 px-4 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Protein %</th>
+                                        <th class="text-left py-3 px-4 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Quality</th>
+                                        <th class="text-left py-3 px-4 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Notes</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="productionHistoryTable" class="divide-y divide-gray-200 dark:divide-gray-600">
+                                    <!-- Production history will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Get cow ID from URL
+        const cowId = {{ cow_id }};
+        let productionTrendChart;
+
+        // Sidebar functionality
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const mobileSidebarToggle = document.getElementById('mobileSidebarToggle');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('-translate-x-full');
+        }
+
+        sidebarToggle.addEventListener('click', toggleSidebar);
+        mobileSidebarToggle.addEventListener('click', toggleSidebar);
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            if (window.innerWidth < 1024) {
+                if (!sidebar.contains(event.target) && !mobileSidebarToggle.contains(event.target)) {
+                    sidebar.classList.add('-translate-x-full');
+                }
+            }
+        });
+
+        // Load cow data
+        function loadCowData() {
+            document.getElementById('loadingState').classList.remove('hidden');
+            document.getElementById('errorState').classList.add('hidden');
+            document.getElementById('cowDetailsContent').classList.add('hidden');
+
+            fetch(`/api/cow/${cowId}/details`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        displayCowData(data);
+                        document.getElementById('loadingState').classList.add('hidden');
+                        document.getElementById('cowDetailsContent').classList.remove('hidden');
+                    } else {
+                        showError(data.error || 'Failed to load cow details');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading cow data:', error);
+                    showError('Failed to load cow details');
+                });
+        }
+
+        function displayCowData(data) {
+            const cow = data.cow;
+            const stats = data.statistics;
+            const history = data.production_history;
+            const trend = data.trend_data;
+
+            // Update page title and subtitle
+            document.getElementById('pageTitle').textContent = `${cow.name || 'Unnamed Cow'} Details`;
+            document.getElementById('pageSubtitle').textContent = `Ear Tag: ${cow.ear_tag}`;
+
+            // Update cow information
+            document.getElementById('cowName').textContent = cow.name || 'Unnamed Cow';
+            document.getElementById('cowEarTag').textContent = `Ear Tag: ${cow.ear_tag}`;
+            document.getElementById('cowBreed').textContent = cow.breed || '-';
+            document.getElementById('cowGender').textContent = cow.gender || '-';
+            document.getElementById('cowAge').textContent = cow.age_days ? `${Math.floor(cow.age_days / 30)} months` : '-';
+            document.getElementById('cowColor').textContent = cow.color_markings || '-';
+            document.getElementById('cowBirthDate').textContent = cow.birth_date || '-';
+            document.getElementById('cowSource').textContent = cow.source || '-';
+            document.getElementById('cowSire').textContent = cow.sire_ear_tag ? `${cow.sire_ear_tag}${cow.sire_details ? ` (${cow.sire_details})` : ''}` : '-';
+            document.getElementById('cowDam').textContent = cow.dam_ear_tag ? `${cow.dam_ear_tag}${cow.dam_details ? ` (${cow.dam_details})` : ''}` : '-';
+
+            // Update status
+            const statusElement = document.getElementById('cowStatus');
+            if (cow.status === 'active') {
+                statusElement.className = 'inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300';
+                statusElement.innerHTML = '<i class="fas fa-check-circle mr-1"></i>Active';
+            } else {
+                statusElement.className = 'inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300';
+                statusElement.innerHTML = '<i class="fas fa-times-circle mr-1"></i>Inactive';
+            }
+
+            // Update statistics
+            document.getElementById('totalProduction').textContent = `${stats.total_production.toFixed(1)} L`;
+            document.getElementById('avgProduction').textContent = `${stats.avg_production.toFixed(1)} L`;
+            document.getElementById('peakProduction').textContent = `${stats.peak_production.toFixed(1)} L`;
+            document.getElementById('productionDays').textContent = stats.production_days;
+            document.getElementById('avgFat').textContent = `${stats.avg_fat.toFixed(1)}%`;
+            document.getElementById('avgProtein').textContent = `${stats.avg_protein.toFixed(1)}%`;
+
+            // Create production trend chart
+            if (trend.length > 0) {
+                const ctx = document.getElementById('productionTrendChart').getContext('2d');
+                if (productionTrendChart) productionTrendChart.destroy();
+                
+                productionTrendChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: trend.map(item => {
+                            const date = new Date(item.date);
+                            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                        }),
+                        datasets: [{
+                            label: 'Daily Production (L)',
+                            data: trend.map(item => item.daily_total),
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Update production history table
+            const tableBody = document.getElementById('productionHistoryTable');
+            if (history.length > 0) {
+                tableBody.innerHTML = history.map(record => `
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                        <td class="py-4 px-4">
+                            <span class="text-sm text-gray-900 dark:text-white">${new Date(record.production_date).toLocaleDateString()}</span>
+                        </td>
+                        <td class="py-4 px-4">
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getSessionColor(record.milking_session)}">
+                                ${record.milking_session.charAt(0).toUpperCase() + record.milking_session.slice(1)}
+                            </span>
+                        </td>
+                        <td class="py-4 px-4">
+                            <span class="text-sm font-medium text-gray-900 dark:text-white">${record.milk_quantity.toFixed(1)} L</span>
+                        </td>
+                        <td class="py-4 px-4">
+                            <span class="text-sm text-gray-900 dark:text-white">${record.fat_percentage ? record.fat_percentage.toFixed(1) + '%' : '-'}</span>
+                        </td>
+                        <td class="py-4 px-4">
+                            <span class="text-sm text-gray-900 dark:text-white">${record.protein_percentage ? record.protein_percentage.toFixed(1) + '%' : '-'}</span>
+                        </td>
+                        <td class="py-4 px-4">
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getQualityColor(record.milk_quality_assessment)}">
+                                ${getQualityLabel(record.milk_quality_assessment)}
+                            </span>
+                        </td>
+                        <td class="py-4 px-4">
+                            <span class="text-sm text-gray-900 dark:text-white">${record.additional_notes || '-'}</span>
+                        </td>
+                    </tr>
+                `).join('');
+            } else {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="py-8 px-4 text-center text-gray-500 dark:text-gray-400">
+                            No production records found for this cow
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function getSessionColor(session) {
+            switch(session) {
+                case 'morning': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300';
+                case 'afternoon': return 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300';
+                case 'evening': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300';
+                default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300';
+            }
+        }
+
+        function getQualityColor(quality) {
+            switch(quality) {
+                case 'good_quality': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300';
+                case 'moderate_quality': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300';
+                case 'poor_quality': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300';
+                default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300';
+            }
+        }
+
+        function getQualityLabel(quality) {
+            switch(quality) {
+                case 'good_quality': return 'Good';
+                case 'moderate_quality': return 'Moderate';
+                case 'poor_quality': return 'Poor';
+                default: return 'Unknown';
+            }
+        }
+
+        function showError(message) {
+            document.getElementById('loadingState').classList.add('hidden');
+            document.getElementById('errorState').classList.remove('hidden');
+            document.getElementById('errorMessage').textContent = message;
+        }
+
+        function refreshCowData() {
+            loadCowData();
+        }
+
+        // Load cow data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCowData();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Milk Production Analytics - Pig Farm Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    screens: {
+                        'xs': '475px',
+                        'sm': '640px',
+                        'md': '768px',
+                        'lg': '1024px',
+                        'xl': '1280px',
+                        '2xl': '1536px',
+                    },
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        },
+                        secondary: {
+                            50: '#fdf4ff',
+                            100: '#fae8ff',
+                            200: '#f5d0fe',
+                            300: '#f0abfc',
+                            400: '#e879f9',
+                            500: '#d946ef',
+                            600: '#c026d3',
+                            700: '#a21caf',
+                            800: '#86198f',
+                            900: '#701a75',
+                        },
+                        success: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            300: '#86efac',
+                            400: '#4ade80',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        },
+                        warning: {
+                            50: '#fffbeb',
+                            100: '#fef3c7',
+                            200: '#fde68a',
+                            300: '#fcd34d',
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309',
+                            800: '#92400e',
+                            900: '#78350f',
+                        },
+                        danger: {
+                            50: '#fef2f2',
+                            100: '#fee2e2',
+                            200: '#fecaca',
+                            300: '#fca5a5',
+                            400: '#f87171',
+                            500: '#ef4444',
+                            600: '#dc2626',
+                            700: '#b91c1c',
+                            800: '#991b1b',
+                            900: '#7f1d1d',
+                        },
+                        rose: {
+                            50: '#fff1f2',
+                            100: '#ffe4e6',
+                            200: '#fecdd3',
+                            300: '#fda4af',
+                            400: '#fb7185',
+                            500: '#f43f5e',
+                            600: '#e11d48',
+                            700: '#be123c',
+                            800: '#9f1239',
+                            900: '#881337',
+                        },
+                        pink: {
+                            50: '#fdf2f8',
+                            100: '#fce7f3',
+                            200: '#fbcfe8',
+                            300: '#f9a8d4',
+                            400: '#f472b6',
+                            500: '#ec4899',
+                            600: '#db2777',
+                            700: '#be185d',
+                            800: '#9d174d',
+                            900: '#831843',
+                        },
+                        blue: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        },
+                        cyan: {
+                            50: '#ecfeff',
+                            100: '#cffafe',
+                            200: '#a5f3fc',
+                            300: '#67e8f9',
+                            400: '#22d3ee',
+                            500: '#06b6d4',
+                            600: '#0891b2',
+                            700: '#0e7490',
+                            800: '#155e75',
+                            900: '#164e63',
+                        },
+                        yellow: {
+                            50: '#fefce8',
+                            100: '#fef3c7',
+                            200: '#fde68a',
+                            300: '#fcd34d',
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309',
+                            800: '#92400e',
+                            900: '#78350f',
+                        },
+                        orange: {
+                            50: '#fff7ed',
+                            100: '#ffedd5',
+                            200: '#fed7aa',
+                            300: '#fdba74',
+                            400: '#fb923c',
+                            500: '#f97316',
+                            600: '#ea580c',
+                            700: '#c2410c',
+                            800: '#9a3412',
+                            900: '#7c2d12',
+                        },
+                        green: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            300: '#86efac',
+                            400: '#4ade80',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-in': 'slideIn 0.3s ease-out',
+                        'scale-in': 'scaleIn 0.2s ease-out',
+                        'bounce-in': 'bounceIn 0.6s ease-out',
+                        'pulse-slow': 'pulse 3s infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideIn: {
+                            '0%': { transform: 'translateY(-10px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        scaleIn: {
+                            '0%': { transform: 'scale(0.9)', opacity: '0' },
+                            '100%': { transform: 'scale(1)', opacity: '1' },
+                        },
+                        bounceIn: {
+                            '0%': { transform: 'scale(0.3)', opacity: '0' },
+                            '50%': { transform: 'scale(1.05)' },
+                            '70%': { transform: 'scale(0.9)' },
+                            '100%': { transform: 'scale(1)', opacity: '1' },
+                        },
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        
+        .animate-scale-in {
+            animation: scaleIn 0.2s ease-out;
+        }
+        
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .dark .glass-effect {
+            background: rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-rose-50 via-pink-50 to-red-50 dark:from-gray-900 dark:via-rose-900/20 dark:to-red-900/20 min-h-screen">
+    <!-- Sidebar -->
+    <div class="fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 shadow-xl transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out" id="sidebar">
+        <!-- Sidebar Header -->
+        <div class="flex items-center justify-between h-16 px-4 bg-gradient-to-r from-rose-500 via-pink-500 to-red-500">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-chart-bar text-white text-sm"></i>
+                </div>
+                <div>
+                    <h1 class="text-white font-bold text-sm">Analytics</h1>
+                    <p class="text-white/80 text-xs">Milk Production</p>
+                </div>
+            </div>
+            <button id="sidebarToggle" class="lg:hidden text-white/80 hover:text-white">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- Sidebar Navigation -->
+        <nav class="mt-4 px-4 space-y-2">
+            <!-- Dashboard -->
+            <a href="/admin/dashboard" class="group flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-xl transition-all duration-200 hover:shadow-md" role="menuitem">
+                <div class="w-10 h-10 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/30 dark:to-blue-800/30 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-200">
+                    <i class="fas fa-tachometer-alt text-blue-600 dark:text-blue-400 text-lg"></i>
+                </div>
+                <div class="flex-1">
+                    <span class="font-semibold text-sm">Dashboard</span>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Overview</p>
+                </div>
+            </a>
+
+            <!-- Cow Milk Management -->
+            <a href="/admin/farm/cow-milk" class="group flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-xl transition-all duration-200 hover:shadow-md" role="menuitem">
+                <div class="w-10 h-10 bg-gradient-to-br from-green-100 to-green-200 dark:from-green-900/30 dark:to-green-800/30 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-200">
+                    <i class="fas fa-tint text-green-600 dark:text-green-400 text-lg"></i>
+                </div>
+                <div class="flex-1">
+                    <span class="font-semibold text-sm">Milk Management</span>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Track Production</p>
+                </div>
+            </a>
+
+            <!-- Milk Production Analytics -->
+            <a href="/admin/farm/milk-production-analytics" class="group flex items-center px-4 py-3 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20 rounded-xl shadow-md" role="menuitem">
+                <div class="w-10 h-10 bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-900/30 dark:to-primary-800/30 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-200">
+                    <i class="fas fa-chart-bar text-primary-600 dark:text-primary-400 text-lg"></i>
+                </div>
+                <div class="flex-1">
+                    <span class="font-semibold text-sm">Production Analytics</span>
+                    <p class="text-xs text-primary-500 dark:text-primary-400">Analytics & Reports</p>
+                </div>
+            </a>
+        </nav>
+
+        <!-- Sidebar Footer -->
+        <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-gradient-to-br from-rose-500 to-pink-500 rounded-full flex items-center justify-center">
+                    <i class="fas fa-user text-white text-sm"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-900 dark:text-white truncate">Admin User</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Administrator</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="lg:ml-64 min-h-screen">
+        <!-- Top Navigation -->
+        <div class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+            <div class="flex items-center justify-between h-16 px-4 sm:px-6">
+                <div class="flex items-center space-x-4">
+                    <button id="mobileSidebarToggle" class="lg:hidden text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <div>
+                        <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Milk Production Analytics</h1>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Comprehensive analytics and insights for milk production</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
+                        <i class="fas fa-bell text-xl"></i>
+                    </button>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-gradient-to-br from-rose-500 to-pink-500 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-white text-sm"></i>
+                        </div>
+                        <span class="hidden sm:block text-sm font-medium text-gray-900 dark:text-white">Admin</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page Content -->
+        <div class="p-4 sm:p-6">
+            <!-- Analytics Sections -->
+            <div class="space-y-6">
+                <!-- 1. General Milk Production Analytics -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                    <div class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">General Milk Production Analytics</h2>
+                                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Quantity-based production insights and trends</p>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <button onclick="refreshProductionAnalytics()" class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors flex items-center space-x-2">
+                                    <i class="fas fa-sync-alt"></i>
+                                    <span class="hidden sm:inline">Refresh</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 sm:p-6">
+                        <!-- Production Statistics Cards -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6">
+                            <!-- Total Production -->
+                            <div class="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-4 sm:p-6 border border-blue-200 dark:border-blue-700">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm font-medium text-blue-600 dark:text-blue-400">Total Production</p>
+                                        <p class="text-2xl sm:text-3xl font-bold text-blue-900 dark:text-blue-100" id="totalProduction">0 L</p>
+                                        <p class="text-xs text-blue-600 dark:text-blue-400 mt-1">This Month</p>
+                                    </div>
+                                    <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
+                                        <i class="fas fa-tint text-blue-600 dark:text-blue-400 text-xl"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Daily Average -->
+                            <div class="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-xl p-4 sm:p-6 border border-green-200 dark:border-green-700">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm font-medium text-green-600 dark:text-green-400">Daily Average</p>
+                                        <p class="text-2xl sm:text-3xl font-bold text-green-900 dark:text-green-100" id="dailyAverage">0 L</p>
+                                        <p class="text-xs text-green-600 dark:text-green-400 mt-1">Per Day</p>
+                                    </div>
+                                    <div class="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center">
+                                        <i class="fas fa-chart-line text-green-600 dark:text-green-400 text-xl"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Peak Production -->
+                            <div class="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 rounded-xl p-4 sm:p-6 border border-orange-200 dark:border-orange-700">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm font-medium text-orange-600 dark:text-orange-400">Peak Production</p>
+                                        <p class="text-2xl sm:text-3xl font-bold text-orange-900 dark:text-orange-100" id="peakProduction">0 L</p>
+                                        <p class="text-xs text-orange-600 dark:text-orange-400 mt-1">Best Day</p>
+                                    </div>
+                                    <div class="w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-xl flex items-center justify-center">
+                                        <i class="fas fa-trophy text-orange-600 dark:text-orange-400 text-xl"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Production Growth -->
+                            <div class="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-xl p-4 sm:p-6 border border-purple-200 dark:border-purple-700">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm font-medium text-purple-600 dark:text-purple-400">Growth Rate</p>
+                                        <p class="text-2xl sm:text-3xl font-bold text-purple-900 dark:text-purple-100" id="growthRate">0%</p>
+                                        <p class="text-xs text-purple-600 dark:text-purple-400 mt-1">vs Last Month</p>
+                                    </div>
+                                    <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center">
+                                        <i class="fas fa-arrow-up text-purple-600 dark:text-purple-400 text-xl"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Production Trend Chart -->
+                        <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 sm:p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Production Trend (Last 30 Days)</h3>
+                            <div class="h-64 sm:h-80">
+                                <canvas id="productionTrendChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Usage Analytics per Purpose -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                    <div class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Usage Analytics per Purpose</h2>
+                                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Breakdown of milk usage by purpose and category</p>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <button onclick="refreshUsageAnalytics()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center space-x-2">
+                                    <i class="fas fa-sync-alt"></i>
+                                    <span class="hidden sm:inline">Refresh</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 sm:p-6">
+                        <!-- Usage Statistics -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6">
+                            <!-- Calf Feeding -->
+                            <div class="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-4 border border-blue-200 dark:border-blue-700">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm font-medium text-blue-600 dark:text-blue-400">Calf Feeding</p>
+                                        <p class="text-xl font-bold text-blue-900 dark:text-blue-100" id="calfFeedingUsage">0 L</p>
+                                        <p class="text-xs text-blue-600 dark:text-blue-400">This Month</p>
+                                    </div>
+                                    <i class="fas fa-baby text-blue-600 dark:text-blue-400 text-xl"></i>
+                                </div>
+                            </div>
+
+                            <!-- Home Consumption -->
+                            <div class="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-xl p-4 border border-green-200 dark:border-green-700">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm font-medium text-green-600 dark:text-green-400">Home Consumption</p>
+                                        <p class="text-xl font-bold text-green-900 dark:text-green-100" id="homeConsumptionUsage">0 L</p>
+                                        <p class="text-xs text-green-600 dark:text-green-400">This Month</p>
+                                    </div>
+                                    <i class="fas fa-home text-green-600 dark:text-green-400 text-xl"></i>
+                                </div>
+                            </div>
+
+                            <!-- Processing -->
+                            <div class="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 rounded-xl p-4 border border-orange-200 dark:border-orange-700">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm font-medium text-orange-600 dark:text-orange-400">Processing</p>
+                                        <p class="text-xl font-bold text-orange-900 dark:text-orange-100" id="processingUsage">0 L</p>
+                                        <p class="text-xs text-orange-600 dark:text-orange-400">This Month</p>
+                                    </div>
+                                    <i class="fas fa-cogs text-orange-600 dark:text-orange-400 text-xl"></i>
+                                </div>
+                            </div>
+
+                            <!-- Wastage/Spoiled -->
+                            <div class="bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 rounded-xl p-4 border border-red-200 dark:border-red-700">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm font-medium text-red-600 dark:text-red-400">Wastage/Spoiled</p>
+                                        <p class="text-xl font-bold text-red-900 dark:text-red-100" id="wastageUsage">0 L</p>
+                                        <p class="text-xs text-red-600 dark:text-red-400">This Month</p>
+                                    </div>
+                                    <i class="fas fa-exclamation-triangle text-red-600 dark:text-red-400 text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Usage Distribution Chart -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 sm:p-6">
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Usage Distribution</h3>
+                                <div class="h-64">
+                                    <canvas id="usageDistributionChart"></canvas>
+                                </div>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 sm:p-6">
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Usage Trend</h3>
+                                <div class="h-64">
+                                    <canvas id="usageTrendChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Milk Quality Analytics -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                    <div class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Milk Quality Analytics</h2>
+                                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Quality assessment and composition analysis</p>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <button onclick="refreshQualityAnalytics()" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center space-x-2">
+                                    <i class="fas fa-sync-alt"></i>
+                                    <span class="hidden sm:inline">Refresh</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 sm:p-6">
+                        <!-- Quality Statistics -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6">
+                            <!-- Quality Distribution -->
+                            <div class="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-xl p-4 border border-green-200 dark:border-green-700">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm font-medium text-green-600 dark:text-green-400">Good Quality</p>
+                                        <p class="text-2xl font-bold text-green-900 dark:text-green-100" id="goodQuality">0%</p>
+                                        <p class="text-xs text-green-600 dark:text-green-400">of Total</p>
+                                    </div>
+                                    <i class="fas fa-check-circle text-green-600 dark:text-green-400 text-xl"></i>
+                                </div>
+                            </div>
+
+                            <!-- Average Fat Content -->
+                            <div class="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-4 border border-blue-200 dark:border-blue-700">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm font-medium text-blue-600 dark:text-blue-400">Avg Fat Content</p>
+                                        <p class="text-2xl font-bold text-blue-900 dark:text-blue-100" id="avgFatContent">0%</p>
+                                        <p class="text-xs text-blue-600 dark:text-blue-400">This Month</p>
+                                    </div>
+                                    <i class="fas fa-percentage text-blue-600 dark:text-blue-400 text-xl"></i>
+                                </div>
+                            </div>
+
+                            <!-- Average Protein Content -->
+                            <div class="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 rounded-xl p-4 border border-orange-200 dark:border-orange-700">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm font-medium text-orange-600 dark:text-orange-400">Avg Protein</p>
+                                        <p class="text-2xl font-bold text-orange-900 dark:text-orange-100" id="avgProteinContent">0%</p>
+                                        <p class="text-xs text-orange-600 dark:text-orange-400">This Month</p>
+                                    </div>
+                                    <i class="fas fa-dna text-orange-600 dark:text-orange-400 text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quality Charts -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 sm:p-6">
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quality Distribution</h3>
+                                <div class="h-64">
+                                    <canvas id="qualityDistributionChart"></canvas>
+                                </div>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 sm:p-6">
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Composition Trend</h3>
+                                <div class="h-64">
+                                    <canvas id="compositionTrendChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Sales Analytics -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                    <div class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Sales Analytics</h2>
+                                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Revenue tracking and sales performance</p>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <button onclick="refreshSalesAnalytics()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center space-x-2">
+                                    <i class="fas fa-sync-alt"></i>
+                                    <span class="hidden sm:inline">Refresh</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 sm:p-6">
+                        <!-- Sales Statistics -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6">
+                            <!-- Total Revenue -->
+                            <div class="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-xl p-4 border border-green-200 dark:border-green-700">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm font-medium text-green-600 dark:text-green-400">Total Revenue</p>
+                                        <p class="text-2xl font-bold text-green-900 dark:text-green-100" id="totalRevenue">$0</p>
+                                        <p class="text-xs text-green-600 dark:text-green-400">This Month</p>
+                                    </div>
+                                    <i class="fas fa-dollar-sign text-green-600 dark:text-green-400 text-xl"></i>
+                                </div>
+                            </div>
+
+                            <!-- Total Sold -->
+                            <div class="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-4 border border-blue-200 dark:border-blue-700">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm font-medium text-blue-600 dark:text-blue-400">Total Sold</p>
+                                        <p class="text-2xl font-bold text-blue-900 dark:text-blue-100" id="totalSold">0 L</p>
+                                        <p class="text-xs text-blue-600 dark:text-blue-400">This Month</p>
+                                    </div>
+                                    <i class="fas fa-tint text-blue-600 dark:text-blue-400 text-xl"></i>
+                                </div>
+                            </div>
+
+                            <!-- Average Price -->
+                            <div class="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-xl p-4 border border-purple-200 dark:border-purple-700">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm font-medium text-purple-600 dark:text-purple-400">Avg Price/Liter</p>
+                                        <p class="text-2xl font-bold text-purple-900 dark:text-purple-100" id="avgPrice">$0</p>
+                                        <p class="text-xs text-purple-600 dark:text-purple-400">This Month</p>
+                                    </div>
+                                    <i class="fas fa-tag text-purple-600 dark:text-purple-400 text-xl"></i>
+                                </div>
+                            </div>
+
+                            <!-- Sales Count -->
+                            <div class="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 rounded-xl p-4 border border-orange-200 dark:border-orange-700">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm font-medium text-orange-600 dark:text-orange-400">Sales Count</p>
+                                        <p class="text-2xl font-bold text-orange-900 dark:text-orange-100" id="salesCount">0</p>
+                                        <p class="text-xs text-orange-600 dark:text-orange-400">Transactions</p>
+                                    </div>
+                                    <i class="fas fa-chart-bar text-orange-600 dark:text-orange-400 text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sales Charts -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 sm:p-6">
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Sales by Buyer</h3>
+                                <div class="h-64">
+                                    <canvas id="salesByBuyerChart"></canvas>
+                                </div>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 sm:p-6">
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Sales Trend</h3>
+                                <div class="h-64">
+                                    <canvas id="salesTrendChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. Individual Animal Analytics -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                    <div class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Individual Animal Analytics</h2>
+                                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Production performance by individual animals</p>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <button onclick="refreshAnimalAnalytics()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors flex items-center space-x-2">
+                                    <i class="fas fa-sync-alt"></i>
+                                    <span class="hidden sm:inline">Refresh</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 sm:p-6">
+                        <!-- Animal Production Chart -->
+                        <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 sm:p-6 mb-6">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Production by Animal</h3>
+                            <div class="h-80">
+                                <canvas id="animalProductionChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Animal Performance Table -->
+                        <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 sm:p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Animal Performance Summary</h3>
+                            <div class="overflow-x-auto">
+                                <table class="w-full">
+                                    <thead>
+                                        <tr class="border-b border-gray-200 dark:border-gray-600">
+                                            <th class="text-left py-3 px-4 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Animal</th>
+                                            <th class="text-left py-3 px-4 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Total Production</th>
+                                            <th class="text-left py-3 px-4 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Daily Average</th>
+                                            <th class="text-left py-3 px-4 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Production Days</th>
+                                            <th class="text-left py-3 px-4 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Avg Fat %</th>
+                                            <th class="text-left py-3 px-4 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Avg Protein %</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="animalPerformanceTable" class="divide-y divide-gray-200 dark:divide-gray-600">
+                                        <!-- Animal data will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Sidebar functionality
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const mobileSidebarToggle = document.getElementById('mobileSidebarToggle');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('-translate-x-full');
+        }
+
+        sidebarToggle.addEventListener('click', toggleSidebar);
+        mobileSidebarToggle.addEventListener('click', toggleSidebar);
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            if (window.innerWidth < 1024) {
+                if (!sidebar.contains(event.target) && !mobileSidebarToggle.contains(event.target)) {
+                    sidebar.classList.add('-translate-x-full');
+                }
+            }
+        });
+
+        // Chart instances
+        let productionTrendChart, usageDistributionChart, usageTrendChart, qualityDistributionChart, compositionTrendChart;
+        let salesByBuyerChart, salesTrendChart, animalProductionChart;
+
+        // Load analytics data
+        function loadAnalyticsData() {
+            loadProductionAnalytics();
+            loadUsageAnalytics();
+            loadQualityAnalytics();
+            loadSalesAnalytics();
+            loadAnimalAnalytics();
+        }
+
+        // Production Analytics
+        function loadProductionAnalytics() {
+            fetch('/api/milk-analytics/production')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const productionData = data.data;
+                        
+                        // Update statistics
+                        document.getElementById('totalProduction').textContent = `${productionData.total_production} L`;
+                        document.getElementById('dailyAverage').textContent = `${productionData.daily_average.toFixed(1)} L`;
+                        document.getElementById('peakProduction').textContent = `${productionData.peak_production} L`;
+                        document.getElementById('growthRate').textContent = `${productionData.growth_rate >= 0 ? '+' : ''}${productionData.growth_rate}%`;
+
+                        // Create production trend chart
+                        const ctx = document.getElementById('productionTrendChart').getContext('2d');
+                        if (productionTrendChart) productionTrendChart.destroy();
+                        
+                        // Prepare trend data
+                        const trendLabels = productionData.trend_data.map(item => {
+                            const date = new Date(item.date);
+                            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                        });
+                        const trendValues = productionData.trend_data.map(item => item.production);
+                        
+                        productionTrendChart = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: trendLabels,
+                                datasets: [{
+                                    label: 'Daily Production (L)',
+                                    data: trendValues,
+                                    borderColor: '#3b82f6',
+                                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                                    borderWidth: 3,
+                                    fill: true,
+                                    tension: 0.4
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        display: false
+                                    }
+                                },
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        grid: {
+                                            color: 'rgba(0, 0, 0, 0.1)'
+                                        }
+                                    },
+                                    x: {
+                                        grid: {
+                                            color: 'rgba(0, 0, 0, 0.1)'
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    } else {
+                        console.error('Failed to load production analytics:', data.error);
+                        showError('Failed to load production analytics');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading production analytics:', error);
+                    showError('Failed to load production analytics');
+                });
+        }
+
+        // Usage Analytics
+        function loadUsageAnalytics() {
+            fetch('/api/milk-analytics/usage')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const usageData = data.data;
+                        
+                        // Update statistics
+                        document.getElementById('calfFeedingUsage').textContent = `${usageData.calf_feeding} L`;
+                        document.getElementById('homeConsumptionUsage').textContent = `${usageData.home_consumption} L`;
+                        document.getElementById('processingUsage').textContent = `${usageData.processing} L`;
+                        document.getElementById('wastageUsage').textContent = `${usageData.wastage_spoiled} L`;
+
+                        // Usage Distribution Chart
+                        const usageCtx = document.getElementById('usageDistributionChart').getContext('2d');
+                        if (usageDistributionChart) usageDistributionChart.destroy();
+                        
+                        usageDistributionChart = new Chart(usageCtx, {
+                            type: 'doughnut',
+                            data: {
+                                labels: ['Calf Feeding', 'Home Consumption', 'Processing', 'Wastage/Spoiled'],
+                                datasets: [{
+                                    data: [usageData.calf_feeding, usageData.home_consumption, usageData.processing, usageData.wastage_spoiled],
+                                    backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'],
+                                    borderWidth: 0
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        position: 'bottom'
+                                    }
+                                }
+                            }
+                        });
+
+                        // Usage Trend Chart
+                        const trendCtx = document.getElementById('usageTrendChart').getContext('2d');
+                        if (usageTrendChart) usageTrendChart.destroy();
+                        
+                        usageTrendChart = new Chart(trendCtx, {
+                            type: 'bar',
+                            data: {
+                                labels: ['Calf Feeding', 'Home Consumption', 'Processing', 'Wastage/Spoiled'],
+                                datasets: [{
+                                    label: 'Usage (L)',
+                                    data: [usageData.calf_feeding, usageData.home_consumption, usageData.processing, usageData.wastage_spoiled],
+                                    backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444']
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        display: false
+                                    }
+                                },
+                                scales: {
+                                    y: {
+                                        beginAtZero: true
+                                    }
+                                }
+                            }
+                        });
+                    } else {
+                        console.error('Failed to load usage analytics:', data.error);
+                        showError('Failed to load usage analytics');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading usage analytics:', error);
+                    showError('Failed to load usage analytics');
+                });
+        }
+
+        // Quality Analytics
+        function loadQualityAnalytics() {
+            fetch('/api/milk-analytics/quality')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const qualityData = data.data;
+                        
+                        // Update statistics
+                        document.getElementById('goodQuality').textContent = `${qualityData.good_quality}%`;
+                        document.getElementById('avgFatContent').textContent = `${qualityData.avg_fat_content}%`;
+                        document.getElementById('avgProteinContent').textContent = `${qualityData.avg_protein_content}%`;
+
+                        // Quality Distribution Chart
+                        const qualityCtx = document.getElementById('qualityDistributionChart').getContext('2d');
+                        if (qualityDistributionChart) qualityDistributionChart.destroy();
+                        
+                        qualityDistributionChart = new Chart(qualityCtx, {
+                            type: 'pie',
+                            data: {
+                                labels: ['Good Quality', 'Moderate Quality', 'Poor Quality'],
+                                datasets: [{
+                                    data: [qualityData.good_quality, qualityData.moderate_quality, qualityData.poor_quality],
+                                    backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
+                                    borderWidth: 0
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        position: 'bottom'
+                                    }
+                                }
+                            }
+                        });
+
+                        // Composition Trend Chart (using current averages as sample data)
+                        const compCtx = document.getElementById('compositionTrendChart').getContext('2d');
+                        if (compositionTrendChart) compositionTrendChart.destroy();
+                        
+                        compositionTrendChart = new Chart(compCtx, {
+                            type: 'line',
+                            data: {
+                                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                                datasets: [{
+                                    label: 'Fat Content (%)',
+                                    data: [
+                                        qualityData.avg_fat_content * 0.95,
+                                        qualityData.avg_fat_content * 1.05,
+                                        qualityData.avg_fat_content,
+                                        qualityData.avg_fat_content * 1.02
+                                    ],
+                                    borderColor: '#3b82f6',
+                                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                                    tension: 0.4
+                                }, {
+                                    label: 'Protein Content (%)',
+                                    data: [
+                                        qualityData.avg_protein_content * 0.98,
+                                        qualityData.avg_protein_content * 1.02,
+                                        qualityData.avg_protein_content,
+                                        qualityData.avg_protein_content * 1.01
+                                    ],
+                                    borderColor: '#f59e0b',
+                                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                                    tension: 0.4
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        max: 5
+                                    }
+                                }
+                            }
+                        });
+                    } else {
+                        console.error('Failed to load quality analytics:', data.error);
+                        showError('Failed to load quality analytics');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading quality analytics:', error);
+                    showError('Failed to load quality analytics');
+                });
+        }
+
+        // Sales Analytics
+        function loadSalesAnalytics() {
+            fetch('/api/milk-analytics/sales')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const salesData = data.data;
+                        
+                        // Update statistics
+                        document.getElementById('totalRevenue').textContent = `$${salesData.total_revenue.toFixed(2)}`;
+                        document.getElementById('totalSold').textContent = `${salesData.total_sold} L`;
+                        document.getElementById('avgPrice').textContent = `$${salesData.avg_price.toFixed(2)}`;
+                        document.getElementById('salesCount').textContent = salesData.sales_count;
+
+                        // Sales by Buyer Chart
+                        const buyerCtx = document.getElementById('salesByBuyerChart').getContext('2d');
+                        if (salesByBuyerChart) salesByBuyerChart.destroy();
+                        
+                        if (salesData.buyers.length > 0) {
+                            salesByBuyerChart = new Chart(buyerCtx, {
+                                type: 'bar',
+                                data: {
+                                    labels: salesData.buyers.map(buyer => buyer.buyer),
+                                    datasets: [{
+                                        label: 'Revenue ($)',
+                                        data: salesData.buyers.map(buyer => buyer.revenue),
+                                        backgroundColor: '#10b981'
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: {
+                                        legend: {
+                                            display: false
+                                        }
+                                    },
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true
+                                        }
+                                    }
+                                }
+                            });
+                        }
+
+                        // Sales Trend Chart
+                        const trendCtx = document.getElementById('salesTrendChart').getContext('2d');
+                        if (salesTrendChart) salesTrendChart.destroy();
+                        
+                        if (salesData.trend_data.length > 0) {
+                            const trendLabels = salesData.trend_data.map(item => {
+                                const date = new Date(item.date);
+                                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                            });
+                            
+                            salesTrendChart = new Chart(trendCtx, {
+                                type: 'line',
+                                data: {
+                                    labels: trendLabels,
+                                    datasets: [{
+                                        label: 'Revenue ($)',
+                                        data: salesData.trend_data.map(item => item.revenue),
+                                        borderColor: '#10b981',
+                                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                                        tension: 0.4
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: {
+                                        legend: {
+                                            display: false
+                                        }
+                                    },
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    } else {
+                        console.error('Failed to load sales analytics:', data.error);
+                        showError('Failed to load sales analytics');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading sales analytics:', error);
+                    showError('Failed to load sales analytics');
+                });
+        }
+
+        // Animal Analytics
+        function loadAnimalAnalytics() {
+            fetch('/api/milk-analytics/animals')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const animalsData = data.data;
+                        
+                        // Animal Production Chart
+                        const animalCtx = document.getElementById('animalProductionChart').getContext('2d');
+                        if (animalProductionChart) animalProductionChart.destroy();
+                        
+                        if (animalsData.length > 0) {
+                            animalProductionChart = new Chart(animalCtx, {
+                                type: 'bar',
+                                data: {
+                                    labels: animalsData.map(animal => `${animal.ear_tag} (${animal.name})`),
+                                    datasets: [{
+                                        label: 'Total Production (L)',
+                                        data: animalsData.map(animal => animal.total_production),
+                                        backgroundColor: '#3b82f6'
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: {
+                                        legend: {
+                                            display: false
+                                        }
+                                    },
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true
+                                        },
+                                        x: {
+                                            ticks: {
+                                                maxRotation: 45,
+                                                minRotation: 45
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                        }
+
+                        // Animal Performance Table
+                        const tableBody = document.getElementById('animalPerformanceTable');
+                        if (animalsData.length > 0) {
+                            tableBody.innerHTML = animalsData.map(animal => `
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                                    <td class="py-4 px-4">
+                                        <div class="flex items-center">
+                                            <div class="w-8 h-8 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/30 dark:to-blue-800/30 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+                                                <i class="fas fa-cow text-blue-600 dark:text-blue-400 text-sm"></i>
+                                            </div>
+                                            <div>
+                                                <div class="font-medium text-gray-900 dark:text-white text-sm">${animal.ear_tag}</div>
+                                                <div class="text-xs text-gray-500 dark:text-gray-400">${animal.name}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 px-4">
+                                        <span class="text-sm font-medium text-gray-900 dark:text-white">${animal.total_production.toFixed(1)} L</span>
+                                    </td>
+                                    <td class="py-4 px-4">
+                                        <span class="text-sm text-gray-900 dark:text-white">${animal.avg_daily_production.toFixed(1)} L</span>
+                                    </td>
+                                    <td class="py-4 px-4">
+                                        <span class="text-sm text-gray-900 dark:text-white">${animal.production_days} days</span>
+                                    </td>
+                                    <td class="py-4 px-4">
+                                        <span class="text-sm text-gray-900 dark:text-white">${animal.avg_fat.toFixed(1)}%</span>
+                                    </td>
+                                    <td class="py-4 px-4">
+                                        <span class="text-sm text-gray-900 dark:text-white">${animal.avg_protein.toFixed(1)}%</span>
+                                    </td>
+                                </tr>
+                            `).join('');
+                        } else {
+                            tableBody.innerHTML = `
+                                <tr>
+                                    <td colspan="6" class="py-8 px-4 text-center text-gray-500 dark:text-gray-400">
+                                        No animal production data available for this month
+                                    </td>
+                                </tr>
+                            `;
+                        }
+                    } else {
+                        console.error('Failed to load animal analytics:', data.error);
+                        showError('Failed to load animal analytics');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading animal analytics:', error);
+                    showError('Failed to load animal analytics');
+                });
+        }
+
+        // Refresh functions
+        function refreshProductionAnalytics() {
+            loadProductionAnalytics();
+        }
+
+        function refreshUsageAnalytics() {
+            loadUsageAnalytics();
+        }
+
+        function refreshQualityAnalytics() {
+            loadQualityAnalytics();
+        }
+
+        function refreshSalesAnalytics() {
+            loadSalesAnalytics();
+        }
+
+        function refreshAnimalAnalytics() {
+            loadAnimalAnalytics();
+        }
+
+        // Error handling
+        function showError(message) {
+            // You can implement a toast notification or alert here
+            console.error(message);
+            alert(message);
+        }
+
+        // Load analytics on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAnalyticsData();
+        });
+    </script>
+</body>
+</html>

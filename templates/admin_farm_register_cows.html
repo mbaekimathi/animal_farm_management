@@ -1,0 +1,1552 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cow Registration - Pig Farm Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    screens: {
+                        'xs': '475px',
+                        'sm': '640px',
+                        'md': '768px',
+                        'lg': '1024px',
+                        'xl': '1280px',
+                        '2xl': '1536px',
+                    },
+                    colors: {
+                        primary: {
+                            50: '#fef3f2',
+                            100: '#fee4e2',
+                            200: '#fecdd3',
+                            300: '#fda4af',
+                            400: '#fb7185',
+                            500: '#f43f5e',
+                            600: '#e11d48',
+                            700: '#be123c',
+                            800: '#9f1239',
+                            900: '#881337',
+                        },
+                        secondary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        },
+                        accent: {
+                            50: '#fefce8',
+                            100: '#fef9c3',
+                            200: '#fef08a',
+                            300: '#fde047',
+                            400: '#facc15',
+                            500: '#eab308',
+                            600: '#ca8a04',
+                            700: '#a16207',
+                            800: '#854d0e',
+                            900: '#713f12',
+                        },
+                        success: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            300: '#86efac',
+                            400: '#4ade80',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        },
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.5s ease-out',
+                        'slide-down': 'slideDown 0.5s ease-out',
+                        'slide-left': 'slideLeft 0.5s ease-out',
+                        'slide-right': 'slideRight 0.5s ease-out',
+                        'scale-in': 'scaleIn 0.3s ease-out',
+                        'bounce-slow': 'bounce 2s infinite',
+                        'pulse-slow': 'pulse 3s infinite',
+                        'spin-slow': 'spin 3s linear infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        slideDown: {
+                            '0%': { transform: 'translateY(-20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        slideLeft: {
+                            '0%': { transform: 'translateX(20px)', opacity: '0' },
+                            '100%': { transform: 'translateX(0)', opacity: '1' },
+                        },
+                        slideRight: {
+                            '0%': { transform: 'translateX(-20px)', opacity: '0' },
+                            '100%': { transform: 'translateX(0)', opacity: '1' },
+                        },
+                        scaleIn: {
+                            '0%': { transform: 'scale(0.9)', opacity: '0' },
+                            '100%': { transform: 'scale(1)', opacity: '1' },
+                        },
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        /* Custom scrollbar */
+        .scrollbar-thin {
+            scrollbar-width: thin;
+            scrollbar-color: rgb(156 163 175) transparent;
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+            background-color: rgb(156 163 175);
+            border-radius: 3px;
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+            background-color: rgb(107 114 128);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-red-50 dark:from-gray-900 dark:via-rose-900/20 dark:to-red-900/20 transition-all duration-300 ease-in-out">
+    <!-- Sidebar -->
+    <div id="sidebar" class="fixed inset-y-0 left-0 z-50 w-72 bg-white dark:bg-gray-900 shadow-2xl transform -translate-x-full transition-all duration-300 ease-in-out md:translate-x-0 border-r border-gray-200 dark:border-gray-700">
+        <!-- Sidebar Header -->
+        <div class="flex items-center justify-between h-20 px-4 sm:px-6 bg-gradient-to-br from-rose-600 via-pink-600 to-red-600 shadow-lg">
+            <div class="flex items-center space-x-3 sm:space-x-4">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-lg">
+                    <i class="fas fa-cow text-white text-lg sm:text-xl"></i>
+                </div>
+                <div class="min-w-0">
+                    <h1 class="text-lg sm:text-xl font-bold text-white tracking-tight truncate">FarmPro</h1>
+                    <p class="text-xs sm:text-sm text-white/90 font-medium truncate">Cow Registration</p>
+                </div>
+            </div>
+            <button id="close-sidebar" class="md:hidden text-white/80 hover:text-white hover:bg-white/10 p-2 rounded-lg transition-all duration-200" aria-label="Close sidebar">
+                <i class="fas fa-times text-lg"></i>
+            </button>
+        </div>
+
+        <!-- Sidebar Navigation -->
+        <nav class="mt-6 sm:mt-8 px-3 sm:px-4">
+            <div class="space-y-1 sm:space-y-2">
+                <!-- Dashboard -->
+                <a href="/admin/dashboard" class="group flex items-center px-3 sm:px-4 py-2 sm:py-3 text-gray-700 dark:text-gray-300 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-xl transition-all duration-200 hover:shadow-md" role="menuitem">
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 rounded-xl flex items-center justify-center mr-3 sm:mr-4 group-hover:scale-110 transition-transform duration-200">
+                        <i class="fas fa-chart-line text-gray-600 dark:text-gray-400 text-sm sm:text-lg"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <span class="font-semibold text-xs sm:text-sm truncate">Dashboard</span>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">Overview</p>
+                    </div>
+                </a>
+
+
+                <!-- Cow Registration (Active) -->
+                <a href="/admin/farm/register-cows" class="group flex items-center px-3 sm:px-4 py-3 sm:py-4 bg-gradient-to-r from-rose-50 via-pink-50 to-red-50 dark:from-rose-900/30 dark:via-pink-800/30 dark:to-red-900/30 text-rose-700 dark:text-rose-300 rounded-xl shadow-lg border border-rose-200 dark:border-rose-700/50 relative overflow-hidden" role="menuitem" aria-current="page">
+                    <div class="absolute inset-0 bg-gradient-to-r from-rose-500/10 to-pink-500/10"></div>
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-rose-500 via-pink-500 to-red-500 rounded-xl flex items-center justify-center shadow-lg mr-3 sm:mr-4 group-hover:scale-110 transition-transform duration-200 relative z-10">
+                        <i class="fas fa-cow text-white text-sm sm:text-lg"></i>
+                    </div>
+                    <div class="flex-1 relative z-10 min-w-0">
+                        <span class="font-bold text-xs sm:text-sm text-gray-900 dark:text-white block truncate">Cow Registration</span>
+                        <span class="text-xs text-rose-600 dark:text-rose-400 font-medium truncate">Register new cows</span>
+                    </div>
+                    <div class="w-2 h-2 bg-yellow-500 rounded-full animate-pulse-slow"></div>
+                </a>
+
+            </div>
+        </nav>
+
+        <!-- Sidebar Footer -->
+        <div class="absolute bottom-0 left-0 right-0 p-4 sm:p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+            <div class="flex items-center space-x-3 sm:space-x-4">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <i class="fas fa-user text-white text-sm sm:text-lg"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-xs sm:text-sm font-bold text-gray-900 dark:text-white truncate">Admin User</p>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 font-medium truncate">Administrator</p>
+                    <div class="flex items-center mt-1">
+                        <div class="w-2 h-2 bg-yellow-500 rounded-full mr-2"></div>
+                        <span class="text-xs text-yellow-600 dark:text-yellow-400 font-medium">Online</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Overlay -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden md:hidden transition-opacity duration-300"></div>
+
+    <!-- Main Content -->
+    <main class="md:ml-72 min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-red-50 dark:from-gray-900 dark:via-rose-900/20 dark:to-red-900/20 transition-all duration-300 ease-in-out">
+        <div class="p-4 sm:p-6 lg:p-8">
+            <!-- Page Header -->
+            <div class="mb-6 sm:mb-8 animate-fade-in">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+                    <!-- Header Background -->
+                    <div class="h-2 bg-gradient-to-r from-rose-500 via-pink-500 to-red-500"></div>
+                    <div class="p-4 sm:p-6 lg:p-8">
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-4 sm:space-y-0">
+                            <div class="flex items-center space-x-3 sm:space-x-4">
+                                <div class="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-rose-500 via-pink-500 to-red-500 rounded-2xl flex items-center justify-center shadow-lg">
+                                    <i class="fas fa-cow text-white text-lg sm:text-2xl"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-1 sm:mb-2">Cow Registration</h1>
+                                    <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 font-medium">Register new cows to the farm management system</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2 sm:space-x-4">
+                                <button id="toggle-sidebar" class="md:hidden p-2 sm:p-3 bg-gray-100 dark:bg-gray-700 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                                    <i class="fas fa-bars text-gray-600 dark:text-gray-400 text-sm sm:text-base"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Registration Button -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden animate-slide-up">
+                <div class="p-6 sm:p-8 text-center">
+                    <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-rose-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6 shadow-lg">
+                        <i class="fas fa-plus text-white text-2xl sm:text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">Register New Cow</h3>
+                    <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-6 sm:mb-8">Click the button below to open the registration form</p>
+                    <button id="openRegistrationModal" class="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-rose-500 to-pink-500 text-white rounded-xl hover:from-rose-600 hover:to-pink-600 transition-all duration-200 shadow-lg hover:shadow-xl font-semibold text-base sm:text-lg">
+                        <i class="fas fa-cow mr-2 sm:mr-3"></i>Register New Cow
+                    </button>
+                </div>
+            </div>
+
+            <!-- Registration Form Modal -->
+            <div id="registrationModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center z-50 p-2 sm:p-4">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[95vh] overflow-y-auto animate-scale-in mx-auto">
+                    <!-- Modal Header -->
+                    <div class="sticky top-0 bg-gradient-to-r from-rose-500 via-pink-500 to-red-500 h-2"></div>
+                    <div class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3 sm:space-x-4 min-w-0">
+                                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-rose-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
+                                    <i class="fas fa-cow text-white text-lg sm:text-xl"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <h2 class="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white truncate">Register New Cow</h2>
+                                    <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 truncate">Fill in the details below to register a new cow</p>
+                                </div>
+                            </div>
+                            <button id="closeRegistrationModal" class="p-2 sm:p-3 bg-gray-100 dark:bg-gray-700 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex-shrink-0">
+                                <i class="fas fa-times text-gray-600 dark:text-gray-400 text-sm sm:text-base"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Modal Body -->
+                    <div class="p-4 sm:p-6">
+                        <form id="cowRegistrationForm" class="space-y-8">
+                        <!-- Basic Information Section -->
+                        <div class="bg-gradient-to-r from-rose-50 to-pink-50 dark:from-rose-900/20 dark:to-pink-900/20 rounded-xl p-4 sm:p-6 border border-rose-200 dark:border-rose-700/30">
+                            <div class="flex items-center mb-4 sm:mb-6">
+                                <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-rose-500 to-pink-500 rounded-xl flex items-center justify-center mr-3 sm:mr-4">
+                                    <i class="fas fa-info-circle text-white text-sm sm:text-lg"></i>
+                                </div>
+                                <h3 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Basic Information</h3>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                                <!-- Ear Tag -->
+                                <div class="sm:col-span-2">
+                                    <label for="earTag" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+                                        Ear Tag Number <span class="text-red-500">*</span>
+                                    </label>
+                                    <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                                        <input type="text" id="earTag" name="ear_tag" readonly
+                                               class="flex-1 px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base"
+                                               placeholder="Auto-generated">
+                                        <button type="button" id="generateTagBtn" 
+                                                class="px-4 py-2 sm:py-3 bg-gradient-to-r from-rose-500 to-pink-500 text-white rounded-xl hover:from-rose-600 hover:to-pink-600 focus:ring-2 focus:ring-rose-500 transition-all duration-200 shadow-lg hover:shadow-xl text-sm sm:text-base">
+                                            <i class="fas fa-sync-alt"></i>
+                                        </button>
+                                    </div>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-2 flex items-center">
+                                        <i class="fas fa-info-circle mr-1"></i>Auto-generated ID starting with C
+                                    </p>
+                                </div>
+
+                                <!-- Name -->
+                                <div>
+                                    <label for="name" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+                                        Name (Optional)
+                                    </label>
+                                    <input type="text" id="name" name="name"
+                                           class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base"
+                                           placeholder="Enter cow name">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mt-4 sm:mt-6">
+                                <!-- Breed -->
+                                <div>
+                                    <label for="breed" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+                                        Breed <span class="text-red-500">*</span>
+                                    </label>
+                                    <select id="breed" name="breed" required
+                                            class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base">
+                                        <option value="">Select Breed</option>
+                                        <option value="Holstein">Holstein</option>
+                                        <option value="Jersey">Jersey</option>
+                                        <option value="Guernsey">Guernsey</option>
+                                        <option value="Ayrshire">Ayrshire</option>
+                                        <option value="Brown Swiss">Brown Swiss</option>
+                                        <option value="Friesian">Friesian</option>
+                                        <option value="Sahiwal">Sahiwal</option>
+                                        <option value="Boran">Boran</option>
+                                        <option value="Zebu">Zebu</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+
+                                <!-- Color/Markings -->
+                                <div>
+                                    <label for="colorMarkings" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+                                        Color/Markings
+                                    </label>
+                                    <input type="text" id="colorMarkings" name="color_markings"
+                                           class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base"
+                                           placeholder="e.g., Black and white, Brown spots">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Source Selection Section -->
+                        <div class="bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl p-4 sm:p-6 border border-blue-200 dark:border-blue-700/30">
+                            <div class="flex items-center mb-4 sm:mb-6">
+                                <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center mr-3 sm:mr-4">
+                                    <i class="fas fa-question-circle text-white text-sm sm:text-lg"></i>
+                                </div>
+                                <h3 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Source Information</h3>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 sm:mb-4">
+                                    How did you acquire this cow? <span class="text-red-500">*</span>
+                                </label>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                                    <label class="flex items-center p-3 sm:p-4 border border-gray-300 dark:border-gray-600 rounded-xl cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 hover:shadow-md">
+                                        <input type="radio" name="source" value="born" class="mr-3 text-rose-600 focus:ring-rose-500">
+                                        <div class="min-w-0">
+                                            <div class="font-semibold text-gray-900 dark:text-white text-sm sm:text-base">Born on Farm</div>
+                                            <div class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Cow was born on this farm</div>
+                                        </div>
+                                    </label>
+                                    <label class="flex items-center p-3 sm:p-4 border border-gray-300 dark:border-gray-600 rounded-xl cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 hover:shadow-md">
+                                        <input type="radio" name="source" value="purchased" class="mr-3 text-rose-600 focus:ring-rose-500">
+                                        <div class="min-w-0">
+                                            <div class="font-semibold text-gray-900 dark:text-white text-sm sm:text-base">Purchased</div>
+                                            <div class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Cow was purchased from elsewhere</div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Birth Date and Gender Section -->
+                        <div class="bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-xl p-4 sm:p-6 border border-yellow-200 dark:border-yellow-700/30">
+                            <div class="flex items-center mb-4 sm:mb-6">
+                                <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-xl flex items-center justify-center mr-3 sm:mr-4">
+                                    <i class="fas fa-calendar-alt text-white text-sm sm:text-lg"></i>
+                                </div>
+                                <h3 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Birth & Gender Information</h3>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                                <!-- Birth Date -->
+                                <div>
+                                    <label for="birthDate" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+                                        Date of Birth <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="date" id="birthDate" name="birth_date" required
+                                           class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base">
+                                </div>
+
+                                <!-- Gender -->
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+                                        Gender <span class="text-red-500">*</span>
+                                    </label>
+                                    <div class="grid grid-cols-2 gap-2 sm:gap-3">
+                                        <label class="flex items-center p-2 sm:p-3 border border-gray-300 dark:border-gray-600 rounded-xl cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 hover:shadow-md">
+                                            <input type="radio" name="gender" value="female" class="mr-2 sm:mr-3 text-rose-600 focus:ring-rose-500">
+                                            <div class="flex items-center min-w-0">
+                                                <i class="fas fa-female text-pink-500 mr-1 sm:mr-2 text-sm sm:text-base"></i>
+                                                <span class="font-semibold text-gray-900 dark:text-white text-xs sm:text-sm">Female</span>
+                                            </div>
+                                        </label>
+                                        <label class="flex items-center p-2 sm:p-3 border border-gray-300 dark:border-gray-600 rounded-xl cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 hover:shadow-md">
+                                            <input type="radio" name="gender" value="male" class="mr-2 sm:mr-3 text-rose-600 focus:ring-rose-500">
+                                            <div class="flex items-center min-w-0">
+                                                <i class="fas fa-male text-blue-500 mr-1 sm:mr-2 text-sm sm:text-base"></i>
+                                                <span class="font-semibold text-gray-900 dark:text-white text-xs sm:text-sm">Male</span>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Purchase Information (shown when purchased is selected) -->
+                        <div id="purchaseInfo" class="hidden bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 rounded-xl p-4 sm:p-6 border border-orange-200 dark:border-orange-700/30">
+                            <div class="flex items-center mb-4 sm:mb-6">
+                                <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center mr-3 sm:mr-4">
+                                    <i class="fas fa-shopping-cart text-white text-sm sm:text-lg"></i>
+                                </div>
+                                <h3 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Purchase Information</h3>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                                <div>
+                                    <label for="purchaseDate" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+                                        Purchase Date
+                                    </label>
+                                    <input type="date" id="purchaseDate" name="purchase_date"
+                                           class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base">
+                                </div>
+                                <div>
+                                    <label for="purchasePlace" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+                                        Place Purchased
+                                    </label>
+                                    <input type="text" id="purchasePlace" name="purchase_place"
+                                           class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base"
+                                           placeholder="e.g., Local Market, Another Farm">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Parent Information Section -->
+                        <div class="bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-xl p-4 sm:p-6 border border-purple-200 dark:border-purple-700/30">
+                            <div class="flex items-center mb-4 sm:mb-6">
+                                <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-xl flex items-center justify-center mr-3 sm:mr-4">
+                                    <i class="fas fa-sitemap text-white text-sm sm:text-lg"></i>
+                                </div>
+                                <h3 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Parent Information</h3>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                                <!-- Sire (Father) -->
+                                <div>
+                                    <label for="sireEarTag" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+                                        Sire (Father) Ear Tag
+                                    </label>
+                                    <input type="text" id="sireEarTag" name="sire_ear_tag"
+                                           class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base"
+                                           placeholder="Father's ear tag">
+                                </div>
+                                <div>
+                                    <label for="sireDetails" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+                                        Sire Details
+                                    </label>
+                                    <textarea id="sireDetails" name="sire_details" rows="2"
+                                              class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base"
+                                              placeholder="Additional sire information"></textarea>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mt-4 sm:mt-6">
+                                <!-- Dam (Mother) -->
+                                <div>
+                                    <label for="damEarTag" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+                                        Dam (Mother) Ear Tag
+                                    </label>
+                                    <input type="text" id="damEarTag" name="dam_ear_tag"
+                                           class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base"
+                                           placeholder="Mother's ear tag">
+                                </div>
+                                <div>
+                                    <label for="damDetails" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+                                        Dam Details
+                                    </label>
+                                    <textarea id="damDetails" name="dam_details" rows="2"
+                                              class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base"
+                                              placeholder="Additional dam information"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                            <!-- Submit Buttons -->
+                            <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-6 sm:pt-8 border-t border-gray-200 dark:border-gray-700">
+                                <button type="button" id="resetFormBtn"
+                                        class="w-full sm:w-auto px-6 sm:px-8 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 focus:ring-2 focus:ring-gray-500 transition-all duration-200 font-semibold text-sm sm:text-base">
+                                    <i class="fas fa-undo mr-2"></i>Reset Form
+                                </button>
+                                <button type="submit" id="submitBtn"
+                                        class="w-full sm:w-auto px-6 sm:px-8 py-3 bg-gradient-to-r from-rose-500 to-pink-500 text-white rounded-xl hover:from-rose-600 hover:to-pink-600 focus:ring-2 focus:ring-rose-500 transition-all duration-200 shadow-lg hover:shadow-xl font-semibold text-sm sm:text-base">
+                                    <i class="fas fa-save mr-2"></i>Register Cow
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Registrations -->
+            <div class="mt-6 sm:mt-8">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden animate-slide-up">
+                    <div class="p-4 sm:p-6">
+                        <div class="flex items-center mb-4 sm:mb-6">
+                            <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-green-500 to-yellow-500 rounded-xl flex items-center justify-center mr-3 sm:mr-4">
+                                <i class="fas fa-list text-white text-sm sm:text-lg"></i>
+                            </div>
+                            <h3 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Recent Cow Registrations</h3>
+                        </div>
+                        <div id="recentCows" class="space-y-2 sm:space-y-3">
+                            <!-- Recent cows will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Calves -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                <div class="p-4 sm:p-6">
+                    <div class="flex items-center mb-4 sm:mb-6">
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center mr-3 sm:mr-4">
+                            <i class="fas fa-baby text-white text-sm sm:text-lg"></i>
+                        </div>
+                        <h3 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Recent Calves</h3>
+                    </div>
+                    <div id="recentCalves" class="space-y-2 sm:space-y-3">
+                        <!-- Recent calves will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit Cow Modal -->
+            <div id="editCowModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center z-50 p-2 sm:p-4">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[95vh] overflow-y-auto animate-scale-in mx-auto">
+                    <!-- Modal Header -->
+                    <div class="sticky top-0 bg-gradient-to-r from-rose-500 via-pink-500 to-red-500 h-2"></div>
+                    <div class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3 sm:space-x-4 min-w-0">
+                                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-rose-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
+                                    <i class="fas fa-edit text-white text-lg sm:text-xl"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <h2 class="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white truncate">Edit Cow Details</h2>
+                                    <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 truncate">Update the cow's information</p>
+                                </div>
+                            </div>
+                            <button id="closeEditModal" class="p-2 sm:p-3 bg-gray-100 dark:bg-gray-700 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex-shrink-0">
+                                <i class="fas fa-times text-gray-600 dark:text-gray-400 text-sm sm:text-base"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Modal Body -->
+                    <div class="p-4 sm:p-6">
+                        <form id="editCowForm" class="space-y-8">
+                            <!-- Basic Information Section -->
+                            <div class="bg-gradient-to-r from-rose-50 to-pink-50 dark:from-rose-900/20 dark:to-pink-900/20 rounded-xl p-4 sm:p-6 border border-rose-200 dark:border-rose-700/30">
+                                <div class="flex items-center mb-4 sm:mb-6">
+                                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-rose-500 to-pink-500 rounded-xl flex items-center justify-center mr-3 sm:mr-4">
+                                        <i class="fas fa-info-circle text-white text-sm sm:text-lg"></i>
+                                    </div>
+                                    <h3 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Basic Information</h3>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                                    <!-- Ear Tag -->
+                                    <div class="sm:col-span-2">
+                                        <label for="editEarTag" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+                                            Ear Tag Number <span class="text-red-500">*</span>
+                                        </label>
+                                        <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                                            <input type="text" id="editEarTag" name="ear_tag" 
+                                                   class="flex-1 px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base"
+                                                   placeholder="Enter new ear tag number (e.g., 001, 002)">
+                                            <button type="button" id="generateEditTagBtn" 
+                                                    class="px-4 py-2 sm:py-3 bg-gradient-to-r from-rose-500 to-pink-500 text-white rounded-xl hover:from-rose-600 hover:to-pink-600 focus:ring-2 focus:ring-rose-500 transition-all duration-200 shadow-lg hover:shadow-xl text-sm sm:text-base">
+                                                <i class="fas fa-sync-alt"></i>
+                                            </button>
+                                        </div>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2 flex items-center">
+                                            <i class="fas fa-info-circle mr-1"></i>Enter number only (e.g., 001). Will be saved as EC001, EC002, etc.
+                                        </p>
+                                    </div>
+
+                                    <!-- Name -->
+                                    <div>
+                                        <label for="editName" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+                                            Name (Optional)
+                                        </label>
+                                        <input type="text" id="editName" name="name"
+                                               class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base"
+                                               placeholder="Enter cow name">
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mt-4 sm:mt-6">
+                                    <!-- Breed -->
+                                    <div>
+                                        <label for="editBreed" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+                                            Breed <span class="text-red-500">*</span>
+                                        </label>
+                                        <select id="editBreed" name="breed" required
+                                                class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base">
+                                            <option value="">Select Breed</option>
+                                            <option value="Holstein">Holstein</option>
+                                            <option value="Jersey">Jersey</option>
+                                            <option value="Guernsey">Guernsey</option>
+                                            <option value="Ayrshire">Ayrshire</option>
+                                            <option value="Brown Swiss">Brown Swiss</option>
+                                            <option value="Friesian">Friesian</option>
+                                            <option value="Sahiwal">Sahiwal</option>
+                                            <option value="Boran">Boran</option>
+                                            <option value="Zebu">Zebu</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Color/Markings -->
+                                    <div>
+                                        <label for="editColorMarkings" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+                                            Color/Markings
+                                        </label>
+                                        <input type="text" id="editColorMarkings" name="color_markings"
+                                               class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base"
+                                               placeholder="e.g., Black and white, Brown spots">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Source Selection Section -->
+                            <div class="bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl p-4 sm:p-6 border border-blue-200 dark:border-blue-700/30">
+                                <div class="flex items-center mb-4 sm:mb-6">
+                                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center mr-3 sm:mr-4">
+                                        <i class="fas fa-question-circle text-white text-sm sm:text-lg"></i>
+                                    </div>
+                                    <h3 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Source Information</h3>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 sm:mb-4">
+                                        How did you acquire this cow? <span class="text-red-500">*</span>
+                                    </label>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                                        <label class="flex items-center p-3 sm:p-4 border border-gray-300 dark:border-gray-600 rounded-xl cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 hover:shadow-md">
+                                            <input type="radio" name="source" value="born" class="mr-3 text-rose-600 focus:ring-rose-500">
+                                            <div class="min-w-0">
+                                                <div class="font-semibold text-gray-900 dark:text-white text-sm sm:text-base">Born on Farm</div>
+                                                <div class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Cow was born on this farm</div>
+                                            </div>
+                                        </label>
+                                        <label class="flex items-center p-3 sm:p-4 border border-gray-300 dark:border-gray-600 rounded-xl cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 hover:shadow-md">
+                                            <input type="radio" name="source" value="purchased" class="mr-3 text-rose-600 focus:ring-rose-500">
+                                            <div class="min-w-0">
+                                                <div class="font-semibold text-gray-900 dark:text-white text-sm sm:text-base">Purchased</div>
+                                                <div class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Cow was purchased from elsewhere</div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Birth Date and Gender Section -->
+                            <div class="bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-xl p-4 sm:p-6 border border-yellow-200 dark:border-yellow-700/30">
+                                <div class="flex items-center mb-4 sm:mb-6">
+                                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-xl flex items-center justify-center mr-3 sm:mr-4">
+                                        <i class="fas fa-calendar-alt text-white text-sm sm:text-lg"></i>
+                                    </div>
+                                    <h3 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Birth & Gender Information</h3>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                                    <!-- Birth Date -->
+                                    <div>
+                                        <label for="editBirthDate" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+                                            Date of Birth <span class="text-red-500">*</span>
+                                        </label>
+                                        <input type="date" id="editBirthDate" name="birth_date" required
+                                               class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base">
+                                    </div>
+
+                                    <!-- Gender -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+                                            Gender <span class="text-red-500">*</span>
+                                        </label>
+                                        <div class="grid grid-cols-2 gap-2 sm:gap-3">
+                                            <label class="flex items-center p-2 sm:p-3 border border-gray-300 dark:border-gray-600 rounded-xl cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 hover:shadow-md">
+                                                <input type="radio" name="gender" value="female" class="mr-2 sm:mr-3 text-rose-600 focus:ring-rose-500">
+                                                <div class="flex items-center min-w-0">
+                                                    <i class="fas fa-female text-pink-500 mr-1 sm:mr-2 text-sm sm:text-base"></i>
+                                                    <span class="font-semibold text-gray-900 dark:text-white text-xs sm:text-sm">Female</span>
+                                                </div>
+                                            </label>
+                                            <label class="flex items-center p-2 sm:p-3 border border-gray-300 dark:border-gray-600 rounded-xl cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 hover:shadow-md">
+                                                <input type="radio" name="gender" value="male" class="mr-2 sm:mr-3 text-rose-600 focus:ring-rose-500">
+                                                <div class="flex items-center min-w-0">
+                                                    <i class="fas fa-male text-blue-500 mr-1 sm:mr-2 text-sm sm:text-base"></i>
+                                                    <span class="font-semibold text-gray-900 dark:text-white text-xs sm:text-sm">Male</span>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Purchase Information (shown when purchased is selected) -->
+                            <div id="editPurchaseInfo" class="hidden bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 rounded-xl p-4 sm:p-6 border border-orange-200 dark:border-orange-700/30">
+                                <div class="flex items-center mb-4 sm:mb-6">
+                                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center mr-3 sm:mr-4">
+                                        <i class="fas fa-shopping-cart text-white text-sm sm:text-lg"></i>
+                                    </div>
+                                    <h3 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Purchase Information</h3>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                                    <div>
+                                        <label for="editPurchaseDate" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+                                            Purchase Date
+                                        </label>
+                                        <input type="date" id="editPurchaseDate" name="purchase_date"
+                                               class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base">
+                                    </div>
+                                    <div>
+                                        <label for="editPurchasePlace" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+                                            Place Purchased
+                                        </label>
+                                        <input type="text" id="editPurchasePlace" name="purchase_place"
+                                               class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base"
+                                               placeholder="e.g., Local Market, Another Farm">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Parent Information Section -->
+                            <div class="bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-xl p-4 sm:p-6 border border-purple-200 dark:border-purple-700/30">
+                                <div class="flex items-center mb-4 sm:mb-6">
+                                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-xl flex items-center justify-center mr-3 sm:mr-4">
+                                        <i class="fas fa-sitemap text-white text-sm sm:text-lg"></i>
+                                    </div>
+                                    <h3 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Parent Information</h3>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                                    <!-- Sire (Father) -->
+                                    <div>
+                                        <label for="editSireEarTag" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+                                            Sire (Father) Ear Tag
+                                        </label>
+                                        <input type="text" id="editSireEarTag" name="sire_ear_tag"
+                                               class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base"
+                                               placeholder="Father's ear tag">
+                                    </div>
+                                    <div>
+                                        <label for="editSireDetails" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+                                            Sire Details
+                                        </label>
+                                        <textarea id="editSireDetails" name="sire_details" rows="2"
+                                                  class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base"
+                                                  placeholder="Additional sire information"></textarea>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mt-4 sm:mt-6">
+                                    <!-- Dam (Mother) -->
+                                    <div>
+                                        <label for="editDamEarTag" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+                                            Dam (Mother) Ear Tag
+                                        </label>
+                                        <input type="text" id="editDamEarTag" name="dam_ear_tag"
+                                               class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base"
+                                               placeholder="Mother's ear tag">
+                                    </div>
+                                    <div>
+                                        <label for="editDamDetails" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+                                            Dam Details
+                                        </label>
+                                        <textarea id="editDamDetails" name="dam_details" rows="2"
+                                                  class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base"
+                                                  placeholder="Additional dam information"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Submit Buttons -->
+                            <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-6 sm:pt-8 border-t border-gray-200 dark:border-gray-700">
+                                <button type="button" id="cancelEditBtn"
+                                        class="w-full sm:w-auto px-6 sm:px-8 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 focus:ring-2 focus:ring-gray-500 transition-all duration-200 font-semibold text-sm sm:text-base">
+                                    <i class="fas fa-times mr-2"></i>Cancel
+                                </button>
+                                <button type="submit" id="updateCowBtn"
+                                        class="w-full sm:w-auto px-6 sm:px-8 py-3 bg-gradient-to-r from-rose-500 to-pink-500 text-white rounded-xl hover:from-rose-600 hover:to-pink-600 focus:ring-2 focus:ring-rose-500 transition-all duration-200 shadow-lg hover:shadow-xl font-semibold text-sm sm:text-base">
+                                    <i class="fas fa-save mr-2"></i>Update Cow
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Edit History Modal -->
+    <div id="editHistoryModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto animate-scale-in mx-auto">
+            <!-- Modal Header -->
+            <div class="sticky top-0 bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500 h-2"></div>
+            <div class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3 sm:space-x-4 min-w-0">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
+                            <i class="fas fa-history text-white text-lg sm:text-xl"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <h2 class="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white truncate" id="historyModalTitle">Edit History</h2>
+                            <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 truncate" id="historyModalSubtitle">View all changes made to this cow</p>
+                        </div>
+                    </div>
+                    <button id="closeHistoryModal" class="p-2 sm:p-3 bg-gray-100 dark:bg-gray-700 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex-shrink-0">
+                        <i class="fas fa-times text-gray-600 dark:text-gray-400 text-sm sm:text-base"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-4 sm:p-6">
+                <div id="editHistoryContent">
+                    <!-- History content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 sm:p-8 max-w-md w-full animate-scale-in mx-auto">
+            <div class="text-center">
+                <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-green-100 to-yellow-100 dark:from-green-900/30 dark:to-yellow-900/30 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 shadow-lg">
+                    <i class="fas fa-check text-green-600 dark:text-green-400 text-2xl sm:text-3xl"></i>
+                </div>
+                <h3 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-2 sm:mb-3">Cow Registered Successfully!</h3>
+                <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-6 sm:mb-8">The cow has been added to the farm management system.</p>
+                <button id="closeSuccessModal" class="w-full sm:w-auto px-6 sm:px-8 py-3 bg-gradient-to-r from-rose-500 to-pink-500 text-white rounded-xl hover:from-rose-600 hover:to-pink-600 transition-all duration-200 shadow-lg hover:shadow-xl font-semibold text-sm sm:text-base">
+                    <i class="fas fa-check mr-2"></i>Continue
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Generate ear tag on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadRecentCows();
+            loadRecentCalves();
+            
+            // Sidebar functionality
+            const sidebar = document.getElementById('sidebar');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+            const closeSidebarBtn = document.getElementById('close-sidebar');
+            const toggleSidebarBtn = document.getElementById('toggle-sidebar');
+            
+            // Close sidebar
+            function closeSidebar() {
+                sidebar.classList.add('-translate-x-full');
+                sidebarOverlay.classList.add('hidden');
+            }
+            
+            // Open sidebar
+            function openSidebar() {
+                sidebar.classList.remove('-translate-x-full');
+                sidebarOverlay.classList.remove('hidden');
+            }
+            
+            // Event listeners
+            closeSidebarBtn.addEventListener('click', closeSidebar);
+            sidebarOverlay.addEventListener('click', closeSidebar);
+            if (toggleSidebarBtn) {
+                toggleSidebarBtn.addEventListener('click', openSidebar);
+            }
+            
+            // Modal functionality
+            const registrationModal = document.getElementById('registrationModal');
+            const openModalBtn = document.getElementById('openRegistrationModal');
+            const closeModalBtn = document.getElementById('closeRegistrationModal');
+            
+            // Open modal
+            function openRegistrationModal() {
+                registrationModal.classList.remove('hidden');
+                generateEarTag(); // Generate ear tag when modal opens
+            }
+            
+            // Close modal
+            function closeRegistrationModal() {
+                registrationModal.classList.add('hidden');
+                resetForm(); // Reset form when closing
+            }
+            
+            // Event listeners for modal
+            openModalBtn.addEventListener('click', openRegistrationModal);
+            closeModalBtn.addEventListener('click', closeRegistrationModal);
+            
+            // Close modal when clicking outside
+            registrationModal.addEventListener('click', function(e) {
+                if (e.target === registrationModal) {
+                    closeRegistrationModal();
+                }
+            });
+            
+            // Close modal with Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && !registrationModal.classList.contains('hidden')) {
+                    closeRegistrationModal();
+                }
+            });
+            
+            // Source change handler
+            document.querySelectorAll('input[name="source"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const purchaseInfo = document.getElementById('purchaseInfo');
+                    if (this.value === 'purchased') {
+                        purchaseInfo.classList.remove('hidden');
+                        document.getElementById('purchaseDate').required = true;
+                        document.getElementById('purchasePlace').required = true;
+                    } else {
+                        purchaseInfo.classList.add('hidden');
+                        document.getElementById('purchaseDate').required = false;
+                        document.getElementById('purchasePlace').required = false;
+                    }
+                });
+            });
+            
+            // Generate tag button
+            document.getElementById('generateTagBtn').addEventListener('click', generateEarTag);
+            
+            // Reset form
+            document.getElementById('resetFormBtn').addEventListener('click', resetForm);
+            
+            // Form submission
+            document.getElementById('cowRegistrationForm').addEventListener('submit', registerCow);
+            
+            // Close success modal
+            document.getElementById('closeSuccessModal').addEventListener('click', function() {
+                document.getElementById('successModal').classList.add('hidden');
+                closeRegistrationModal(); // Close registration modal too
+            });
+
+            // Edit modal functionality
+            const editModal = document.getElementById('editCowModal');
+            const closeEditModalBtn = document.getElementById('closeEditModal');
+            const cancelEditBtn = document.getElementById('cancelEditBtn');
+            const generateEditTagBtn = document.getElementById('generateEditTagBtn');
+            const editForm = document.getElementById('editCowForm');
+
+            // Close edit modal
+            function closeEditModalHandler() {
+                closeEditModal();
+            }
+
+            // Event listeners for edit modal
+            closeEditModalBtn.addEventListener('click', closeEditModalHandler);
+            cancelEditBtn.addEventListener('click', closeEditModalHandler);
+            
+            // Close modal when clicking outside
+            editModal.addEventListener('click', function(e) {
+                if (e.target === editModal) {
+                    closeEditModalHandler();
+                }
+            });
+
+            // Generate edit ear tag
+            generateEditTagBtn.addEventListener('click', generateEditEarTag);
+
+            // Edit form submission
+            editForm.addEventListener('submit', updateCow);
+
+            // Source change handler for edit form
+            document.querySelectorAll('#editCowForm input[name="source"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const purchaseInfo = document.getElementById('editPurchaseInfo');
+                    if (this.value === 'purchased') {
+                        purchaseInfo.classList.remove('hidden');
+                    } else {
+                        purchaseInfo.classList.add('hidden');
+                    }
+                });
+            });
+
+            // Edit history modal functionality
+            const historyModal = document.getElementById('editHistoryModal');
+            const closeHistoryModalBtn = document.getElementById('closeHistoryModal');
+
+            // Close history modal
+            function closeHistoryModalHandler() {
+                closeHistoryModal();
+            }
+
+            // Event listeners for history modal
+            closeHistoryModalBtn.addEventListener('click', closeHistoryModalHandler);
+            
+            // Close modal when clicking outside
+            historyModal.addEventListener('click', function(e) {
+                if (e.target === historyModal) {
+                    closeHistoryModalHandler();
+                }
+            });
+        });
+
+        function generateEarTag() {
+            fetch('/api/cow/generate-ear-tag', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('earTag').value = data.next_ear_tag;
+                } else {
+                    showNotification('Failed to generate ear tag', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error generating ear tag:', error);
+                showNotification('Failed to generate ear tag', 'error');
+            });
+        }
+
+        function registerCow(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Registering...';
+            submitBtn.disabled = true;
+            
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            fetch('/api/cow/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('successModal').classList.remove('hidden');
+                    loadRecentCows();
+                } else {
+                    showNotification(data.message || 'Failed to register cow', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error registering cow:', error);
+                showNotification('Failed to register cow', 'error');
+            })
+            .finally(() => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            });
+        }
+
+        function loadRecentCows() {
+            fetch('/api/cow/list')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    displayRecentCows(data.cows.slice(0, 5)); // Show only 5 most recent
+                }
+            })
+            .catch(error => {
+                console.error('Error loading recent cows:', error);
+            });
+        }
+
+        function loadRecentCalves() {
+            fetch('/api/calves/list')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    displayRecentCalves(data.calves.slice(0, 5)); // Show only 5 most recent
+                }
+            })
+            .catch(error => {
+                console.error('Error loading recent calves:', error);
+            });
+        }
+
+        function displayRecentCows(cows) {
+            const container = document.getElementById('recentCows');
+            
+            if (cows.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center py-4">No cows registered yet</p>';
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b border-gray-200 dark:border-gray-700">
+                                <th class="text-left py-3 px-4 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Ear Tag</th>
+                                <th class="text-left py-3 px-4 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Name</th>
+                                <th class="text-left py-3 px-4 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Breed</th>
+                                <th class="text-left py-3 px-4 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Gender</th>
+                                <th class="text-left py-3 px-4 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Age</th>
+                                <th class="text-left py-3 px-4 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Source</th>
+                                <th class="text-left py-3 px-4 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Registered</th>
+                                <th class="text-center py-3 px-4 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                            ${cows.map(cow => `
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                                    <td class="py-4 px-4">
+                                        <div class="flex items-center">
+                                            <div class="w-8 h-8 bg-gradient-to-br from-green-100 to-yellow-100 dark:from-green-900/30 dark:to-yellow-900/30 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+                                                <i class="fas fa-cow text-green-600 dark:text-green-400 text-sm"></i>
+                                            </div>
+                                            <button onclick="showEditHistory(${cow.id})" class="font-medium text-gray-900 dark:text-white text-sm hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer" title="Click to view edit history">
+                                                ${cow.ear_tag}
+                                            </button>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 px-4">
+                                        <span class="text-sm text-gray-900 dark:text-white">${cow.name || 'N/A'}</span>
+                                    </td>
+                                    <td class="py-4 px-4">
+                                        <span class="text-sm text-gray-900 dark:text-white">${cow.breed}</span>
+                                    </td>
+                                    <td class="py-4 px-4">
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${cow.gender === 'female' ? 'bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-300' : 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'}">
+                                            <i class="fas ${cow.gender === 'female' ? 'fa-female' : 'fa-male'} mr-1"></i>
+                                            ${cow.gender}
+                                        </span>
+                                    </td>
+                                    <td class="py-4 px-4">
+                                        <span class="text-sm text-gray-900 dark:text-white">${cow.age_days ? Math.floor(cow.age_days / 30) + ' months' : 'N/A'}</span>
+                                    </td>
+                                    <td class="py-4 px-4">
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${cow.source === 'born' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' : 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300'}">
+                                            <i class="fas ${cow.source === 'born' ? 'fa-home' : 'fa-shopping-cart'} mr-1"></i>
+                                            ${cow.source === 'born' ? 'Born on Farm' : 'Purchased'}
+                                        </span>
+                                    </td>
+                                    <td class="py-4 px-4">
+                                        <span class="text-sm text-gray-500 dark:text-gray-400">${new Date(cow.created_at).toLocaleDateString()}</span>
+                                    </td>
+                                    <td class="py-4 px-4 text-center">
+                                        <button onclick="editCow(${cow.id})" class="p-2 bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 rounded-lg hover:bg-rose-200 dark:hover:bg-rose-800/50 transition-colors" title="Edit cow">
+                                            <i class="fas fa-edit text-sm"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function displayRecentCalves(calves) {
+            const container = document.getElementById('recentCalves');
+            
+            if (calves.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center py-4">No calves registered yet</p>';
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b border-gray-200 dark:border-gray-700">
+                                <th class="text-left py-3 px-4 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Calf ID</th>
+                                <th class="text-left py-3 px-4 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Name</th>
+                                <th class="text-left py-3 px-4 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Breed</th>
+                                <th class="text-left py-3 px-4 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Gender</th>
+                                <th class="text-left py-3 px-4 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Age</th>
+                                <th class="text-left py-3 px-4 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Parents</th>
+                                <th class="text-left py-3 px-4 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                                <th class="text-left py-3 px-4 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Birth Date</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                            ${calves.map(calf => `
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                                    <td class="py-4 px-4">
+                                        <div class="flex items-center">
+                                            <div class="w-8 h-8 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+                                                <i class="fas fa-baby text-blue-600 dark:text-blue-400 text-sm"></i>
+                                            </div>
+                                            <span class="font-medium text-gray-900 dark:text-white text-sm">${calf.calf_id}</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 px-4">
+                                        <span class="text-sm text-gray-900 dark:text-white">${calf.name || 'N/A'}</span>
+                                    </td>
+                                    <td class="py-4 px-4">
+                                        <span class="text-sm text-gray-900 dark:text-white">${calf.breed}</span>
+                                    </td>
+                                    <td class="py-4 px-4">
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${calf.gender === 'female' ? 'bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-300' : 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'}">
+                                            <i class="fas ${calf.gender === 'female' ? 'fa-female' : 'fa-male'} mr-1"></i>
+                                            ${calf.gender}
+                                        </span>
+                                    </td>
+                                    <td class="py-4 px-4">
+                                        <span class="text-sm text-gray-900 dark:text-white">${calf.age_days ? Math.floor(calf.age_days / 30) + ' months' : 'N/A'}</span>
+                                    </td>
+                                    <td class="py-4 px-4">
+                                        <div class="text-xs text-gray-600 dark:text-gray-400">
+                                            <div>Dam: ${calf.dam_ear_tag}</div>
+                                            <div>Sire: ${calf.sire_ear_tag}</div>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 px-4">
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getCalfStatusColor(calf.status)}">
+                                            ${calf.status}
+                                        </span>
+                                    </td>
+                                    <td class="py-4 px-4">
+                                        <span class="text-sm text-gray-900 dark:text-white">${new Date(calf.birth_date).toLocaleDateString()}</span>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function getCalfStatusColor(status) {
+            switch(status) {
+                case 'active': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300';
+                case 'sold': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300';
+                case 'deceased': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300';
+                default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300';
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('cowRegistrationForm').reset();
+            document.getElementById('purchaseInfo').classList.add('hidden');
+            generateEarTag();
+        }
+
+        function showNotification(message, type) {
+            // Simple notification - you can enhance this with a proper notification system
+            alert(message);
+        }
+
+        // Edit cow functionality
+        let currentEditingCowId = null;
+
+        function editCow(cowId) {
+            currentEditingCowId = cowId;
+            
+            // Fetch cow details
+            fetch(`/api/cow/${cowId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        populateEditForm(data.cow);
+                        openEditModal();
+                    } else {
+                        showNotification('Failed to load cow details', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading cow details:', error);
+                    showNotification('Failed to load cow details', 'error');
+                });
+        }
+
+        function populateEditForm(cow) {
+            console.log('Populating form with cow data:', cow);
+            
+            // Populate form fields - extract number from ear tag for editing
+            let earTagNumber = '';
+            if (cow.ear_tag) {
+                // Extract number from ear tag (remove C or EC prefix)
+                if (cow.ear_tag.startsWith('EC')) {
+                    earTagNumber = cow.ear_tag.substring(2); // Remove EC prefix
+                } else if (cow.ear_tag.startsWith('C')) {
+                    earTagNumber = cow.ear_tag.substring(1); // Remove C prefix
+                } else {
+                    earTagNumber = cow.ear_tag; // Use as is if no prefix
+                }
+            }
+            document.getElementById('editEarTag').value = earTagNumber;
+            document.getElementById('editName').value = cow.name || '';
+            document.getElementById('editBreed').value = cow.breed || '';
+            document.getElementById('editColorMarkings').value = cow.color_markings || '';
+            
+            // Handle dates properly
+            if (cow.birth_date) {
+                try {
+                    const birthDate = new Date(cow.birth_date);
+                    if (!isNaN(birthDate.getTime())) {
+                        const formattedBirthDate = birthDate.toISOString().split('T')[0];
+                        document.getElementById('editBirthDate').value = formattedBirthDate;
+                        console.log('Set birth date:', formattedBirthDate);
+                    } else {
+                        console.log('Invalid birth date:', cow.birth_date);
+                        document.getElementById('editBirthDate').value = '';
+                    }
+                } catch (error) {
+                    console.error('Error formatting birth date:', error);
+                    document.getElementById('editBirthDate').value = '';
+                }
+            } else {
+                document.getElementById('editBirthDate').value = '';
+            }
+            
+            if (cow.purchase_date) {
+                try {
+                    const purchaseDate = new Date(cow.purchase_date);
+                    if (!isNaN(purchaseDate.getTime())) {
+                        const formattedPurchaseDate = purchaseDate.toISOString().split('T')[0];
+                        document.getElementById('editPurchaseDate').value = formattedPurchaseDate;
+                        console.log('Set purchase date:', formattedPurchaseDate);
+                    } else {
+                        console.log('Invalid purchase date:', cow.purchase_date);
+                        document.getElementById('editPurchaseDate').value = '';
+                    }
+                } catch (error) {
+                    console.error('Error formatting purchase date:', error);
+                    document.getElementById('editPurchaseDate').value = '';
+                }
+            } else {
+                document.getElementById('editPurchaseDate').value = '';
+            }
+            
+            document.getElementById('editPurchasePlace').value = cow.purchase_place || '';
+            document.getElementById('editSireEarTag').value = cow.sire_ear_tag || '';
+            document.getElementById('editSireDetails').value = cow.sire_details || '';
+            document.getElementById('editDamEarTag').value = cow.dam_ear_tag || '';
+            document.getElementById('editDamDetails').value = cow.dam_details || '';
+
+            // Set gender
+            document.querySelectorAll('#editCowForm input[name="gender"]').forEach(radio => {
+                radio.checked = radio.value === cow.gender;
+            });
+
+            // Set source
+            document.querySelectorAll('#editCowForm input[name="source"]').forEach(radio => {
+                radio.checked = radio.value === cow.source;
+            });
+
+            // Show/hide purchase info based on source
+            const purchaseInfo = document.getElementById('editPurchaseInfo');
+            if (cow.source === 'purchased') {
+                purchaseInfo.classList.remove('hidden');
+            } else {
+                purchaseInfo.classList.add('hidden');
+            }
+            
+            console.log('Form populated successfully');
+        }
+
+        function openEditModal() {
+            document.getElementById('editCowModal').classList.remove('hidden');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editCowModal').classList.add('hidden');
+            currentEditingCowId = null;
+        }
+
+        function generateEditEarTag() {
+            // Generate next available EC tag number
+            fetch('/api/cow/generate-edit-ear-tag', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Extract just the number part (remove EC prefix)
+                    const numberPart = data.new_ear_tag.replace('EC', '');
+                    document.getElementById('editEarTag').value = numberPart;
+                } else {
+                    showNotification('Failed to generate edit ear tag', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error generating edit ear tag:', error);
+                showNotification('Failed to generate edit ear tag', 'error');
+            });
+        }
+
+        function updateCow(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('updateCowBtn');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Updating...';
+            submitBtn.disabled = true;
+            
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            // Add EC prefix to ear tag number
+            const earTagNumber = data.ear_tag;
+            if (earTagNumber && !earTagNumber.startsWith('EC') && !earTagNumber.startsWith('C')) {
+                // Pad with zeros if needed (e.g., 1 -> 001, 12 -> 012)
+                const paddedNumber = earTagNumber.padStart(3, '0');
+                data.ear_tag = `EC${paddedNumber}`;
+            }
+            
+            fetch(`/api/cow/${currentEditingCowId}/edit`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('Cow details updated successfully!', 'success');
+                    closeEditModal();
+                    loadRecentCows();
+                } else {
+                    showNotification(data.message || 'Failed to update cow', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error updating cow:', error);
+                showNotification('Failed to update cow', 'error');
+            })
+            .finally(() => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            });
+        }
+
+        // Edit history functionality
+        function showEditHistory(cowId) {
+            fetch(`/api/cow/${cowId}/edit-history`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        displayEditHistory(data.cow, data.history);
+                        openHistoryModal();
+                    } else {
+                        showNotification('Failed to load edit history', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading edit history:', error);
+                    showNotification('Failed to load edit history', 'error');
+                });
+        }
+
+        function displayEditHistory(cow, history) {
+            const title = document.getElementById('historyModalTitle');
+            const subtitle = document.getElementById('historyModalSubtitle');
+            const content = document.getElementById('editHistoryContent');
+            
+            title.textContent = `Edit History - ${cow.ear_tag}`;
+            subtitle.textContent = `View all changes made to ${cow.name || 'this cow'}`;
+            
+            if (history.length === 0) {
+                content.innerHTML = `
+                    <div class="text-center py-8">
+                        <div class="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-history text-gray-400 text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">No Edit History</h3>
+                        <p class="text-gray-500 dark:text-gray-400">This cow has not been edited yet.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            content.innerHTML = `
+                <div class="space-y-4">
+                    ${history.map(change => `
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border-l-4 border-blue-500">
+                            <div class="flex items-start justify-between">
+                                <div class="flex-1">
+                                    <div class="flex items-center mb-2">
+                                        <span class="font-semibold text-gray-900 dark:text-white">${change.field_name}</span>
+                                        <span class="ml-2 text-xs text-gray-500 dark:text-gray-400">${new Date(change.edited_at).toLocaleString()}</span>
+                                    </div>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Old Value</label>
+                                            <p class="text-sm text-gray-900 dark:text-white bg-red-50 dark:bg-red-900/20 p-2 rounded border-l-2 border-red-300 dark:border-red-700">${change.old_value || 'Empty'}</p>
+                                        </div>
+                                        <div>
+                                            <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">New Value</label>
+                                            <p class="text-sm text-gray-900 dark:text-white bg-green-50 dark:bg-green-900/20 p-2 rounded border-l-2 border-green-300 dark:border-green-700">${change.new_value || 'Empty'}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ml-4 text-right">
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">Edited by</p>
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white">${change.edited_by_name || 'Unknown'}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function openHistoryModal() {
+            document.getElementById('editHistoryModal').classList.remove('hidden');
+        }
+
+        function closeHistoryModal() {
+            document.getElementById('editHistoryModal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>

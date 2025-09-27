@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cow Breeding Management - Pig Farm Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        .animate-scale-in { animation: scaleIn 0.2s ease-out; }
+        @keyframes scaleIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-rose-50 via-pink-50 to-red-50 dark:from-gray-900 dark:via-rose-900/20 dark:to-red-900/20 min-h-screen">
+    <!-- Sidebar -->
+    <div class="fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 shadow-xl transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out" id="sidebar">
+        <div class="flex items-center justify-between h-16 px-4 bg-gradient-to-r from-rose-500 via-pink-500 to-red-500">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-heart text-white text-sm"></i>
+                </div>
+                <div>
+                    <h1 class="text-white font-bold text-sm">Breeding</h1>
+                    <p class="text-white/80 text-xs">Cow Management</p>
+                </div>
+            </div>
+            <button id="sidebarToggle" class="lg:hidden text-white/80 hover:text-white">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+
+        <nav class="mt-4 px-4 space-y-2">
+            <a href="/admin/dashboard" class="group flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-xl transition-all duration-200 hover:shadow-md">
+                <div class="w-10 h-10 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/30 dark:to-blue-800/30 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-200">
+                    <i class="fas fa-tachometer-alt text-blue-600 dark:text-blue-400 text-lg"></i>
+                </div>
+                <div class="flex-1">
+                    <span class="font-semibold text-sm">Dashboard</span>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Overview</p>
+                </div>
+            </a>
+
+            <a href="/admin/farm/cow-milk" class="group flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-xl transition-all duration-200 hover:shadow-md">
+                <div class="w-10 h-10 bg-gradient-to-br from-green-100 to-green-200 dark:from-green-900/30 dark:to-green-800/30 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-200">
+                    <i class="fas fa-tint text-green-600 dark:text-green-400 text-lg"></i>
+                </div>
+                <div class="flex-1">
+                    <span class="font-semibold text-sm">Milk Management</span>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Track Production</p>
+                </div>
+            </a>
+
+            <a href="/admin/farm/cow-breeding" class="group flex items-center px-4 py-3 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20 rounded-xl shadow-md">
+                <div class="w-10 h-10 bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-900/30 dark:to-primary-800/30 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-200">
+                    <i class="fas fa-heart text-primary-600 dark:text-primary-400 text-lg"></i>
+                </div>
+                <div class="flex-1">
+                    <span class="font-semibold text-sm">Breeding Management</span>
+                    <p class="text-xs text-primary-500 dark:text-primary-400">Track Breeding</p>
+                </div>
+            </a>
+        </nav>
+
+        <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-gradient-to-br from-rose-500 to-pink-500 rounded-full flex items-center justify-center">
+                    <i class="fas fa-user text-white text-sm"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-900 dark:text-white truncate">Admin User</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Administrator</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="lg:ml-64 min-h-screen">
+        <!-- Top Navigation -->
+        <div class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+            <div class="flex items-center justify-between h-16 px-4 sm:px-6">
+                <div class="flex items-center space-x-4">
+                    <button id="mobileSidebarToggle" class="lg:hidden text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <div>
+                        <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Cow Breeding Management</h1>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Track breeding records and pregnancy status</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button onclick="openBreedingModal()" class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors flex items-center space-x-2">
+                        <i class="fas fa-plus"></i>
+                        <span class="hidden sm:inline">Register Breeding</span>
+                    </button>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-gradient-to-br from-rose-500 to-pink-500 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-white text-sm"></i>
+                        </div>
+                        <span class="hidden sm:block text-sm font-medium text-gray-900 dark:text-white">Admin</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page Content -->
+        <div class="p-4 sm:p-6">
+            <!-- Calving Alerts -->
+            <div id="calvingAlerts" class="mb-6">
+                <!-- Alerts will be populated by JavaScript -->
+            </div>
+
+            <!-- Breeding Statistics -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6">
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-yellow-100 dark:bg-yellow-900/30 rounded-xl flex items-center justify-center mr-4">
+                            <i class="fas fa-clock text-yellow-600 dark:text-yellow-400 text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Served</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white" id="servedCount">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center mr-4">
+                            <i class="fas fa-check-circle text-green-600 dark:text-green-400 text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Conceived</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white" id="conceivedCount">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-xl flex items-center justify-center mr-4">
+                            <i class="fas fa-exclamation-triangle text-orange-600 dark:text-orange-400 text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Due Soon</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white" id="dueSoonCount">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-xl flex items-center justify-center mr-4">
+                            <i class="fas fa-times-circle text-red-600 dark:text-red-400 text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Overdue</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white" id="overdueCount">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Breeding Records -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                <div class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-xl font-bold text-gray-900 dark:text-white">Breeding Records</h2>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Track all breeding activities and pregnancy status</p>
+                        </div>
+                        <button onclick="loadBreedingRecords()" class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center space-x-2">
+                            <i class="fas fa-sync-alt"></i>
+                            <span class="hidden sm:inline">Refresh</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50 dark:bg-gray-700/50">
+                            <tr>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Dam</th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Sire</th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Breeding Date</th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Expected Calving</th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Days Left</th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Progress</th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="breedingRecordsList" class="divide-y divide-gray-200 dark:divide-gray-700">
+                            <!-- Breeding records will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Calves Records -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                <div class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-xl font-bold text-gray-900 dark:text-white">Calves Records</h2>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Track all calves and their ages</p>
+                        </div>
+                        <button onclick="loadCalvesRecords()" class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center space-x-2">
+                            <i class="fas fa-sync-alt"></i>
+                            <span class="hidden sm:inline">Refresh</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50 dark:bg-gray-700/50">
+                            <tr>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Calf ID</th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Name</th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Breed</th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Gender</th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Age</th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Parents</th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Birth Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="calvesRecordsList" class="divide-y divide-gray-200 dark:divide-gray-700">
+                            <!-- Calves records will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Breeding Registration Modal -->
+    <div id="breedingModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-scale-in mx-auto">
+            <div class="sticky top-0 bg-gradient-to-r from-rose-500 via-pink-500 to-red-500 h-2"></div>
+            <div class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3 sm:space-x-4 min-w-0">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-rose-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
+                            <i class="fas fa-heart text-white text-lg sm:text-xl"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <h2 class="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white truncate">Register Breeding</h2>
+                            <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 truncate">Record new breeding activity</p>
+                        </div>
+                    </div>
+                    <button id="closeBreedingModal" class="p-2 sm:p-3 bg-gray-100 dark:bg-gray-700 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex-shrink-0">
+                        <i class="fas fa-times text-gray-600 dark:text-gray-400 text-sm sm:text-base"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="p-4 sm:p-6">
+                <form id="breedingForm" class="space-y-4 sm:space-y-6">
+                    <!-- Breeding Date -->
+                    <div>
+                        <label for="breedingDate" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Breeding Date <span class="text-red-500">*</span>
+                        </label>
+                        <input type="date" id="breedingDate" name="breeding_date" required
+                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500 dark:bg-gray-700 dark:text-white">
+                    </div>
+
+                    <!-- Select Dam -->
+                    <div>
+                        <label for="selectedDam" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Select Dam (Female) <span class="text-red-500">*</span>
+                        </label>
+                        <select id="selectedDam" name="dam_id" required
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500 dark:bg-gray-700 dark:text-white">
+                            <option value="">Select a dam...</option>
+                        </select>
+                    </div>
+
+                    <!-- Select Sire -->
+                    <div>
+                        <label for="selectedSire" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Select Sire (Male) <span class="text-red-500">*</span>
+                        </label>
+                        <select id="selectedSire" name="sire_id" required
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500 dark:bg-gray-700 dark:text-white">
+                            <option value="">Select a sire...</option>
+                        </select>
+                    </div>
+
+                    <!-- Expected Calving Date (Read-only) -->
+                    <div>
+                        <label for="expectedCalvingDate" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Expected Calving Date
+                        </label>
+                        <input type="date" id="expectedCalvingDate" name="expected_calving_date" readonly
+                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-600 text-gray-600 dark:text-gray-400 cursor-not-allowed">
+                    </div>
+
+                    <!-- Submit Buttons -->
+                    <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4">
+                        <button type="submit" id="submitBreeding" 
+                                class="flex-1 bg-gradient-to-r from-rose-600 to-pink-600 text-white px-6 py-3 rounded-lg font-medium hover:from-rose-700 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center space-x-2">
+                            <i class="fas fa-heart"></i>
+                            <span>Register Breeding</span>
+                        </button>
+                        <button type="button" id="cancelBreeding" 
+                                class="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-6 py-3 rounded-lg font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 flex items-center justify-center space-x-2">
+                            <i class="fas fa-times"></i>
+                            <span>Cancel</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Calving Modal -->
+    <div id="calvingModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full animate-scale-in mx-auto">
+            <div class="sticky top-0 bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 h-2"></div>
+            <div class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-baby text-green-600 dark:text-green-400 text-lg"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-gray-900 dark:text-white">Register Calving</h2>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Record calf birth and update cow status</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 sm:p-6">
+                <form id="calvingForm" class="space-y-4">
+                    <input type="hidden" id="breedingId" name="breeding_id">
+                    
+                    <!-- Calving Date -->
+                    <div>
+                        <label for="calvingDate" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Date of Birth <span class="text-red-500">*</span>
+                        </label>
+                        <input type="date" id="calvingDate" name="birth_date" required
+                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white">
+                    </div>
+
+                    <!-- Generated Calf ID Display -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Calf Ear Tag ID (Auto-generated)
+                        </label>
+                        <div class="px-3 py-2 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-lg">
+                            <p class="text-sm font-mono font-medium text-green-800 dark:text-green-300" id="generatedCalfId">
+                                CALF-{DAM_EAR_TAG}-{DATE}
+                            </p>
+                            <p class="text-xs text-green-600 dark:text-green-400 mt-1">This ID will be generated when you submit the form</p>
+                        </div>
+                    </div>
+
+                    <!-- Parent Information (Read-only) -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Dam (Mother)
+                            </label>
+                            <div class="px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600">
+                                <p class="text-sm font-medium text-gray-900 dark:text-white" id="damInfo"></p>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Sire (Father)
+                            </label>
+                            <div class="px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600">
+                                <p class="text-sm font-medium text-gray-900 dark:text-white" id="sireInfo"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Calf Gender -->
+                    <div>
+                        <label for="calfGender" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Calf Sex <span class="text-red-500">*</span>
+                        </label>
+                        <select id="calfGender" name="calf_gender" required
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white">
+                            <option value="">Select gender...</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
+                    </div>
+
+                    <!-- Calf Breed -->
+                    <div>
+                        <label for="calfBreed" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Calf Breed <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="calfBreed" name="calf_breed" required
+                               placeholder="Enter calf breed..."
+                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white">
+                    </div>
+
+                    <!-- Calf Color/Markings -->
+                    <div>
+                        <label for="calfColorMarkings" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Color/Markings
+                        </label>
+                        <textarea id="calfColorMarkings" name="calf_color_markings" rows="2"
+                                  placeholder="Enter color and markings..."
+                                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white resize-none"></textarea>
+                    </div>
+
+                    <!-- Calf Name (Optional) -->
+                    <div>
+                        <label for="calfName" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Calf Name (Optional)
+                        </label>
+                        <input type="text" id="calfName" name="calf_name"
+                               placeholder="Enter calf name..."
+                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white">
+                    </div>
+
+                    <!-- Submit Buttons -->
+                    <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4">
+                        <button type="submit" id="submitCalving" 
+                                class="flex-1 bg-gradient-to-r from-green-600 to-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:from-green-700 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center space-x-2">
+                            <i class="fas fa-baby"></i>
+                            <span>Register Calving</span>
+                        </button>
+                        <button type="button" id="cancelCalving" 
+                                class="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-6 py-3 rounded-lg font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 flex items-center justify-center space-x-2">
+                            <i class="fas fa-times"></i>
+                            <span>Cancel</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cancel Conception Modal -->
+    <div id="cancelConceptionModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full animate-scale-in mx-auto">
+            <div class="sticky top-0 bg-gradient-to-r from-red-500 via-pink-500 to-rose-500 h-2"></div>
+            <div class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-exclamation-triangle text-red-600 dark:text-red-400 text-lg"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-gray-900 dark:text-white">Cancel Conception</h2>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Provide reason for cancellation</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 sm:p-6">
+                <form id="cancelConceptionForm" class="space-y-4">
+                    <div>
+                        <label for="cancellationReason" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Cancellation Reason <span class="text-red-500">*</span>
+                        </label>
+                        <textarea id="cancellationReason" name="cancellation_reason" rows="3" required
+                                  placeholder="Enter reason for cancelling conception..."
+                                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-white resize-none"></textarea>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4">
+                        <button type="submit" id="submitCancellation" 
+                                class="flex-1 bg-red-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-red-700 transition-all duration-200 flex items-center justify-center space-x-2">
+                            <i class="fas fa-times"></i>
+                            <span>Cancel Conception</span>
+                        </button>
+                        <button type="button" id="cancelCancellation" 
+                                class="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-6 py-3 rounded-lg font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 flex items-center justify-center space-x-2">
+                            <i class="fas fa-arrow-left"></i>
+                            <span>Back</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sidebar functionality
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const mobileSidebarToggle = document.getElementById('mobileSidebarToggle');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('-translate-x-full');
+        }
+
+        sidebarToggle.addEventListener('click', toggleSidebar);
+        mobileSidebarToggle.addEventListener('click', toggleSidebar);
+
+        document.addEventListener('click', function(event) {
+            if (window.innerWidth < 1024) {
+                if (!sidebar.contains(event.target) && !mobileSidebarToggle.contains(event.target)) {
+                    sidebar.classList.add('-translate-x-full');
+                }
+            }
+        });
+
+        // Global variables
+        let currentBreedingId = null;
+        let currentCalvingData = null;
+
+        // Load breeding records
+        function loadBreedingRecords() {
+            fetch('/api/cow-breeding/list')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        displayBreedingRecords(data.breeding_records);
+                    } else {
+                        console.error('Failed to load breeding records:', data.error);
+                        showNotification('Failed to load breeding records', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading breeding records:', error);
+                    showNotification('Failed to load breeding records', 'error');
+                });
+        }
+
+        function loadCalvesRecords() {
+            console.log('Loading calves records...');
+            fetch('/api/calves/list')
+                .then(response => {
+                    console.log('Calves response status:', response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Calves response data:', data);
+                    if (data.success) {
+                        displayCalvesRecords(data.calves);
+                    } else {
+                        console.error('Failed to load calves records:', data.error);
+                        showNotification('Failed to load calves records: ' + (data.error || 'Unknown error'), 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading calves records:', error);
+                    showNotification('Failed to load calves records: ' + error.message, 'error');
+                });
+        }
+
+        function displayBreedingRecords(records) {
+            const container = document.getElementById('breedingRecordsList');
+            
+            // Update statistics
+            updateBreedingStatistics(records);
+            
+            // Display calving alerts
+            displayCalvingAlerts(records);
+            
+            if (records.length === 0) {
+                container.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="px-6 py-12 text-center">
+                            <div class="flex flex-col items-center">
+                                <div class="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4">
+                                    <i class="fas fa-heart text-gray-400 text-xl"></i>
+                                </div>
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">No Breeding Records</h3>
+                                <p class="text-gray-500 dark:text-gray-400">No breeding records found. Register a new breeding to get started.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            container.innerHTML = records.map(record => `
+                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                    <!-- Dam Column -->
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-pink-100 dark:bg-pink-900/30 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-female text-pink-600 dark:text-pink-400 text-sm"></i>
+                            </div>
+                            <div>
+                                <div class="text-sm font-medium text-gray-900 dark:text-white">${record.dam.ear_tag}</div>
+                                <div class="text-xs text-gray-500 dark:text-gray-400">${record.dam.name || 'Unnamed'}</div>
+                            </div>
+                        </div>
+                    </td>
+
+                    <!-- Sire Column -->
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-male text-blue-600 dark:text-blue-400 text-sm"></i>
+                            </div>
+                            <div>
+                                <div class="text-sm font-medium text-gray-900 dark:text-white">${record.sire.ear_tag}</div>
+                                <div class="text-xs text-gray-500 dark:text-gray-400">${record.sire.name || 'Unnamed'}</div>
+                            </div>
+                        </div>
+                    </td>
+
+                    <!-- Breeding Date Column -->
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900 dark:text-white">${new Date(record.breeding_date).toLocaleDateString()}</div>
+                    </td>
+
+                    <!-- Expected Calving Column -->
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900 dark:text-white">${new Date(record.expected_calving_date).toLocaleDateString()}</div>
+                    </td>
+
+                    <!-- Days Left Column -->
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-semibold ${getDaysLeftColor(record.expected_calving_date)}">
+                            ${calculateDaysLeft(record.expected_calving_date)}
+                        </div>
+                    </td>
+
+                    <!-- Status Column -->
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex flex-col space-y-1">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(record.pregnancy_status)}">
+                                <i class="fas ${getStatusIcon(record.pregnancy_status)} mr-1"></i>
+                                ${getStatusLabel(record.pregnancy_status)}
+                            </span>
+                            ${record.pregnancy_status === 'lactating' && record.lactation_days > 0 ? `
+                                <span class="text-xs text-gray-500 dark:text-gray-400">
+                                    Lactating: ${record.lactation_days} days
+                                </span>
+                            ` : ''}
+                        </div>
+                    </td>
+
+                    <!-- Progress Column -->
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        ${record.pregnancy_status === 'served' || record.pregnancy_status === 'conceived' ? `
+                            <div class="w-full">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-xs text-gray-500 dark:text-gray-400">Progress</span>
+                                    <span class="text-xs font-medium text-gray-900 dark:text-white">${getPregnancyProgress(record.breeding_date, record.expected_calving_date)}%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                    <div class="bg-gradient-to-r from-pink-500 to-rose-500 h-2 rounded-full transition-all duration-300" 
+                                         style="width: ${getPregnancyProgress(record.breeding_date, record.expected_calving_date)}%"></div>
+                                </div>
+                            </div>
+                        ` : `
+                            <span class="text-xs text-gray-500 dark:text-gray-400">N/A</span>
+                        `}
+                    </td>
+
+                    <!-- Actions Column -->
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <div class="flex items-center space-x-2">
+                            ${canCalve(record) ? `
+                                <button onclick="openCalvingModal(${record.id}, '${record.dam.ear_tag}', '${record.sire.ear_tag}', '${record.dam.breed}', '${record.sire.breed}')" 
+                                        class="${getCalvingButtonClass(record)}" 
+                                        title="${getCalvingButtonTitle(record)}">
+                                    <i class="fas fa-baby text-sm"></i>
+                                    <span class="ml-1 text-xs font-semibold">${getCalvingButtonText(record)}</span>
+                                </button>
+                            ` : ''}
+                            ${canCancelConception(record) ? `
+                                <button onclick="openCancelConceptionModal(${record.id})" 
+                                        class="px-2 py-1 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-md hover:bg-red-200 dark:hover:bg-red-800/50 transition-colors" 
+                                        title="Cancel Conception">
+                                    <i class="fas fa-times text-xs"></i>
+                                </button>
+                            ` : ''}
+                            ${record.pregnancy_status === 'lactating' ? `
+                                <button onclick="endLactation(${record.id})" 
+                                        class="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-md hover:bg-green-200 dark:hover:bg-green-800/50 transition-colors" 
+                                        title="End Lactation">
+                                    <i class="fas fa-check text-xs"></i>
+                                    <span class="ml-1 text-xs">End Lactation</span>
+                                </button>
+                            ` : ''}
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function displayCalvesRecords(calves) {
+            console.log('Displaying calves records:', calves);
+            console.log('First calf data:', calves[0]);
+            if (calves[0]) {
+                console.log('First calf age_days:', calves[0].age_days);
+                console.log('First calf birth_date:', calves[0].birth_date);
+            }
+            const container = document.getElementById('calvesRecordsList');
+            
+            if (!calves || calves.length === 0) {
+                console.log('No calves found, displaying empty state');
+                container.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="px-6 py-12 text-center">
+                            <div class="flex flex-col items-center">
+                                <div class="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4">
+                                    <i class="fas fa-baby text-gray-400 text-xl"></i>
+                                </div>
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">No Calves Records</h3>
+                                <p class="text-gray-500 dark:text-gray-400">No calves found. Calves will appear here after calving is registered.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            container.innerHTML = calves.map(calf => {
+                console.log('Processing calf:', calf.calf_id, 'age_days:', calf.age_days);
+                return `
+                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                    <!-- Calf ID Column -->
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-baby text-blue-600 dark:text-blue-400 text-sm"></i>
+                            </div>
+                            <div>
+                                <div class="text-sm font-medium text-gray-900 dark:text-white">${calf.calf_id}</div>
+                            </div>
+                        </div>
+                    </td>
+
+                    <!-- Name Column -->
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900 dark:text-white">${calf.name || 'N/A'}</div>
+                    </td>
+
+                    <!-- Breed Column -->
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900 dark:text-white">${calf.breed}</div>
+                    </td>
+
+                    <!-- Gender Column -->
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${calf.gender === 'female' ? 'bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-300' : 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'}">
+                            <i class="fas ${calf.gender === 'female' ? 'fa-female' : 'fa-male'} mr-1"></i>
+                            ${calf.gender}
+                        </span>
+                    </td>
+
+                    <!-- Age Column -->
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900 dark:text-white">
+                            ${calf.age_days !== undefined && calf.age_days !== null ? Math.floor(calf.age_days / 30) + ' months' : 'N/A'}
+                        </div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400">
+                            ${calf.age_days !== undefined && calf.age_days !== null ? calf.age_days + ' days' : 'N/A'}
+                        </div>
+                    </td>
+
+                    <!-- Parents Column -->
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-xs text-gray-600 dark:text-gray-400">
+                            <div class="flex items-center mb-1">
+                                <i class="fas fa-female text-pink-500 mr-1"></i>
+                                <span>${calf.dam_ear_tag}</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-male text-blue-500 mr-1"></i>
+                                <span>${calf.sire_ear_tag}</span>
+                            </div>
+                        </div>
+                    </td>
+
+                    <!-- Status Column -->
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getCalfStatusColor(calf.status)}">
+                            ${calf.status}
+                        </span>
+                    </td>
+
+                    <!-- Birth Date Column -->
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900 dark:text-white">${new Date(calf.birth_date).toLocaleDateString()}</div>
+                    </td>
+                </tr>
+                `;
+            }).join('');
+        }
+
+        function getCalfStatusColor(status) {
+            switch(status) {
+                case 'active': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300';
+                case 'sold': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300';
+                case 'deceased': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300';
+                default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300';
+            }
+        }
+
+        function getStatusColor(status) {
+            switch(status) {
+                case 'served': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300';
+                case 'conceived': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300';
+                case 'lactating': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300';
+                case 'available': return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300';
+                default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300';
+            }
+        }
+
+        function getStatusIcon(status) {
+            switch(status) {
+                case 'served': return 'fa-clock';
+                case 'conceived': return 'fa-check-circle';
+                case 'lactating': return 'fa-tint';
+                case 'available': return 'fa-circle';
+                default: return 'fa-circle';
+            }
+        }
+
+        function getStatusLabel(status) {
+            switch(status) {
+                case 'served': return 'Served';
+                case 'conceived': return 'Conceived';
+                case 'lactating': return 'Lactating';
+                case 'available': return 'Available';
+                default: return 'Unknown';
+            }
+        }
+
+        function canCancelConception(record) {
+            if (record.conception_cancelled) return false;
+            if (record.pregnancy_status === 'available') return false;
+            
+            const breedingDate = new Date(record.breeding_date);
+            const daysSinceBreeding = (new Date() - breedingDate) / (1000 * 60 * 60 * 24);
+            
+            return daysSinceBreeding <= 30;
+        }
+
+        function canCalve(record) {
+            if (record.conception_cancelled) return false;
+            if (record.pregnancy_status === 'available' || record.pregnancy_status === 'lactating') return false;
+            
+            const today = new Date();
+            const calvingDate = new Date(record.expected_calving_date);
+            const daysLeft = Math.ceil((calvingDate.getTime() - today.getTime()) / (1000 * 3600 * 24));
+            
+            return daysLeft <= 7; // Allow calving if 7 days or less (including overdue)
+        }
+
+        function getCalvingUrgency(record) {
+            if (!canCalve(record)) return null;
+            
+            const today = new Date();
+            const calvingDate = new Date(record.expected_calving_date);
+            const daysLeft = Math.ceil((calvingDate.getTime() - today.getTime()) / (1000 * 3600 * 24));
+            
+            if (daysLeft < 0) {
+                return 'overdue'; // Overdue
+            } else if (daysLeft <= 3) {
+                return 'urgent'; // Very close (0-3 days)
+            } else {
+                return 'ready'; // Ready to calve (4-7 days)
+            }
+        }
+
+        function getCalvingButtonClass(record) {
+            const urgency = getCalvingUrgency(record);
+            
+            switch(urgency) {
+                case 'overdue':
+                    return 'px-3 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 animate-pulse flex items-center space-x-1 text-xs font-semibold';
+                case 'urgent':
+                    return 'px-3 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-lg hover:from-orange-600 hover:to-red-600 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center space-x-1 text-xs font-semibold';
+                case 'ready':
+                    return 'px-3 py-2 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-lg hover:from-green-600 hover:to-blue-600 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center space-x-1 text-xs font-semibold';
+                default:
+                    return 'px-3 py-2 bg-gray-500 text-white rounded-lg flex items-center space-x-1 text-xs font-semibold';
+            }
+        }
+
+        function getCalvingButtonText(record) {
+            const urgency = getCalvingUrgency(record);
+            
+            switch(urgency) {
+                case 'overdue':
+                    return 'OVERDUE';
+                case 'urgent':
+                    return 'URGENT';
+                case 'ready':
+                    return 'READY';
+                default:
+                    return 'CALVE';
+            }
+        }
+
+        function getCalvingButtonTitle(record) {
+            const urgency = getCalvingUrgency(record);
+            const today = new Date();
+            const calvingDate = new Date(record.expected_calving_date);
+            const daysLeft = Math.ceil((calvingDate.getTime() - today.getTime()) / (1000 * 3600 * 24));
+            
+            if (daysLeft < 0) {
+                return `OVERDUE by ${Math.abs(daysLeft)} days - Click to register calving immediately!`;
+            } else if (daysLeft === 0) {
+                return 'Due today - Click to register calving!';
+            } else {
+                return `${daysLeft} days left - Click to register calving!`;
+            }
+        }
+
+        function calculateDaysLeft(expectedCalvingDate) {
+            const today = new Date();
+            const calvingDate = new Date(expectedCalvingDate);
+            const timeDiff = calvingDate.getTime() - today.getTime();
+            const daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            
+            if (daysLeft < 0) {
+                return `Overdue by ${Math.abs(daysLeft)} days`;
+            } else if (daysLeft === 0) {
+                return 'Due today';
+            } else {
+                return `${daysLeft} days`;
+            }
+        }
+
+        function getDaysLeftColor(expectedCalvingDate) {
+            const today = new Date();
+            const calvingDate = new Date(expectedCalvingDate);
+            const timeDiff = calvingDate.getTime() - today.getTime();
+            const daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            
+            if (daysLeft < 0) {
+                return 'text-red-600 dark:text-red-400'; // Overdue - Red
+            } else if (daysLeft <= 7) {
+                return 'text-orange-600 dark:text-orange-400'; // Due soon - Orange
+            } else if (daysLeft <= 30) {
+                return 'text-yellow-600 dark:text-yellow-400'; // Approaching - Yellow
+            } else {
+                return 'text-green-600 dark:text-green-400'; // Plenty of time - Green
+            }
+        }
+
+        function getPregnancyProgress(breedingDate, expectedCalvingDate) {
+            const today = new Date();
+            const breeding = new Date(breedingDate);
+            const calving = new Date(expectedCalvingDate);
+            
+            const totalDays = Math.ceil((calving.getTime() - breeding.getTime()) / (1000 * 3600 * 24));
+            const daysPassed = Math.ceil((today.getTime() - breeding.getTime()) / (1000 * 3600 * 24));
+            
+            const progress = Math.min(Math.max((daysPassed / totalDays) * 100, 0), 100);
+            return Math.round(progress);
+        }
+
+        function updateBreedingStatistics(records) {
+            let servedCount = 0;
+            let conceivedCount = 0;
+            let dueSoonCount = 0;
+            let overdueCount = 0;
+
+            records.forEach(record => {
+                if (record.conception_cancelled) return;
+
+                if (record.pregnancy_status === 'served') {
+                    servedCount++;
+                } else if (record.pregnancy_status === 'conceived') {
+                    conceivedCount++;
+                }
+
+                // Check if due soon (within 7 days) or overdue
+                const today = new Date();
+                const calvingDate = new Date(record.expected_calving_date);
+                const timeDiff = calvingDate.getTime() - today.getTime();
+                const daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+                if (daysLeft < 0) {
+                    overdueCount++;
+                } else if (daysLeft <= 7) {
+                    dueSoonCount++;
+                }
+            });
+
+            document.getElementById('servedCount').textContent = servedCount;
+            document.getElementById('conceivedCount').textContent = conceivedCount;
+            document.getElementById('dueSoonCount').textContent = dueSoonCount;
+            document.getElementById('overdueCount').textContent = overdueCount;
+        }
+
+        function displayCalvingAlerts(records) {
+            const alertsContainer = document.getElementById('calvingAlerts');
+            const readyToCalve = records.filter(record => canCalve(record));
+            
+            if (readyToCalve.length === 0) {
+                alertsContainer.innerHTML = '';
+                return;
+            }
+
+            // Sort by urgency (overdue first, then urgent, then ready)
+            readyToCalve.sort((a, b) => {
+                const urgencyA = getCalvingUrgency(a);
+                const urgencyB = getCalvingUrgency(b);
+                const urgencyOrder = { 'overdue': 0, 'urgent': 1, 'ready': 2 };
+                return urgencyOrder[urgencyA] - urgencyOrder[urgencyB];
+            });
+
+            const alertsHTML = readyToCalve.map(record => {
+                const urgency = getCalvingUrgency(record);
+                const today = new Date();
+                const calvingDate = new Date(record.expected_calving_date);
+                const daysLeft = Math.ceil((calvingDate.getTime() - today.getTime()) / (1000 * 3600 * 24));
+                
+                let alertClass = '';
+                let iconClass = '';
+                let message = '';
+                
+                switch(urgency) {
+                    case 'overdue':
+                        alertClass = 'bg-gradient-to-r from-red-500 to-red-600 border-red-400';
+                        iconClass = 'fas fa-exclamation-triangle text-red-200';
+                        message = `OVERDUE by ${Math.abs(daysLeft)} days`;
+                        break;
+                    case 'urgent':
+                        alertClass = 'bg-gradient-to-r from-orange-500 to-red-500 border-orange-400';
+                        iconClass = 'fas fa-exclamation-circle text-orange-200';
+                        message = daysLeft === 0 ? 'Due today!' : `${daysLeft} days left`;
+                        break;
+                    case 'ready':
+                        alertClass = 'bg-gradient-to-r from-green-500 to-blue-500 border-green-400';
+                        iconClass = 'fas fa-baby text-green-200';
+                        message = `${daysLeft} days left`;
+                        break;
+                }
+
+                return `
+                    <div class="${alertClass} text-white rounded-xl p-4 border-l-4 shadow-lg hover:shadow-xl transition-all duration-200 cursor-pointer" 
+                         onclick="openCalvingModal(${record.id}, '${record.dam.ear_tag}', '${record.sire.ear_tag}', '${record.dam.breed}', '${record.sire.breed}')">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
+                                    <i class="${iconClass} text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-lg">${record.dam.ear_tag} - ${record.dam.name || 'Unnamed'}</h3>
+                                    <p class="text-sm opacity-90">${message} • Expected: ${new Date(record.expected_calving_date).toLocaleDateString()}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span class="bg-white/20 px-3 py-1 rounded-full text-sm font-semibold">
+                                    ${urgency.toUpperCase()}
+                                </span>
+                                <i class="fas fa-arrow-right text-white/80"></i>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            alertsContainer.innerHTML = `
+                <div class="space-y-3">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i class="fas fa-bell text-2xl text-orange-500"></i>
+                        <h2 class="text-xl font-bold text-gray-900 dark:text-white">Calving Alerts</h2>
+                        <span class="bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300 px-2 py-1 rounded-full text-sm font-semibold">
+                            ${readyToCalve.length} cow${readyToCalve.length !== 1 ? 's' : ''} ready to calve
+                        </span>
+                    </div>
+                    ${alertsHTML}
+                </div>
+            `;
+        }
+
+        // Breeding modal functionality
+        function openBreedingModal() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('breedingDate').value = today;
+            populateDams();
+            populateSires();
+            document.getElementById('breedingModal').classList.remove('hidden');
+        }
+
+        function closeBreedingModal() {
+            document.getElementById('breedingModal').classList.add('hidden');
+            document.getElementById('breedingForm').reset();
+        }
+
+        function populateDams() {
+            const damSelect = document.getElementById('selectedDam');
+            damSelect.innerHTML = '<option value="">Select a dam...</option>';
+            
+            fetch('/api/cow-breeding/available-dams')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.dams) {
+                        data.dams.forEach(dam => {
+                            const option = document.createElement('option');
+                            option.value = dam.id;
+                            option.textContent = `${dam.ear_tag} - ${dam.name} (${dam.breed})`;
+                            damSelect.appendChild(option);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading dams:', error);
+                });
+        }
+
+        function populateSires() {
+            const sireSelect = document.getElementById('selectedSire');
+            sireSelect.innerHTML = '<option value="">Select a sire...</option>';
+            
+            fetch('/api/cow-breeding/available-sires')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.sires) {
+                        data.sires.forEach(sire => {
+                            const option = document.createElement('option');
+                            option.value = sire.id;
+                            option.textContent = `${sire.ear_tag} - ${sire.name} (${sire.breed})`;
+                            sireSelect.appendChild(option);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading sires:', error);
+                });
+        }
+
+        // Calculate expected calving date
+        document.getElementById('breedingDate').addEventListener('change', function() {
+            const breedingDate = new Date(this.value);
+            if (breedingDate) {
+                const expectedCalvingDate = new Date(breedingDate);
+                expectedCalvingDate.setDate(expectedCalvingDate.getDate() + 279);
+                document.getElementById('expectedCalvingDate').value = expectedCalvingDate.toISOString().split('T')[0];
+            }
+        });
+
+        // Breeding form submission
+        document.getElementById('breedingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBreeding');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Registering...';
+            submitBtn.disabled = true;
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+            
+            fetch('/api/cow-breeding/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    showNotification('Breeding registered successfully!', 'success');
+                    closeBreedingModal();
+                    loadBreedingRecords();
+                } else {
+                    showNotification(result.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error registering breeding:', error);
+                showNotification('Failed to register breeding', 'error');
+            })
+            .finally(() => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            });
+        });
+
+        // Calving modal functionality
+        function openCalvingModal(breedingId, damEarTag, sireEarTag, damBreed, sireBreed) {
+            currentBreedingId = breedingId;
+            currentCalvingData = {
+                damEarTag: damEarTag,
+                sireEarTag: sireEarTag,
+                damBreed: damBreed,
+                sireBreed: sireBreed
+            };
+            
+            // Set today's date as default
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('calvingDate').value = today;
+            
+            // Generate and display calf ID
+            const todayFormatted = today.replace(/-/g, '');
+            const generatedCalfId = `CALF-${damEarTag}-${todayFormatted}`;
+            document.getElementById('generatedCalfId').textContent = generatedCalfId;
+            
+            // Set parent information
+            document.getElementById('damInfo').textContent = `${damEarTag} (${damBreed})`;
+            document.getElementById('sireInfo').textContent = `${sireEarTag} (${sireBreed})`;
+            
+            // Pre-fill breed with dam's breed
+            document.getElementById('calfBreed').value = damBreed;
+            
+            // Add event listener for date change to update calf ID
+            document.getElementById('calvingDate').addEventListener('change', function() {
+                const selectedDate = this.value;
+                if (selectedDate) {
+                    const dateFormatted = selectedDate.replace(/-/g, '');
+                    const generatedCalfId = `CALF-${damEarTag}-${dateFormatted}`;
+                    document.getElementById('generatedCalfId').textContent = generatedCalfId;
+                }
+            });
+            
+            document.getElementById('calvingModal').classList.remove('hidden');
+        }
+
+        function closeCalvingModal() {
+            document.getElementById('calvingModal').classList.add('hidden');
+            document.getElementById('calvingForm').reset();
+            currentBreedingId = null;
+            currentCalvingData = null;
+        }
+
+        // Cancel conception modal
+        function openCancelConceptionModal(breedingId) {
+            currentBreedingId = breedingId;
+            document.getElementById('cancelConceptionModal').classList.remove('hidden');
+        }
+
+        function endLactation(breedingId) {
+            if (confirm('Are you sure you want to end lactation for this cow? This will change the pregnancy status to available.')) {
+                fetch('/api/cow-breeding/end-lactation', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        breeding_id: breedingId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showNotification('Lactation ended successfully', 'success');
+                        loadBreedingRecords(); // Refresh the records
+                    } else {
+                        showNotification('Failed to end lactation: ' + (data.message || 'Unknown error'), 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error ending lactation:', error);
+                    showNotification('Failed to end lactation: ' + error.message, 'error');
+                });
+            }
+        }
+
+        function closeCancelConceptionModal() {
+            document.getElementById('cancelConceptionModal').classList.add('hidden');
+            document.getElementById('cancelConceptionForm').reset();
+            currentBreedingId = null;
+        }
+
+        // Calving form submission
+        document.getElementById('calvingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitCalving');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Registering...';
+            submitBtn.disabled = true;
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+            data.breeding_id = currentBreedingId;
+            
+            fetch('/api/cow-breeding/calve', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    showNotification(`Calving registered successfully! Calf ID: ${result.calf_id}`, 'success');
+                    closeCalvingModal();
+                    loadBreedingRecords();
+                } else {
+                    showNotification(result.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error registering calving:', error);
+                showNotification('Failed to register calving', 'error');
+            })
+            .finally(() => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            });
+        });
+
+        // Cancel conception form submission
+        document.getElementById('cancelConceptionForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitCancellation');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Cancelling...';
+            submitBtn.disabled = true;
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+            data.breeding_id = currentBreedingId;
+            
+            fetch('/api/cow-breeding/cancel-conception', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    showNotification('Conception cancelled successfully!', 'success');
+                    closeCancelConceptionModal();
+                    loadBreedingRecords();
+                } else {
+                    showNotification(result.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error cancelling conception:', error);
+                showNotification('Failed to cancel conception', 'error');
+            })
+            .finally(() => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            });
+        });
+
+        // Notification function
+        function showNotification(message, type) {
+            // Simple alert for now - you can implement a proper notification system
+            alert(message);
+        }
+
+        // Event listeners
+        document.getElementById('closeBreedingModal').addEventListener('click', closeBreedingModal);
+        document.getElementById('cancelBreeding').addEventListener('click', closeBreedingModal);
+        document.getElementById('closeBreedingModal').addEventListener('click', closeBreedingModal);
+        document.getElementById('cancelCalving').addEventListener('click', closeCalvingModal);
+        document.getElementById('cancelCancellation').addEventListener('click', closeCancelConceptionModal);
+
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadBreedingRecords();
+            loadCalvesRecords();
+        });
+    </script>
+</body>
+</html>

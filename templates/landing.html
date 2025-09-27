@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kwetu Smart Farm - Smart Farming, Smart Profits</title>
+    <meta name="description" content="Manage pigs, chickens, and cows in one smart system. Health, breeding, and sales tracking simplified for modern farmers.">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-green: #10b981;
+            --primary-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --accent-orange: #f59e0b;
+            --dark-bg: #0f172a;
+            --light-bg: #f8fafc;
+        }
+        
+        * {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        
+        .font-poppins {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .font-space {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        
+        /* Advanced Hero Background */
+        .hero-bg {
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(16, 185, 129, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(139, 92, 246, 0.2) 0%, transparent 50%),
+                linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse"><path d="M 50 0 L 0 0 0 50" fill="none" stroke="%23ffffff" stroke-width="0.5" opacity="0.1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+            animation: gridMove 20s linear infinite;
+        }
+        
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+        
+        /* Floating Elements */
+        .floating-element {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary-green), var(--primary-blue));
+            opacity: 0.1;
+            animation: float 8s ease-in-out infinite;
+        }
+        
+        .floating-element:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .floating-element:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 60%;
+            right: 15%;
+            animation-delay: 2s;
+        }
+        
+        .floating-element:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(180deg); }
+        }
+        
+        /* Advanced Card Animations */
+        .card-3d {
+            transform-style: preserve-3d;
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.320, 1);
+        }
+        
+        .card-3d:hover {
+            transform: translateY(-20px) rotateX(5deg) rotateY(5deg);
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.15),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Gradient Text */
+        .gradient-text {
+            background: linear-gradient(135deg, var(--primary-green), var(--primary-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease-in-out infinite;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        /* Advanced Buttons */
+        .btn-magic {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--primary-green), var(--primary-blue));
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+        }
+        
+        .btn-magic::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s;
+        }
+        
+        .btn-magic:hover::before {
+            left: 100%;
+        }
+        
+        .btn-magic:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 35px rgba(16, 185, 129, 0.4);
+        }
+        
+        /* Particle System */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--primary-green);
+            border-radius: 50%;
+            animation: particleFloat 6s linear infinite;
+        }
+        
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) translateX(100px);
+                opacity: 0;
+            }
+        }
+        
+        /* Glass Morphism */
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Advanced Navigation */
+        .nav-glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Interactive Elements */
+        .interactive-card {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .interactive-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+        
+        .interactive-card:hover::before {
+            transform: translateX(100%);
+        }
+        
+        /* Testimonial Carousel */
+        .testimonial-slide {
+            transform: translateX(100%);
+            opacity: 0;
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.320, 1);
+        }
+        
+        .testimonial-slide.active {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        
+        /* Stats Counter Animation */
+        .counter {
+            font-variant-numeric: tabular-nums;
+        }
+        
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .hero-bg {
+                background-attachment: scroll;
+            }
+            
+            .floating-element {
+                display: none;
+            }
+        }
+        
+        /* Dark Mode Support */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --light-bg: #0f172a;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-white overflow-x-hidden">
+    <!-- Particle System -->
+    <div class="particles" id="particles"></div>
+    
+    <!-- Header -->
+    <header class="nav-glass fixed top-0 w-full z-50 transition-all duration-300" id="header">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex items-center group">
+                    <div class="relative">
+                        <div class="w-12 h-12 bg-gradient-to-br from-emerald-500 via-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mr-4 group-hover:rotate-12 transition-transform duration-300">
+                            <i class="fas fa-seedling text-white text-2xl"></i>
+                        </div>
+                        <div class="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full animate-pulse"></div>
+                    </div>
+                    <div>
+                        <span class="font-space font-bold text-2xl gradient-text">Kwetu Smart Farm</span>
+                        <p class="text-xs text-slate-400 -mt-1">Smart Agriculture Solutions</p>
+                    </div>
+                </div>
+
+                <!-- Navigation Links -->
+                <div class="hidden lg:flex items-center space-x-8">
+                    <a href="#home" class="nav-link text-white hover:text-emerald-400 px-4 py-2 text-sm font-medium transition-all duration-300 relative group">
+                        <span class="relative z-10">Home</span>
+                        <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-blue-500/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    </a>
+                    <a href="#features" class="nav-link text-slate-300 hover:text-emerald-400 px-4 py-2 text-sm font-medium transition-all duration-300 relative group">
+                        <span class="relative z-10">Features</span>
+                        <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-blue-500/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    </a>
+                    <a href="#why-choose" class="nav-link text-slate-300 hover:text-emerald-400 px-4 py-2 text-sm font-medium transition-all duration-300 relative group">
+                        <span class="relative z-10">Why Choose Us</span>
+                        <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-blue-500/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    </a>
+                    <a href="#testimonials" class="nav-link text-slate-300 hover:text-emerald-400 px-4 py-2 text-sm font-medium transition-all duration-300 relative group">
+                        <span class="relative z-10">Testimonials</span>
+                        <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-blue-500/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    </a>
+                    <a href="#contact" class="nav-link text-slate-300 hover:text-emerald-400 px-4 py-2 text-sm font-medium transition-all duration-300 relative group">
+                        <span class="relative z-10">Contact</span>
+                        <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-blue-500/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    </a>
+                </div>
+
+                <!-- CTA Buttons -->
+                <div class="flex items-center space-x-4">
+                    <a href="/employee/login" class="btn-magic text-white px-6 py-3 rounded-full font-semibold text-sm relative overflow-hidden group">
+                        <span class="relative z-10 flex items-center">
+                            <i class="fas fa-sign-in-alt mr-2"></i>
+                            <span class="hidden sm:inline">Employee Login</span>
+                            <span class="sm:hidden">Login</span>
+                        </span>
+                    </a>
+                    
+                    <!-- Mobile menu button -->
+                    <button id="mobile-menu-button" class="lg:hidden relative w-10 h-10 rounded-lg glass flex items-center justify-center hover:bg-white/10 transition-colors">
+                        <i class="fas fa-bars text-lg"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile menu -->
+            <div id="mobile-menu" class="lg:hidden hidden glass rounded-2xl mt-4 p-6">
+                <div class="space-y-4">
+                    <a href="#home" class="block px-4 py-3 text-base font-medium text-white hover:text-emerald-400 rounded-lg hover:bg-white/5 transition-all">Home</a>
+                    <a href="#features" class="block px-4 py-3 text-base font-medium text-slate-300 hover:text-emerald-400 rounded-lg hover:bg-white/5 transition-all">Features</a>
+                    <a href="#why-choose" class="block px-4 py-3 text-base font-medium text-slate-300 hover:text-emerald-400 rounded-lg hover:bg-white/5 transition-all">Why Choose Us</a>
+                    <a href="#testimonials" class="block px-4 py-3 text-base font-medium text-slate-300 hover:text-emerald-400 rounded-lg hover:bg-white/5 transition-all">Testimonials</a>
+                    <a href="#contact" class="block px-4 py-3 text-base font-medium text-slate-300 hover:text-emerald-400 rounded-lg hover:bg-white/5 transition-all">Contact</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-bg min-h-screen flex items-center relative overflow-hidden">
+        <!-- Floating Elements -->
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        
+        <!-- Animated Grid Background -->
+        <div class="absolute inset-0 opacity-20">
+            <div class="grid-pattern"></div>
+        </div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <!-- Hero Content -->
+                <div class="text-white space-y-8" data-aos="fade-right" data-aos-duration="1000">
+                    <!-- Badge -->
+                    <div class="inline-flex items-center px-4 py-2 rounded-full glass text-sm font-medium">
+                        <div class="w-2 h-2 bg-emerald-400 rounded-full mr-3 animate-pulse"></div>
+                        <span>Revolutionary Smart Farming Platform</span>
+                    </div>
+                    
+                    <!-- Main Headline -->
+                    <h1 class="font-space font-bold text-5xl sm:text-6xl lg:text-7xl leading-tight">
+                        <span class="block">Smart</span>
+                        <span class="block gradient-text">Farming,</span>
+                        <span class="block">Smart</span>
+                        <span class="block gradient-text">Profits</span>
+                    </h1>
+                    
+                    <!-- Subheadline -->
+                    <p class="text-xl sm:text-2xl text-slate-300 leading-relaxed max-w-2xl">
+                        Transform your agricultural operations with AI-powered insights. Manage pigs, chickens, and cows in one intelligent ecosystem.
+                    </p>
+                    
+                    <!-- Stats -->
+                    <div class="grid grid-cols-3 gap-8 py-8">
+                        <div class="text-center">
+                            <div class="text-3xl font-bold gradient-text counter" data-target="500">0</div>
+                            <div class="text-sm text-slate-400">Active Farms</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold gradient-text counter" data-target="50">0</div>
+                            <div class="text-sm text-slate-400">K+ Animals</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold gradient-text counter" data-target="99">0</div>
+                            <div class="text-sm text-slate-400">% Success Rate</div>
+                        </div>
+                    </div>
+                    
+                    <!-- CTA Buttons -->
+                    <div class="flex flex-col sm:flex-row gap-6">
+                        <a href="https://wa.me/254795606115" target="_blank" class="btn-magic text-white px-8 py-4 rounded-2xl font-bold text-lg inline-flex items-center justify-center group">
+                            <i class="fab fa-whatsapp mr-3 text-xl group-hover:scale-110 transition-transform"></i>
+                            <span>Request Demo on WhatsApp</span>
+                        </a>
+                        <a href="#features" class="glass text-white px-8 py-4 rounded-2xl font-bold text-lg inline-flex items-center justify-center hover:bg-white/20 transition-all group">
+                            <i class="fas fa-play mr-3 text-xl group-hover:scale-110 transition-transform"></i>
+                            <span>Watch Demo</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Hero Visual - 3D Dashboard -->
+                <div class="relative" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="200">
+                    <!-- Main Dashboard -->
+                    <div class="relative z-20">
+                        <div class="glass rounded-3xl p-8 border border-white/20 card-3d">
+                            <!-- Dashboard Header -->
+                            <div class="flex items-center justify-between mb-8">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                                    <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                </div>
+                                <div class="text-sm text-slate-400">Kwetu Smart Farm Dashboard</div>
+                            </div>
+                            
+                            <!-- Dashboard Content -->
+                            <div class="grid grid-cols-2 gap-6">
+                                <!-- Pig Management Card -->
+                                <div class="interactive-card bg-gradient-to-br from-pink-500/20 to-rose-500/20 rounded-2xl p-6 border border-pink-500/30">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <i class="fas fa-piggy-bank text-3xl text-pink-400"></i>
+                                        <div class="text-right">
+                                            <div class="text-2xl font-bold text-white">127</div>
+                                            <div class="text-xs text-pink-300">Pigs</div>
+                                        </div>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <div class="flex justify-between text-sm">
+                                            <span class="text-slate-300">Healthy</span>
+                                            <span class="text-green-400">98%</span>
+                                        </div>
+                                        <div class="w-full bg-slate-700 rounded-full h-2">
+                                            <div class="bg-gradient-to-r from-green-400 to-emerald-500 h-2 rounded-full" style="width: 98%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Chicken Management Card -->
+                                <div class="interactive-card bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-2xl p-6 border border-yellow-500/30">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <i class="fas fa-egg text-3xl text-yellow-400"></i>
+                                        <div class="text-right">
+                                            <div class="text-2xl font-bold text-white">342</div>
+                                            <div class="text-xs text-yellow-300">Chickens</div>
+                                        </div>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <div class="flex justify-between text-sm">
+                                            <span class="text-slate-300">Eggs Today</span>
+                                            <span class="text-yellow-400">287</span>
+                                        </div>
+                                        <div class="w-full bg-slate-700 rounded-full h-2">
+                                            <div class="bg-gradient-to-r from-yellow-400 to-orange-500 h-2 rounded-full" style="width: 84%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Cow Management Card -->
+                                <div class="interactive-card bg-gradient-to-br from-blue-500/20 to-indigo-500/20 rounded-2xl p-6 border border-blue-500/30">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <i class="fas fa-cow text-3xl text-blue-400"></i>
+                                        <div class="text-right">
+                                            <div class="text-2xl font-bold text-white">89</div>
+                                            <div class="text-xs text-blue-300">Cows</div>
+                                        </div>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <div class="flex justify-between text-sm">
+                                            <span class="text-slate-300">Milk Today</span>
+                                            <span class="text-blue-400">156L</span>
+                                        </div>
+                                        <div class="w-full bg-slate-700 rounded-full h-2">
+                                            <div class="bg-gradient-to-r from-blue-400 to-indigo-500 h-2 rounded-full" style="width: 92%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Analytics Card -->
+                                <div class="interactive-card bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-2xl p-6 border border-purple-500/30">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <i class="fas fa-chart-line text-3xl text-purple-400"></i>
+                                        <div class="text-right">
+                                            <div class="text-2xl font-bold text-white">+23%</div>
+                                            <div class="text-xs text-purple-300">Growth</div>
+                                        </div>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <div class="flex justify-between text-sm">
+                                            <span class="text-slate-300">Revenue</span>
+                                            <span class="text-purple-400">$12.4K</span>
+                                        </div>
+                                        <div class="w-full bg-slate-700 rounded-full h-2">
+                                            <div class="bg-gradient-to-r from-purple-400 to-pink-500 h-2 rounded-full" style="width: 76%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Floating Elements -->
+                    <div class="absolute -top-8 -right-8 w-24 h-24 bg-gradient-to-br from-emerald-400/30 to-blue-500/30 rounded-full animate-pulse"></div>
+                    <div class="absolute -bottom-8 -left-8 w-32 h-32 bg-gradient-to-br from-purple-400/30 to-pink-500/30 rounded-full animate-pulse" style="animation-delay: 2s;"></div>
+                    <div class="absolute top-1/2 -left-4 w-16 h-16 bg-gradient-to-br from-yellow-400/30 to-orange-500/30 rounded-full animate-pulse" style="animation-delay: 4s;"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Preview Section -->
+    <section id="features" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="font-poppins font-bold text-4xl sm:text-5xl text-gray-900 mb-6">
+                    Powerful Features for
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-blue-600">Modern Farming</span>
+                </h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Everything you need to manage your farm efficiently, from health records to sales tracking.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Feature 1: Health Records -->
+                <div class="card-hover bg-white rounded-2xl p-8 shadow-lg border border-gray-100">
+                    <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-heartbeat text-white text-2xl"></i>
+                    </div>
+                    <h3 class="font-poppins font-bold text-2xl text-gray-900 mb-4">Health Records</h3>
+                    <p class="text-gray-600 mb-6 leading-relaxed">
+                        Track vaccinations, treatments, and health alerts for all your animals. Get notified about upcoming health checks and medication schedules.
+                    </p>
+                    <ul class="space-y-2 text-sm text-gray-500">
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Vaccination tracking</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Treatment history</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Health alerts</li>
+                    </ul>
+                </div>
+
+                <!-- Feature 2: Breeding Management -->
+                <div class="card-hover bg-white rounded-2xl p-8 shadow-lg border border-gray-100">
+                    <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-baby text-white text-2xl"></i>
+                    </div>
+                    <h3 class="font-poppins font-bold text-2xl text-gray-900 mb-4">Breeding Management</h3>
+                    <p class="text-gray-600 mb-6 leading-relaxed">
+                        Monitor fertility cycles, track breeding records, and manage births and hatching. Optimize your breeding program for maximum productivity.
+                    </p>
+                    <ul class="space-y-2 text-sm text-gray-500">
+                        <li class="flex items-center"><i class="fas fa-check text-blue-500 mr-2"></i>Fertility tracking</li>
+                        <li class="flex items-center"><i class="fas fa-check text-blue-500 mr-2"></i>Birth records</li>
+                        <li class="flex items-center"><i class="fas fa-check text-blue-500 mr-2"></i>Hatching schedules</li>
+                    </ul>
+                </div>
+
+                <!-- Feature 3: Sales Tracking -->
+                <div class="card-hover bg-white rounded-2xl p-8 shadow-lg border border-gray-100">
+                    <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-chart-line text-white text-2xl"></i>
+                    </div>
+                    <h3 class="font-poppins font-bold text-2xl text-gray-900 mb-4">Sales Tracking</h3>
+                    <p class="text-gray-600 mb-6 leading-relaxed">
+                        Track milk production, egg collection, meat sales, and live animal sales. Monitor your revenue streams and optimize pricing strategies.
+                    </p>
+                    <ul class="space-y-2 text-sm text-gray-500">
+                        <li class="flex items-center"><i class="fas fa-check text-purple-500 mr-2"></i>Milk production</li>
+                        <li class="flex items-center"><i class="fas fa-check text-purple-500 mr-2"></i>Egg collection</li>
+                        <li class="flex items-center"><i class="fas fa-check text-purple-500 mr-2"></i>Sales analytics</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us Preview -->
+    <section id="why-choose" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="font-poppins font-bold text-4xl sm:text-5xl text-gray-900 mb-6">
+                    Why Choose
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-blue-600">Kwetu Smart Farm</span>?
+                </h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Join thousands of farmers who have transformed their operations with our smart farming solutions.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white rounded-2xl p-8 shadow-lg border border-gray-100 text-center">
+                    <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-mobile-alt text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="font-poppins font-bold text-xl text-gray-900 mb-4">Mobile Friendly</h3>
+                    <p class="text-gray-600">Access your farm data anywhere, anytime with our responsive mobile interface.</p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-8 shadow-lg border border-gray-100 text-center">
+                    <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-clock text-blue-600 text-2xl"></i>
+                    </div>
+                    <h3 class="font-poppins font-bold text-xl text-gray-900 mb-4">Saves Time & Money</h3>
+                    <p class="text-gray-600">Automate routine tasks and reduce manual work, saving you hours every week.</p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-8 shadow-lg border border-gray-100 text-center">
+                    <div class="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-users text-purple-600 text-2xl"></i>
+                    </div>
+                    <h3 class="font-poppins font-bold text-xl text-gray-900 mb-4">Easy to Use</h3>
+                    <p class="text-gray-600">Intuitive interface designed for farmers, not tech experts. Get started in minutes.</p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-8 shadow-lg border border-gray-100 text-center">
+                    <div class="w-16 h-16 bg-yellow-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-paw text-yellow-600 text-2xl"></i>
+                    </div>
+                    <h3 class="font-poppins font-bold text-xl text-gray-900 mb-4">Multi-Species Support</h3>
+                    <p class="text-gray-600">Manage pigs, chickens, and cows all in one integrated system.</p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-8 shadow-lg border border-gray-100 text-center">
+                    <div class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-chart-bar text-red-600 text-2xl"></i>
+                    </div>
+                    <h3 class="font-poppins font-bold text-xl text-gray-900 mb-4">Smart Analytics</h3>
+                    <p class="text-gray-600">Get insights into your farm's performance with detailed reports and analytics.</p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-8 shadow-lg border border-gray-100 text-center">
+                    <div class="w-16 h-16 bg-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-handshake text-indigo-600 text-2xl"></i>
+                    </div>
+                    <h3 class="font-poppins font-bold text-xl text-gray-900 mb-4">Farmer & Investor Friendly</h3>
+                    <p class="text-gray-600">Perfect for both individual farmers and agricultural investors.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Preview -->
+    <section id="testimonials" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="font-poppins font-bold text-4xl sm:text-5xl text-gray-900 mb-6">
+                    What Farmers Are
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-blue-600">Saying</span>
+                </h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Real stories from real farmers who have transformed their operations.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Testimonial 1 -->
+                <div class="bg-gray-50 rounded-2xl p-8 border border-gray-100">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-blue-600 rounded-full flex items-center justify-center mr-4">
+                            <span class="text-white font-bold text-lg">JM</span>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900">John Mwangi</h4>
+                            <p class="text-gray-600 text-sm">Dairy Farmer, Kiambu</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 italic mb-4">
+                        "Kwetu Smart Farm has revolutionized how I manage my dairy farm. The breeding tracking feature alone has increased my calf production by 30%."
+                    </p>
+                    <div class="flex text-yellow-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+
+                <!-- Testimonial 2 -->
+                <div class="bg-gray-50 rounded-2xl p-8 border border-gray-100">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mr-4">
+                            <span class="text-white font-bold text-lg">SW</span>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900">Sarah Wanjiku</h4>
+                            <p class="text-gray-600 text-sm">Poultry Farmer, Nakuru</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 italic mb-4">
+                        "The health tracking system has helped me prevent diseases before they spread. My chickens are healthier and more productive than ever."
+                    </p>
+                    <div class="flex text-yellow-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+
+                <!-- Testimonial 3 -->
+                <div class="bg-gray-50 rounded-2xl p-8 border border-gray-100">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mr-4">
+                            <span class="text-white font-bold text-lg">PK</span>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900">Peter Kiprotich</h4>
+                            <p class="text-gray-600 text-sm">Mixed Farm Owner, Eldoret</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 italic mb-4">
+                        "Managing pigs, chickens, and cows in one system has been a game-changer. The analytics help me make better business decisions."
+                    </p>
+                    <div class="flex text-yellow-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-gradient-to-br from-green-50 to-blue-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="font-poppins font-bold text-4xl sm:text-5xl text-gray-900 mb-6">
+                    Ready to Transform Your
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-blue-600">Farming Operation</span>?
+                </h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+                    Join thousands of farmers who are already using Kwetu Smart Farm to increase their productivity and profits.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="https://wa.me/254795606115" target="_blank" class="btn-primary text-white px-8 py-4 rounded-full font-semibold text-lg inline-flex items-center justify-center">
+                        <i class="fab fa-whatsapp mr-3 text-xl"></i>
+                        Get Started on WhatsApp
+                    </a>
+                    <a href="/employee/login" class="btn-secondary text-white px-8 py-4 rounded-full font-semibold text-lg inline-flex items-center justify-center">
+                        <i class="fas fa-sign-in-alt mr-3"></i>
+                        Employee Login
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Company Info -->
+                <div class="col-span-1 md:col-span-2">
+                    <div class="flex items-center mb-6">
+                        <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-blue-600 rounded-xl flex items-center justify-center mr-3">
+                            <i class="fas fa-seedling text-white text-xl"></i>
+                        </div>
+                        <span class="font-poppins font-bold text-2xl">Kwetu Smart Farm</span>
+                    </div>
+                    <p class="text-gray-400 mb-6 max-w-md">
+                        Empowering farmers with smart technology to increase productivity, track health, and maximize profits through intelligent farm management.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-green-600 transition-colors">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-green-600 transition-colors">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-green-600 transition-colors">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h3 class="font-semibold text-lg mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#home" class="text-gray-400 hover:text-white transition-colors">Home</a></li>
+                        <li><a href="#features" class="text-gray-400 hover:text-white transition-colors">Features</a></li>
+                        <li><a href="#why-choose" class="text-gray-400 hover:text-white transition-colors">Why Choose Us</a></li>
+                        <li><a href="#testimonials" class="text-gray-400 hover:text-white transition-colors">Testimonials</a></li>
+                        <li><a href="#contact" class="text-gray-400 hover:text-white transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact Info -->
+                <div>
+                    <h3 class="font-semibold text-lg mb-4">Contact</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li class="flex items-center">
+                            <i class="fas fa-phone mr-2"></i>
+                            <a href="tel:+254795606115" class="hover:text-white transition-colors">+254 795 606 115</a>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fab fa-whatsapp mr-2"></i>
+                            <a href="https://wa.me/254795606115" target="_blank" class="hover:text-white transition-colors">WhatsApp</a>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-envelope mr-2"></i>
+                            <a href="mailto:info@kwetusmartfarm.com" class="hover:text-white transition-colors">info@kwetusmartfarm.com</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center">
+                <p class="text-gray-400">
+                    © 2024 Kwetu Smart Farm. All rights reserved. 
+                    <span class="text-green-400">Powered by Jumpoff Tech Solutions</span>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- AOS Animation Library -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <!-- JavaScript -->
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 100
+        });
+
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    // Close mobile menu if open
+                    document.getElementById('mobile-menu').classList.add('hidden');
+                }
+            });
+        });
+
+        // Advanced header scroll effect
+        let lastScrollY = window.scrollY;
+        const header = document.getElementById('header');
+        
+        window.addEventListener('scroll', function() {
+            const currentScrollY = window.scrollY;
+            
+            if (currentScrollY > 100) {
+                header.classList.add('bg-slate-900/95', 'backdrop-blur-xl');
+                header.classList.remove('nav-glass');
+            } else {
+                header.classList.remove('bg-slate-900/95', 'backdrop-blur-xl');
+                header.classList.add('nav-glass');
+            }
+            
+            // Hide/show header on scroll
+            if (currentScrollY > lastScrollY && currentScrollY > 200) {
+                header.style.transform = 'translateY(-100%)';
+            } else {
+                header.style.transform = 'translateY(0)';
+            }
+            
+            lastScrollY = currentScrollY;
+        });
+
+        // Particle System
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 50;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Counter Animation
+        function animateCounters() {
+            const counters = document.querySelectorAll('.counter');
+            
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-target'));
+                const duration = 2000; // 2 seconds
+                const increment = target / (duration / 16); // 60fps
+                let current = 0;
+                
+                const updateCounter = () => {
+                    if (current < target) {
+                        current += increment;
+                        counter.textContent = Math.floor(current);
+                        requestAnimationFrame(updateCounter);
+                    } else {
+                        counter.textContent = target;
+                    }
+                };
+                
+                updateCounter();
+            });
+        }
+
+        // Intersection Observer for counters
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateCounters();
+                    counterObserver.unobserve(entry.target);
+                }
+            });
+        });
+
+        // Observe stats section
+        const statsSection = document.querySelector('.grid.grid-cols-3');
+        if (statsSection) {
+            counterObserver.observe(statsSection);
+        }
+
+        // 3D Card Tilt Effect
+        function addTiltEffect() {
+            const cards = document.querySelectorAll('.card-3d');
+            
+            cards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    
+                    const rotateX = (y - centerY) / 10;
+                    const rotateY = (centerX - x) / 10;
+                    
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(10px)`;
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateZ(0)';
+                });
+            });
+        }
+
+        // Testimonial Carousel
+        function initTestimonialCarousel() {
+            const slides = document.querySelectorAll('.testimonial-slide');
+            let currentSlide = 0;
+            
+            if (slides.length === 0) return;
+            
+            function showSlide(index) {
+                slides.forEach((slide, i) => {
+                    slide.classList.toggle('active', i === index);
+                });
+            }
+            
+            function nextSlide() {
+                currentSlide = (currentSlide + 1) % slides.length;
+                showSlide(currentSlide);
+            }
+            
+            // Auto-advance every 5 seconds
+            setInterval(nextSlide, 5000);
+            showSlide(0);
+        }
+
+        // Parallax Effect
+        function initParallax() {
+            window.addEventListener('scroll', () => {
+                const scrolled = window.pageYOffset;
+                const parallaxElements = document.querySelectorAll('.floating-element');
+                
+                parallaxElements.forEach((element, index) => {
+                    const speed = 0.5 + (index * 0.1);
+                    element.style.transform = `translateY(${scrolled * speed}px)`;
+                });
+            });
+        }
+
+        // Interactive Hover Effects
+        function initInteractiveEffects() {
+            const interactiveCards = document.querySelectorAll('.interactive-card');
+            
+            interactiveCards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    card.style.transform = 'scale(1.05) translateY(-5px)';
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'scale(1) translateY(0)';
+                });
+            });
+        }
+
+        // Initialize all effects
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            addTiltEffect();
+            initTestimonialCarousel();
+            initParallax();
+            initInteractiveEffects();
+        });
+
+        // Performance optimization
+        let ticking = false;
+        
+        function updateOnScroll() {
+            // Add any scroll-based animations here
+            ticking = false;
+        }
+        
+        window.addEventListener('scroll', function() {
+            if (!ticking) {
+                requestAnimationFrame(updateOnScroll);
+                ticking = true;
+            }
+        });
+    </script>
+
+    <style>
+        /* Additional animations */
+        .animate-fade-in {
+            animation: fadeInUp 0.8s cubic-bezier(0.23, 1, 0.320, 1);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Grid pattern */
+        .grid-pattern {
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+        }
+
+        /* Enhanced button effects */
+        .btn-magic:active {
+            transform: scale(0.98);
+        }
+
+        /* Loading states */
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        /* Responsive optimizations */
+        @media (max-width: 768px) {
+            .card-3d:hover {
+                transform: none;
+            }
+            
+            .floating-element {
+                display: none;
+            }
+        }
+    </style>
+</body>
+</html>

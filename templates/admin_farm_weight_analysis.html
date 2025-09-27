@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weight Analysis - Pig Farm Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    screens: {
+                        'xs': '475px',
+                        'sm': '640px',
+                        'md': '768px',
+                        'lg': '1024px',
+                        'xl': '1280px',
+                        '2xl': '1536px',
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.5s ease-out',
+                        'slide-down': 'slideDown 0.5s ease-out',
+                        'bounce-in': 'bounceIn 0.6s ease-out',
+                        'pulse-slow': 'pulse 3s infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        slideDown: {
+                            '0%': { transform: 'translateY(-20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        bounceIn: {
+                            '0%': { transform: 'scale(0.3)', opacity: '0' },
+                            '50%': { transform: 'scale(1.05)' },
+                            '70%': { transform: 'scale(0.9)' },
+                            '100%': { transform: 'scale(1)', opacity: '1' },
+                        },
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        .animate-slide-up {
+            animation: slideUp 0.5s ease-out;
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        .animate-bounce-in {
+            animation: bounceIn 0.6s ease-out;
+        }
+        .animate-pulse-slow {
+            animation: pulse 3s infinite;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <!-- Sidebar -->
+    <div id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 shadow-xl transform -translate-x-full transition-transform duration-300 ease-in-out lg:translate-x-0">
+        <!-- Sidebar content -->
+        <div class="flex items-center justify-center h-16 px-4 bg-gradient-to-r from-blue-600 to-purple-600">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center">
+                    <i class="fas fa-piggy-bank text-white text-lg"></i>
+                </div>
+                <h1 class="text-xl font-bold text-white">Pig Farm</h1>
+            </div>
+        </div>
+        
+        <nav class="mt-8 px-4">
+            <div class="text-center py-8">
+                <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-chart-line text-white text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Weight Analysis</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Performance Analytics</p>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Sidebar Overlay -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden"></div>
+
+    <!-- Main Content -->
+    <main class="lg:ml-64 min-h-screen">
+        <!-- Header -->
+        <header class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+            <div class="flex items-center justify-between px-6 py-4">
+                <div class="flex items-center space-x-4">
+                    <button id="mobile-menu-btn" class="lg:hidden p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-colors duration-200">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Weight Analysis</h1>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Detailed weight performance analytics</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <button id="theme-toggle" class="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-colors duration-200">
+                        <i id="sun-icon" class="fas fa-sun hidden dark:block"></i>
+                        <i id="moon-icon" class="fas fa-moon block dark:hidden"></i>
+                    </button>
+                    
+                    <div class="relative">
+                        <button id="user-dropdown-btn" class="flex items-center space-x-3 p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-colors duration-200">
+                            <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-white text-sm"></i>
+                            </div>
+                            <span class="hidden md:block text-sm font-medium">{{ user.name }}</span>
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                        
+                        <div id="user-dropdown" class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 hidden z-50">
+                            <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                                <p class="text-sm font-medium text-gray-900 dark:text-white">{{ user.name }}</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ user.role.title() }}</p>
+                            </div>
+                            <div class="p-2">
+                                <a href="/profile" class="flex items-center px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors duration-200">
+                                    <i class="fas fa-user mr-3"></i>
+                                    Profile
+                                </a>
+                                <a href="/settings" class="flex items-center px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors duration-200">
+                                    <i class="fas fa-cog mr-3"></i>
+                                    Settings
+                                </a>
+                                <a href="/logout" class="flex items-center px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors duration-200">
+                                    <i class="fas fa-sign-out-alt mr-3"></i>
+                                    Logout
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content -->
+        <div class="p-6">
+            <!-- Loading State -->
+            <div id="loading-state" class="text-center py-12">
+                <div class="inline-flex items-center space-x-3">
+                    <i class="fas fa-spinner fa-spin text-2xl text-blue-600 dark:text-blue-400"></i>
+                    <span class="text-lg text-gray-600 dark:text-gray-400">Loading weight analysis...</span>
+                </div>
+            </div>
+
+            <!-- Analysis Content -->
+            <div id="analysis-content" class="hidden">
+                <!-- Header Info -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-6 mb-6">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                                <i id="header-icon" class="fas fa-chart-line text-white text-2xl"></i>
+                            </div>
+                            <div>
+                                <h2 id="header-title" class="text-2xl font-bold text-gray-900 dark:text-white">Weight Analysis</h2>
+                                <p id="header-subtitle" class="text-gray-600 dark:text-gray-400">Performance tracking and analytics</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm text-gray-500 dark:text-gray-400">Status</div>
+                            <div id="status-indicator" class="flex items-center space-x-2">
+                                <i id="status-icon" class="fas fa-check-circle text-green-500"></i>
+                                <span id="status-text" class="text-sm font-medium text-green-600 dark:text-green-400">Good</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <!-- Main Weight Chart -->
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Weight Progression</h3>
+                            <div class="flex items-center space-x-4 text-xs">
+                                <div class="flex items-center space-x-1">
+                                    <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+                                    <span class="text-gray-600 dark:text-gray-400">Actual</span>
+                                </div>
+                                <div class="flex items-center space-x-1">
+                                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                    <span class="text-gray-600 dark:text-gray-400">Expected</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="relative h-80">
+                            <canvas id="mainWeightChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Performance Metrics -->
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Performance Metrics</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between p-4 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-700">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 bg-green-100 dark:bg-green-800 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-weight text-green-600 dark:text-green-400"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm font-medium text-gray-900 dark:text-white">Latest Weight</div>
+                                        <div class="text-xs text-gray-500 dark:text-gray-400">Most recent recording</div>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div id="latest-weight" class="text-2xl font-bold text-green-600 dark:text-green-400">0 kg</div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-700">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 bg-blue-100 dark:bg-blue-800 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-chart-bar text-blue-600 dark:text-blue-400"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm font-medium text-gray-900 dark:text-white">Average Weight</div>
+                                        <div class="text-xs text-gray-500 dark:text-gray-400">Overall average</div>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div id="average-weight" class="text-2xl font-bold text-blue-600 dark:text-blue-400">0 kg</div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between p-4 bg-purple-50 dark:bg-purple-900/20 rounded-xl border border-purple-200 dark:border-purple-700">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 bg-purple-100 dark:bg-purple-800 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-trending-up text-purple-600 dark:text-purple-400"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm font-medium text-gray-900 dark:text-white">Total Gain</div>
+                                        <div class="text-xs text-gray-500 dark:text-gray-400">Weight increase</div>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div id="total-gain" class="text-2xl font-bold text-purple-600 dark:text-purple-400">0 kg</div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between p-4 bg-orange-50 dark:bg-orange-900/20 rounded-xl border border-orange-200 dark:border-orange-700">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 bg-orange-100 dark:bg-orange-800 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-calendar-day text-orange-600 dark:text-orange-400"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm font-medium text-gray-900 dark:text-white">Daily Gain</div>
+                                        <div class="text-xs text-gray-500 dark:text-gray-400">Average per day</div>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div id="daily-gain" class="text-2xl font-bold text-orange-600 dark:text-orange-400">0 kg/day</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Records -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700">
+                    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Weight Records</h3>
+                    </div>
+                    <div class="p-6">
+                        <div id="weight-records" class="space-y-4">
+                            <!-- Records will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error State -->
+            <div id="error-state" class="hidden text-center py-12">
+                <div class="inline-flex flex-col items-center space-y-4">
+                    <i class="fas fa-exclamation-triangle text-4xl text-red-500"></i>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Error Loading Analysis</h3>
+                        <p class="text-gray-600 dark:text-gray-400">Unable to load weight data. Please try again.</p>
+                    </div>
+                    <button onclick="location.reload()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                        <i class="fas fa-refresh mr-2"></i>
+                        Retry
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Global variables
+        let animalId = '{{ animal_id }}';
+        let litterId = '{{ litter_id }}';
+        let weightData = [];
+        let mainChart = null;
+
+        // DOM Elements
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const closeSidebarBtn = document.getElementById('close-sidebar');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+        const themeToggle = document.getElementById('theme-toggle');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+        const userDropdownBtn = document.getElementById('user-dropdown-btn');
+        const userDropdown = document.getElementById('user-dropdown');
+
+        // Initialize theme
+        function updateThemeIcon() {
+            const isDark = document.documentElement.classList.contains('dark');
+            sunIcon.classList.toggle('hidden', !isDark);
+            moonIcon.classList.toggle('hidden', isDark);
+        }
+
+        // Load theme from localStorage
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+        updateThemeIcon();
+
+        // Theme toggle
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                const isDark = document.documentElement.classList.toggle('dark');
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+                updateThemeIcon();
+            });
+        }
+
+        // Mobile sidebar
+        function openSidebar() {
+            if (sidebar) {
+                sidebar.classList.remove('-translate-x-full');
+                if (sidebarOverlay) {
+                    sidebarOverlay.classList.add('active');
+                }
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeSidebar() {
+            if (sidebar) {
+                sidebar.classList.add('-translate-x-full');
+                if (sidebarOverlay) {
+                    sidebarOverlay.classList.remove('active');
+                }
+                document.body.style.overflow = '';
+            }
+        }
+
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', openSidebar);
+        }
+
+        // Close sidebar when clicking overlay
+        if (sidebarOverlay) {
+            sidebarOverlay.addEventListener('click', closeSidebar);
+        }
+
+        // User dropdown
+        if (userDropdownBtn && userDropdown) {
+            userDropdownBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                userDropdown.classList.toggle('hidden');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!userDropdownBtn.contains(e.target) && !userDropdown.contains(e.target)) {
+                    userDropdown.classList.add('hidden');
+                }
+            });
+        }
+
+        // Load weight data
+        async function loadWeightData() {
+            try {
+                let response;
+                if (animalId && animalId !== 'None') {
+                    response = await fetch(`/api/animal/${animalId}/weights`);
+                } else if (litterId && litterId !== 'None') {
+                    response = await fetch(`/api/litter/${litterId}/weights`);
+                } else {
+                    throw new Error('No animal or litter ID provided');
+                }
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        weightData = data.weights;
+                        displayAnalysis();
+                    } else {
+                        showError();
+                    }
+                } else {
+                    showError();
+                }
+            } catch (error) {
+                console.error('Error loading weight data:', error);
+                showError();
+            }
+        }
+
+        // Display analysis
+        function displayAnalysis() {
+            if (weightData.length === 0) {
+                showError();
+                return;
+            }
+
+            // Hide loading state
+            document.getElementById('loading-state').classList.add('hidden');
+            document.getElementById('analysis-content').classList.remove('hidden');
+
+            // Update header
+            updateHeader();
+            
+            // Calculate metrics
+            calculateMetrics();
+            
+            // Create main chart
+            createMainChart();
+            
+            // Display records
+            displayRecords();
+        }
+
+        // Update header information
+        function updateHeader() {
+            const headerTitle = document.getElementById('header-title');
+            const headerSubtitle = document.getElementById('header-subtitle');
+            const headerIcon = document.getElementById('header-icon');
+
+            if (animalId && animalId !== 'None') {
+                headerTitle.textContent = 'Animal Weight Analysis';
+                headerSubtitle.textContent = 'Individual performance tracking';
+                headerIcon.className = 'fas fa-weight text-white text-2xl';
+            } else if (litterId && litterId !== 'None') {
+                headerTitle.textContent = 'Litter Weight Analysis';
+                headerSubtitle.textContent = 'Litter performance tracking';
+                headerIcon.className = 'fas fa-baby text-white text-2xl';
+            }
+        }
+
+        // Calculate performance metrics
+        function calculateMetrics() {
+            const totalRecords = weightData.length;
+            const latestWeight = weightData[0];
+            const oldestWeight = weightData[weightData.length - 1];
+            
+            // Calculate weight gain
+            const weightGain = latestWeight.weight - oldestWeight.weight;
+            const daysDifference = Math.ceil((new Date(latestWeight.weighing_date) - new Date(oldestWeight.weighing_date)) / (1000 * 60 * 60 * 24));
+            const averageDailyGain = daysDifference > 0 ? (weightGain / daysDifference).toFixed(2) : 0;
+            
+            // Calculate average weight
+            const totalWeight = weightData.reduce((sum, w) => sum + (w.actual_weight || w.weight), 0);
+            const averageWeight = (totalWeight / totalRecords).toFixed(1);
+            
+            // Update metrics display
+            document.getElementById('latest-weight').textContent = `${latestWeight.weight} kg`;
+            document.getElementById('average-weight').textContent = `${averageWeight} kg`;
+            document.getElementById('total-gain').textContent = `${weightGain.toFixed(1)} kg`;
+            document.getElementById('daily-gain').textContent = `${averageDailyGain} kg/day`;
+            
+            // Update status
+            updateStatus(averageDailyGain);
+        }
+
+        // Update status indicator
+        function updateStatus(dailyGain) {
+            const statusIcon = document.getElementById('status-icon');
+            const statusText = document.getElementById('status-text');
+            
+            let status = 'Good';
+            let color = 'text-green-600 dark:text-green-400';
+            let icon = 'fas fa-check-circle text-green-500';
+            
+            const threshold = animalId && animalId !== 'None' ? 0.3 : 0.2;
+            
+            if (dailyGain < threshold * 0.5) {
+                status = 'Poor';
+                color = 'text-red-600 dark:text-red-400';
+                icon = 'fas fa-times-circle text-red-500';
+            } else if (dailyGain < threshold) {
+                status = 'Needs Attention';
+                color = 'text-yellow-600 dark:text-yellow-400';
+                icon = 'fas fa-exclamation-triangle text-yellow-500';
+            }
+            
+            statusIcon.className = icon;
+            statusText.textContent = status;
+            statusText.className = `text-sm font-medium ${color}`;
+        }
+
+        // Create main weight chart
+        function createMainChart() {
+            const ctx = document.getElementById('mainWeightChart');
+            if (!ctx) return;
+
+            // Prepare chart data
+            const chartData = weightData.map(weight => ({
+                date: weight.weighing_date,
+                actual: weight.actual_weight || weight.weight,
+                expected: weight.expected_weight || 0,
+                age: weight.age_days || 0
+            })).sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            // Destroy existing chart
+            if (mainChart) {
+                mainChart.destroy();
+            }
+
+            mainChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: chartData.map(d => new Date(d.date).toLocaleDateString()),
+                    datasets: [{
+                        label: 'Actual Weight',
+                        data: chartData.map(d => d.actual),
+                        borderColor: 'rgb(59, 130, 246)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4,
+                        fill: false,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }, {
+                        label: 'Expected Weight',
+                        data: chartData.map(d => d.expected),
+                        borderColor: 'rgb(34, 197, 94)',
+                        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                        tension: 0.4,
+                        fill: false,
+                        borderDash: [5, 5],
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    label += context.parsed.y + ' kg';
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Weight (kg)',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Date',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        }
+                    },
+                    interaction: {
+                        mode: 'nearest',
+                        axis: 'x',
+                        intersect: false
+                    }
+                }
+            });
+        }
+
+        // Display weight records
+        function displayRecords() {
+            const recordsContainer = document.getElementById('weight-records');
+            
+            if (weightData.length === 0) {
+                recordsContainer.innerHTML = `
+                    <div class="text-center text-gray-500 dark:text-gray-400 py-8">
+                        <i class="fas fa-weight text-2xl mb-2"></i>
+                        <p>No weight records found</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const recordsHtml = weightData.map(weight => {
+                const actualWeight = weight.actual_weight || weight.weight;
+                const expectedWeight = weight.expected_weight;
+                const ageDays = weight.age_days;
+                
+                // Calculate comparison
+                let comparison = '';
+                if (expectedWeight && expectedWeight > 0) {
+                    const diff = actualWeight - expectedWeight;
+                    const percent = ((diff / expectedWeight) * 100).toFixed(1);
+                    const comparisonClass = diff > 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400';
+                    const comparisonIcon = diff > 0 ? 'fas fa-arrow-up' : 'fas fa-arrow-down';
+                    
+                    comparison = `
+                        <div class="flex items-center space-x-2 text-sm ${comparisonClass}">
+                            <i class="${comparisonIcon}"></i>
+                            <span>${diff > 0 ? '+' : ''}${diff.toFixed(1)}kg (${percent}%)</span>
+                        </div>
+                    `;
+                }
+
+                return `
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-blue-100 dark:bg-blue-800 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-weight text-blue-600 dark:text-blue-400"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-medium text-gray-900 dark:text-white">Weight Record</div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400">${weight.weighing_date} • ${ageDays || 'N/A'} days old</div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-xs text-gray-500 dark:text-gray-400">${weight.weighing_time || 'N/A'}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4 mb-3">
+                            <div class="text-center">
+                                <div class="text-xs text-gray-600 dark:text-gray-300 mb-1">Actual Weight</div>
+                                <div class="text-lg font-bold text-blue-600 dark:text-blue-400">${actualWeight} kg</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-xs text-gray-600 dark:text-gray-300 mb-1">Expected Weight</div>
+                                <div class="text-lg font-bold text-green-600 dark:text-green-400">${expectedWeight || 'N/A'} kg</div>
+                            </div>
+                        </div>
+                        
+                        ${comparison}
+                        
+                        ${weight.notes ? `
+                            <div class="text-xs text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-600 rounded-lg p-2 mt-2">
+                                <i class="fas fa-sticky-note mr-1"></i>
+                                ${weight.notes}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+
+            recordsContainer.innerHTML = recordsHtml;
+        }
+
+        // Show error state
+        function showError() {
+            document.getElementById('loading-state').classList.add('hidden');
+            document.getElementById('error-state').classList.remove('hidden');
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadWeightData();
+        });
+    </script>
+</body>
+</html>

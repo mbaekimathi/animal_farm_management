@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vaccination Settings - Pig Farm Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    screens: {
+                        'xs': '475px',
+                        'sm': '640px',
+                        'md': '768px',
+                        'lg': '1024px',
+                        'xl': '1280px',
+                        '2xl': '1536px',
+                    },
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        },
+                        secondary: {
+                            50: '#fdf4ff',
+                            100: '#fae8ff',
+                            200: '#f5d0fe',
+                            300: '#f0abfc',
+                            400: '#e879f9',
+                            500: '#d946ef',
+                            600: '#c026d3',
+                            700: '#a21caf',
+                            800: '#86198f',
+                            900: '#701a75',
+                        },
+                        accent: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            300: '#86efac',
+                            400: '#4ade80',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                        'slide-down': 'slideDown 0.3s ease-out',
+                        'scale-in': 'scaleIn 0.2s ease-out',
+                        'bounce-subtle': 'bounceSubtle 0.6s ease-out',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(10px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        slideDown: {
+                            '0%': { transform: 'translateY(-10px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        scaleIn: {
+                            '0%': { transform: 'scale(0.95)', opacity: '0' },
+                            '100%': { transform: 'scale(1)', opacity: '1' },
+                        },
+                        bounceSubtle: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-4px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar */
+        .scrollbar-thin {
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 #f1f5f9;
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 3px;
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        /* Dark mode scrollbar */
+        .dark .scrollbar-thin {
+            scrollbar-color: #475569 #1e293b;
+        }
+        
+        .dark .scrollbar-thin::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        
+        .dark .scrollbar-thin::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+        
+        .dark .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+        
+        /* Mobile improvements */
+        @media (max-width: 768px) {
+            .header-mobile {
+                padding: 0.75rem 1rem;
+            }
+            
+            .main-content-mobile {
+                padding: 1rem;
+            }
+            
+            .card-mobile {
+                margin-bottom: 1rem;
+                border-radius: 1rem;
+            }
+            
+            .btn-mobile {
+                min-height: 44px;
+                padding: 0.75rem 1rem;
+                font-size: 0.875rem;
+            }
+        }
+        
+        /* Touch-friendly improvements */
+        @media (hover: none) and (pointer: coarse) {
+            .hover\:scale-105:hover {
+                transform: none;
+            }
+            
+            .hover\:shadow-lg:hover {
+                box-shadow: none;
+            }
+            
+            .touch-feedback:active {
+                transform: scale(0.98);
+                transition: transform 0.1s ease;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-indigo-50/30 dark:from-gray-900 dark:via-blue-900/20 dark:to-indigo-900/20 transition-colors duration-300">
+    <!-- Mobile Sidebar Overlay -->
+    <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 shadow-sm">
+        <div class="flex items-center justify-between px-4 sm:px-6 lg:px-8 h-16 header-mobile">
+            <div class="flex items-center space-x-4">
+                <button id="mobile-menu-btn" class="md:hidden p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors touch-feedback btn-mobile">
+                    <svg class="w-6 h-6 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+                
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-sm sm:text-lg">💉</span>
+                    </div>
+                    <div class="hidden sm:block">
+                        <h1 class="text-lg font-bold text-gray-900 dark:text-white">PigFarm Pro</h1>
+                        <p class="text-xs text-gray-600 dark:text-gray-400">Meru Farm Management</p>
+                    </div>
+                </div>
+                
+                <div class="hidden lg:flex items-center space-x-2 ml-6">
+                    <span class="text-gray-400 dark:text-gray-500">/</span>
+                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Farm Management</span>
+                    <span class="text-gray-400 dark:text-gray-500">/</span>
+                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Vaccination Settings</span>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-3 sm:space-x-4">
+                <div class="hidden sm:block text-right">
+                    <div id="live-time" class="text-sm font-medium text-gray-900 dark:text-white">12:00:00 PM</div>
+                    <div id="live-date" class="text-xs text-gray-600 dark:text-gray-400">January 1, 2024</div>
+                </div>
+                
+                <button id="theme-toggle" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                    <svg id="sun-icon" class="w-5 h-5 text-gray-600 dark:text-gray-300 hidden" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>
+                    </svg>
+                    <svg id="moon-icon" class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                    </svg>
+                </button>
+                
+                <div class="relative">
+                    <button id="user-dropdown-btn" class="flex items-center space-x-2 sm:space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                        <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                            <span class="text-white font-bold text-sm">👑</span>
+                        </div>
+                        <div class="hidden sm:block text-left">
+                            <div class="text-sm font-medium text-gray-900 dark:text-white">Admin User</div>
+                            <div class="text-xs text-gray-600 dark:text-gray-400">Administrator</div>
+                        </div>
+                        <svg class="w-4 h-4 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    
+                    <div id="user-dropdown" class="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 hidden">
+                        <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                                    <span class="text-white font-bold text-sm">👑</span>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold text-gray-900 dark:text-white">Admin User</div>
+                                    <div class="text-xs text-gray-600 dark:text-gray-400">admin@farm.com</div>
+                                    <div class="text-xs text-blue-600 dark:text-blue-400 font-medium">Administrator</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="py-2">
+                            <a href="/profile" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                </svg>
+                                My Profile
+                            </a>
+                            <button id="logout-btn" class="w-full flex items-center px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+                                <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                </svg>
+                                Sign Out
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Modern Sidebar -->
+    <aside id="sidebar" class="fixed left-0 top-0 h-full w-72 bg-white dark:bg-gray-900 shadow-2xl z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
+        <div class="flex flex-col h-full">
+            <!-- Sidebar Header -->
+            <div class="relative px-6 py-8 bg-gradient-to-r from-blue-500 via-indigo-500 to-blue-600">
+                <div class="absolute inset-0 bg-gradient-to-r from-blue-500/90 via-indigo-500/90 to-blue-600/90"></div>
+                <div class="relative flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg">
+                            <i class="fas fa-syringe text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold text-white">Vaccination Settings</h2>
+                            <p class="text-blue-100 text-sm font-medium">Schedule Management</p>
+                        </div>
+                    </div>
+                    <button id="close-sidebar" class="md:hidden p-2 text-white/80 hover:text-white hover:bg-white/20 rounded-xl transition-all duration-300">
+                        <i class="fas fa-times text-lg"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Navigation Menu -->
+            <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto scrollbar-thin">
+                <!-- Vaccination Settings (Active) -->
+                <a href="/admin/farm/vaccination-settings" class="group flex items-center px-4 py-4 bg-gradient-to-r from-blue-100 via-indigo-100 to-blue-100 dark:from-blue-900/40 dark:via-indigo-900/40 dark:to-blue-900/40 text-blue-700 dark:text-blue-300 rounded-2xl shadow-lg border border-blue-200/60 dark:border-blue-700/60 hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 via-indigo-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg mr-4 group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
+                        <i class="fas fa-cog text-white text-lg"></i>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <span class="font-semibold text-sm text-gray-900 dark:text-white block">Vaccination Settings</span>
+                        <p class="text-xs text-blue-600 dark:text-blue-400 font-medium">Active Page</p>
+                    </div>
+                    <!-- Active indicator -->
+                    <div class="ml-2 w-3 h-3 bg-blue-500 rounded-full animate-pulse flex-shrink-0"></div>
+                </a>
+                
+                <!-- Navigation Links -->
+                <div class="space-y-1 mt-6">
+                    <a href="/admin/farm/vaccinations" class="group flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-xl transition-all duration-300 hover:scale-[1.02] hover:shadow-md">
+                        <div class="w-8 h-8 bg-purple-100 dark:bg-purple-800/50 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
+                            <i class="fas fa-arrow-left text-purple-600 dark:text-purple-400 text-sm"></i>
+                        </div>
+                        <span class="text-sm font-medium flex-1">Back to Vaccinations</span>
+                        <i class="fas fa-chevron-right text-xs group-hover:translate-x-1 transition-transform duration-300 flex-shrink-0"></i>
+                    </a>
+                    
+                    <a href="/admin/farm/vaccination-tracking" class="group flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-xl transition-all duration-300 hover:scale-[1.02] hover:shadow-md">
+                        <div class="w-8 h-8 bg-green-100 dark:bg-green-800/50 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
+                            <i class="fas fa-clipboard-list text-green-600 dark:text-green-400 text-sm"></i>
+                        </div>
+                        <span class="text-sm font-medium flex-1">Vaccination Tracking</span>
+                        <i class="fas fa-chevron-right text-xs group-hover:translate-x-1 transition-transform duration-300 flex-shrink-0"></i>
+                    </a>
+                    
+                    <a href="/admin/farm/vaccination-analytics" class="group flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/20 rounded-xl transition-all duration-300 hover:scale-[1.02] hover:shadow-md">
+                        <div class="w-8 h-8 bg-orange-100 dark:bg-orange-800/50 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
+                            <i class="fas fa-chart-line text-orange-600 dark:text-orange-400 text-sm"></i>
+                        </div>
+                        <span class="text-sm font-medium flex-1">Vaccination Analytics</span>
+                        <i class="fas fa-chevron-right text-xs group-hover:translate-x-1 transition-transform duration-300 flex-shrink-0"></i>
+                    </a>
+                </div>
+            </nav>
+            
+            <!-- Sidebar Footer -->
+            <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-4 border border-blue-200/60 dark:border-blue-700/60">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-gradient-to-br from-blue-500 via-indigo-500 to-blue-600 rounded-lg flex items-center justify-center shadow-lg flex-shrink-0">
+                            <i class="fas fa-info-circle text-white text-sm"></i>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p class="text-sm font-semibold text-gray-900 dark:text-white">Need Help?</p>
+                            <p class="text-xs text-gray-600 dark:text-gray-400">Contact Support</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="md:ml-72 pt-16 min-h-screen">
+        <div class="p-6 main-content-mobile">
+            <!-- Welcome Section -->
+            <div class="mb-8 animate-fade-in">
+                <div class="relative overflow-hidden bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 rounded-2xl p-8 text-white shadow-2xl">
+                    <div class="absolute inset-0 bg-gradient-to-r from-blue-500/90 via-indigo-500/90 to-purple-600/90"></div>
+                    <div class="relative">
+                        <div class="flex items-center mb-6">
+                            <div class="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg mr-6">
+                                <i class="fas fa-syringe text-white text-2xl"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-3xl font-bold mb-2">Vaccination Schedule Management</h2>
+                                <p class="text-blue-100 text-lg">Configure vaccination schedules and medical protocols for your pigs</p>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap gap-4">
+                            <button onclick="showAddForm()" class="group bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-xl font-semibold hover:bg-white/30 transition-all duration-300 hover:scale-105 hover:shadow-lg border border-white/30">
+                                <i class="fas fa-plus mr-2 group-hover:scale-110 transition-transform duration-300"></i>
+                                Add New Schedule
+                            </button>
+                            <button onclick="showEditForm()" class="group bg-white text-blue-600 px-6 py-3 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-300 hover:scale-105 hover:shadow-lg">
+                                <i class="fas fa-edit mr-2 group-hover:scale-110 transition-transform duration-300"></i>
+                                Edit Schedule
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add New Schedule Form -->
+            <div id="add-form" class="hidden bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-8 mb-8 animate-slide-up card-mobile">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                        <i class="fas fa-plus-circle mr-2 text-green-500"></i>
+                        Add New Vaccination Schedule
+                    </h3>
+                    <button onclick="hideAddForm()" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+
+                <form id="add-schedule-form" enctype="multipart/form-data" class="space-y-6">
+                    <!-- Day Information -->
+                    <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6">
+                        <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                            <i class="fas fa-calendar-day mr-2 text-blue-500"></i>
+                            Day Information
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Day Number <span class="text-red-500">*</span>
+                                </label>
+                                <input type="number" name="day_number" required min="0" max="365" 
+                                       class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white" 
+                                       placeholder="Enter day number (0-365)">
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">0 = Birth, 1 = Day 1, etc.</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Day Description
+                                </label>
+                                <input type="text" name="day_description" 
+                                       class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white" 
+                                       placeholder="e.g., Birth, 2 weeks, 1 month">
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Optional description</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Medical Information -->
+                    <div class="bg-green-50 dark:bg-green-900/20 rounded-lg p-6">
+                        <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                            <i class="fas fa-stethoscope mr-2 text-green-500"></i>
+                            Medical Information
+                        </h4>
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Reason for Vaccination/Treatment <span class="text-red-500">*</span>
+                                </label>
+                                <textarea name="reason" required rows="3" 
+                                          class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white" 
+                                          placeholder="Detailed reason for this vaccination or treatment..."></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Medicine/Medical Activity <span class="text-red-500">*</span>
+                                </label>
+                                <textarea name="medicine_activity" required rows="3" 
+                                          class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white" 
+                                          placeholder="Detailed medicine name, dosage, and administration method..."></textarea>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Dosage/Amount
+                                    </label>
+                                    <input type="text" name="dosage_amount" 
+                                           class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white" 
+                                           placeholder="e.g., 2ml, 200mg, 1 tablet">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Interval/Duration
+                                    </label>
+                                    <input type="text" name="interval_duration" 
+                                           class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white" 
+                                           placeholder="e.g., Single dose, Every 2 weeks, Daily for 5 days">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Additional Notes
+                                </label>
+                                <textarea name="additional_notes" rows="3" 
+                                          class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white" 
+                                          placeholder="Any additional notes, warnings, or special instructions..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Image Uploads (Optional) -->
+                    <div class="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-6">
+                        <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                            <i class="fas fa-camera mr-2 text-purple-500"></i>
+                            Image Documentation (Optional)
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Medicine/Vaccine Image
+                                </label>
+                                <input type="file" name="medicine_image" accept="image/*" 
+                                       class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white">
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Upload image of medicine vial, vaccine bottle, or treatment documentation</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Animal Image (if applicable)
+                                </label>
+                                <input type="file" name="animal_image" accept="image/*" 
+                                       class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white">
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Upload image of the animal or condition being treated</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
+                        <button type="submit" class="flex-1 bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors">
+                            <i class="fas fa-save mr-2"></i>
+                            Add Schedule Entry
+                        </button>
+                        <button type="button" onclick="hideAddForm()" class="flex-1 bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-700 transition-colors">
+                            <i class="fas fa-times mr-2"></i>
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Edit Schedule Form -->
+            <div id="edit-form" class="hidden bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-8 mb-8 animate-slide-up card-mobile">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                        <i class="fas fa-edit mr-2 text-blue-500"></i>
+                        Edit Vaccination Schedule
+                    </h3>
+                    <button onclick="hideEditForm()" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+
+                <form id="edit-schedule-form" enctype="multipart/form-data" class="space-y-6">
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Select Schedule Entry to Edit <span class="text-red-500">*</span>
+                        </label>
+                        <select id="edit-schedule-select" name="schedule_id" required 
+                                class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                            <option value="">Select schedule entry to edit...</option>
+                        </select>
+                    </div>
+
+                    <!-- Same form fields as add form but with edit- prefix -->
+                    <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6">
+                        <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                            <i class="fas fa-calendar-day mr-2 text-blue-500"></i>
+                            Day Information
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Day Number <span class="text-red-500">*</span>
+                                </label>
+                                <input type="number" id="edit-day-number" name="day_number" required min="0" max="365" 
+                                       class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white" 
+                                       placeholder="Enter day number (0-365)">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Day Description
+                                </label>
+                                <input type="text" id="edit-day-description" name="day_description" 
+                                       class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white" 
+                                       placeholder="e.g., Birth, 2 weeks, 1 month">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-green-50 dark:bg-green-900/20 rounded-lg p-6">
+                        <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                            <i class="fas fa-stethoscope mr-2 text-green-500"></i>
+                            Medical Information
+                        </h4>
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Reason for Vaccination/Treatment <span class="text-red-500">*</span>
+                                </label>
+                                <textarea id="edit-reason" name="reason" required rows="3" 
+                                          class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white" 
+                                          placeholder="Detailed reason for this vaccination or treatment..."></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Medicine/Medical Activity <span class="text-red-500">*</span>
+                                </label>
+                                <textarea id="edit-medicine-activity" name="medicine_activity" required rows="3" 
+                                          class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white" 
+                                          placeholder="Detailed medicine name, dosage, and administration method..."></textarea>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Dosage/Amount
+                                    </label>
+                                    <input type="text" id="edit-dosage-amount" name="dosage_amount" 
+                                           class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white" 
+                                           placeholder="e.g., 2ml, 200mg, 1 tablet">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Interval/Duration
+                                    </label>
+                                    <input type="text" id="edit-interval-duration" name="interval_duration" 
+                                           class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white" 
+                                           placeholder="e.g., Single dose, Every 2 weeks, Daily for 5 days">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Additional Notes
+                                </label>
+                                <textarea id="edit-additional-notes" name="additional_notes" rows="3" 
+                                          class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white" 
+                                          placeholder="Any additional notes, warnings, or special instructions..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-6">
+                        <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                            <i class="fas fa-camera mr-2 text-purple-500"></i>
+                            Image Documentation (Optional)
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Medicine/Vaccine Image
+                                </label>
+                                <input type="file" name="medicine_image" accept="image/*" 
+                                       class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Animal Image (if applicable)
+                                </label>
+                                <input type="file" name="animal_image" accept="image/*" 
+                                       class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
+                        <button type="submit" class="flex-1 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                            <i class="fas fa-save mr-2"></i>
+                            Update Schedule Entry
+                        </button>
+                        <button type="button" onclick="hideEditForm()" class="flex-1 bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-700 transition-colors">
+                            <i class="fas fa-times mr-2"></i>
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Current Schedule Table -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 animate-fade-in card-mobile">
+                <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                        <i class="fas fa-list mr-2 text-blue-500"></i>
+                        Current Vaccination Schedule
+                    </h3>
+                    <p class="text-gray-600 dark:text-gray-400 mt-2">Manage your vaccination schedule entries</p>
+                </div>
+                
+                <div class="p-6">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-gray-200 dark:border-gray-700">
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-900 dark:text-white">Day</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-900 dark:text-white">Description</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-900 dark:text-white">Reason</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-900 dark:text-white">Medicine</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-900 dark:text-white">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="schedule-table-body">
+                                <tr>
+                                    <td colspan="5" class="text-center py-8 text-gray-500 dark:text-gray-400">
+                                        <i class="fas fa-spinner fa-spin mr-2"></i>
+                                        Loading schedule entries...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Sidebar Overlay -->
+    <div id="sidebar-overlay" class="hidden lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40" onclick="toggleSidebar()"></div>
+
+    <script>
+        // Theme management
+        function toggleTheme() {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('darkMode', document.documentElement.classList.contains('dark'));
+        }
+
+        // Initialize theme
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.documentElement.classList.add('dark');
+        }
+
+        // Live time and date
+        function updateDateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { 
+                hour12: true, 
+                hour: 'numeric', 
+                minute: '2-digit', 
+                second: '2-digit' 
+            });
+            const dateString = now.toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            
+            const timeElement = document.getElementById('live-time');
+            const dateElement = document.getElementById('live-date');
+            
+            if (timeElement) timeElement.textContent = timeString;
+            if (dateElement) dateElement.textContent = dateString;
+        }
+
+        // Update time every second
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+
+        // Sidebar management
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('-translate-x-full');
+            sidebar.classList.toggle('translate-x-0');
+            overlay.classList.toggle('hidden');
+        }
+
+        // Close sidebar on mobile
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.add('-translate-x-full');
+            sidebar.classList.remove('translate-x-0');
+            overlay.classList.add('hidden');
+        }
+
+        // User dropdown
+        function toggleUserDropdown() {
+            const dropdown = document.getElementById('user-dropdown');
+            dropdown.classList.toggle('hidden');
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(event) {
+            const userDropdown = document.getElementById('user-dropdown');
+            const userBtn = document.getElementById('user-dropdown-btn');
+            
+            if (!userBtn.contains(event.target) && !userDropdown.contains(event.target)) {
+                userDropdown.classList.add('hidden');
+            }
+        });
+
+        // Form management
+        function showAddForm() {
+            document.getElementById('add-form').classList.remove('hidden');
+            document.getElementById('edit-form').classList.add('hidden');
+        }
+
+        function hideAddForm() {
+            document.getElementById('add-form').classList.add('hidden');
+            document.getElementById('add-schedule-form').reset();
+        }
+
+        function showEditForm() {
+            document.getElementById('edit-form').classList.remove('hidden');
+            document.getElementById('add-form').classList.add('hidden');
+            loadScheduleEntries();
+        }
+
+        function hideEditForm() {
+            document.getElementById('edit-form').classList.add('hidden');
+            document.getElementById('edit-schedule-form').reset();
+        }
+
+        // Load schedule entries for edit dropdown
+        async function loadScheduleEntries() {
+            try {
+                const response = await fetch('/api/vaccination/schedule');
+                const data = await response.json();
+                
+                console.log('Edit dropdown data:', data); // Debug log
+                
+                if (data.success && data.schedule && Array.isArray(data.schedule)) {
+                    const select = document.getElementById('edit-schedule-select');
+                    select.innerHTML = '<option value="">Select schedule entry to edit...</option>';
+                    
+                    data.schedule.forEach(entry => {
+                        const option = document.createElement('option');
+                        option.value = entry.id;
+                        option.textContent = `Day ${entry.day_number}: ${entry.day_description || 'No description'}`;
+                        select.appendChild(option);
+                    });
+                } else {
+                    console.error('Invalid data structure for edit dropdown:', data);
+                    const select = document.getElementById('edit-schedule-select');
+                    select.innerHTML = '<option value="">Error loading entries...</option>';
+                }
+            } catch (error) {
+                console.error('Error loading schedule entries:', error);
+                const select = document.getElementById('edit-schedule-select');
+                select.innerHTML = '<option value="">Error loading entries...</option>';
+            }
+        }
+
+        // Load current schedule table
+        async function loadScheduleTable() {
+            try {
+                const response = await fetch('/api/vaccination/schedule');
+                const data = await response.json();
+                
+                console.log('Schedule data:', data); // Debug log
+                
+                if (data.success && data.schedule && Array.isArray(data.schedule)) {
+                    const tbody = document.getElementById('schedule-table-body');
+                    tbody.innerHTML = '';
+                    
+                    if (data.schedule.length === 0) {
+                        tbody.innerHTML = `
+                            <tr>
+                                <td colspan="5" class="text-center py-8 text-gray-500 dark:text-gray-400">
+                                    <i class="fas fa-info-circle mr-2"></i>
+                                    No schedule entries found. Add your first entry above.
+                                </td>
+                            </tr>
+                        `;
+                        return;
+                    }
+                    
+                    data.schedule.forEach(entry => {
+                        const row = document.createElement('tr');
+                        row.className = 'border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700';
+                        row.innerHTML = `
+                            <td class="py-3 px-4 text-gray-900 dark:text-white font-medium">Day ${entry.day_number}</td>
+                            <td class="py-3 px-4 text-gray-600 dark:text-gray-400">${entry.day_description || 'No description'}</td>
+                            <td class="py-3 px-4 text-gray-600 dark:text-gray-400">${entry.reason ? entry.reason.substring(0, 50) + (entry.reason.length > 50 ? '...' : '') : 'No reason'}</td>
+                            <td class="py-3 px-4 text-gray-600 dark:text-gray-400">${entry.medicine_activity ? entry.medicine_activity.substring(0, 50) + (entry.medicine_activity.length > 50 ? '...' : '') : 'No medicine'}</td>
+                            <td class="py-3 px-4">
+                                <button onclick="editScheduleEntry(${entry.id})" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-200 mr-2">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button onclick="deleteScheduleEntry(${entry.id})" class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-200">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                } else {
+                    console.error('Invalid data structure:', data);
+                    document.getElementById('schedule-table-body').innerHTML = `
+                        <tr>
+                            <td colspan="5" class="text-center py-8 text-red-500">
+                                <i class="fas fa-exclamation-triangle mr-2"></i>
+                                Error: Invalid data structure received
+                            </td>
+                        </tr>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading schedule table:', error);
+                document.getElementById('schedule-table-body').innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center py-8 text-red-500">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                            Error loading schedule entries: ${error.message}
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        // Edit schedule entry
+        function editScheduleEntry(entryId) {
+            showEditForm();
+            document.getElementById('edit-schedule-select').value = entryId;
+            loadScheduleEntryDetails(entryId);
+        }
+
+        // Load schedule entry details for editing
+        async function loadScheduleEntryDetails(entryId) {
+            try {
+                const response = await fetch(`/api/vaccination/schedule/${entryId}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const entry = data.schedule;
+                    document.getElementById('edit-day-number').value = entry.day_number;
+                    document.getElementById('edit-day-description').value = entry.day_description || '';
+                    document.getElementById('edit-reason').value = entry.reason;
+                    document.getElementById('edit-medicine-activity').value = entry.medicine_activity;
+                    document.getElementById('edit-dosage-amount').value = entry.dosage_amount || '';
+                    document.getElementById('edit-interval-duration').value = entry.interval_duration || '';
+                    document.getElementById('edit-additional-notes').value = entry.additional_notes || '';
+                }
+            } catch (error) {
+                console.error('Error loading schedule entry details:', error);
+            }
+        }
+
+        // Delete schedule entry
+        async function deleteScheduleEntry(entryId) {
+            if (confirm('Are you sure you want to delete this schedule entry?')) {
+                try {
+                    const response = await fetch(`/api/vaccination/schedule/${entryId}`, {
+                        method: 'DELETE'
+                    });
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        alert('Schedule entry deleted successfully');
+                        loadScheduleTable();
+                    } else {
+                        alert('Error deleting schedule entry: ' + data.error);
+                    }
+                } catch (error) {
+                    console.error('Error deleting schedule entry:', error);
+                    alert('Error deleting schedule entry');
+                }
+            }
+        }
+
+        // Form submissions
+        document.getElementById('add-schedule-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            try {
+                const response = await fetch('/api/vaccination/schedule', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Schedule entry added successfully');
+                    hideAddForm();
+                    loadScheduleTable();
+                } else {
+                    alert('Error adding schedule entry: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error adding schedule entry:', error);
+                alert('Error adding schedule entry');
+            }
+        });
+
+        document.getElementById('edit-schedule-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const scheduleId = formData.get('schedule_id');
+            
+            try {
+                const response = await fetch(`/api/vaccination/schedule/${scheduleId}`, {
+                    method: 'PUT',
+                    body: formData
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Schedule entry updated successfully');
+                    hideEditForm();
+                    loadScheduleTable();
+                } else {
+                    alert('Error updating schedule entry: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error updating schedule entry:', error);
+                alert('Error updating schedule entry');
+            }
+        });
+
+        // Load schedule entries when edit form is shown
+        document.getElementById('edit-schedule-select').addEventListener('change', function() {
+            if (this.value) {
+                loadScheduleEntryDetails(this.value);
+            }
+        });
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadScheduleTable();
+            
+            // Add event listeners
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const closeSidebarBtn = document.getElementById('close-sidebar');
+            const themeToggle = document.getElementById('theme-toggle');
+            const userDropdownBtn = document.getElementById('user-dropdown-btn');
+            const logoutBtn = document.getElementById('logout-btn');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+            
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', toggleSidebar);
+            }
+            
+            if (closeSidebarBtn) {
+                closeSidebarBtn.addEventListener('click', closeSidebar);
+            }
+            
+            if (themeToggle) {
+                themeToggle.addEventListener('click', toggleTheme);
+            }
+            
+            if (userDropdownBtn) {
+                userDropdownBtn.addEventListener('click', toggleUserDropdown);
+            }
+            
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function() {
+                    if (confirm('Are you sure you want to sign out?')) {
+                        window.location.href = '/logout';
+                    }
+                });
+            }
+            
+            if (sidebarOverlay) {
+                sidebarOverlay.addEventListener('click', closeSidebar);
+            }
+        });
+    </script>
+</body>
+</html>

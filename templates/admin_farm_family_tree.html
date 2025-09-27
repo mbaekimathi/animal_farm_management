@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Tree - Pig Farm Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    screens: {
+                        'xs': '475px',
+                        'sm': '640px',
+                        'md': '768px',
+                        'lg': '1024px',
+                        'xl': '1280px',
+                        '2xl': '1536px',
+                    },
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        },
+                        secondary: {
+                            50: '#fdf4ff',
+                            100: '#fae8ff',
+                            200: '#f5d0fe',
+                            300: '#f0abfc',
+                            400: '#e879f9',
+                            500: '#d946ef',
+                            600: '#c026d3',
+                            700: '#a21caf',
+                            800: '#86198f',
+                            900: '#701a75',
+                        },
+                        accent: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            300: '#86efac',
+                            400: '#4ade80',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                        'slide-down': 'slideDown 0.3s ease-out',
+                        'scale-in': 'scaleIn 0.2s ease-out',
+                        'bounce-subtle': 'bounceSubtle 0.6s ease-out',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(10px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        slideDown: {
+                            '0%': { transform: 'translateY(-10px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        scaleIn: {
+                            '0%': { transform: 'scale(0.95)', opacity: '0' },
+                            '100%': { transform: 'scale(1)', opacity: '1' },
+                        },
+                        bounceSubtle: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-4px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .sidebar {
+            transition: transform 0.3s ease-in-out;
+        }
+        .sidebar.closed {
+            transform: translateX(-100%);
+        }
+        @media (min-width: 768px) {
+            .sidebar.closed {
+                transform: translateX(0);
+            }
+        }
+        
+        /* Custom animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .animate-fadeInUp {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+        
+        .animate-slideInRight {
+            animation: slideInRight 0.6s ease-out forwards;
+        }
+        
+        /* Enhanced hover effects */
+        .group:hover .group-hover\:scale-110 {
+            transform: scale(1.1);
+        }
+        
+        .group:hover .group-hover\:scale-105 {
+            transform: scale(1.05);
+        }
+        
+        /* Custom scrollbar */
+        .scrollbar-thin {
+            scrollbar-width: thin;
+            scrollbar-color: rgb(156 163 175) transparent;
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+            background-color: rgb(156 163 175);
+            border-radius: 3px;
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+            background-color: rgb(107 114 128);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-gray-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-all duration-300 ease-in-out">
+    <!-- Sidebar -->
+    <div id="sidebar" class="fixed inset-y-0 left-0 z-50 w-72 bg-white dark:bg-gray-900 shadow-2xl transform -translate-x-full transition-all duration-300 ease-in-out md:translate-x-0 border-r border-gray-200 dark:border-gray-700">
+        <!-- Sidebar Header -->
+        <div class="flex items-center justify-between h-20 px-6 bg-gradient-to-br from-purple-600 via-purple-700 to-pink-800 shadow-lg">
+            <div class="flex items-center space-x-4">
+                <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-lg">
+                    <i class="fas fa-sitemap text-white text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-white tracking-tight">PigFarm Pro</h1>
+                    <p class="text-sm text-white/90 font-medium">Family Tree</p>
+                </div>
+            </div>
+            <button id="close-sidebar" class="md:hidden text-white/80 hover:text-white hover:bg-white/10 p-2 rounded-lg transition-all duration-200" aria-label="Close sidebar">
+                <i class="fas fa-times text-lg"></i>
+            </button>
+        </div>
+
+        <!-- Sidebar Navigation -->
+        <nav class="mt-8 px-4">
+            <div class="space-y-2">
+                <!-- Breeding Management -->
+                <a href="/admin/farm/breeding-management" class="group flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-xl transition-all duration-200 hover:shadow-md" role="menuitem">
+                    <div class="w-10 h-10 bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-900/30 dark:to-primary-800/30 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-200">
+                        <i class="fas fa-heart text-primary-600 dark:text-primary-400 text-lg"></i>
+                    </div>
+                    <div class="flex-1">
+                        <span class="font-semibold text-sm">Breeding Management</span>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Manage breeding</p>
+                    </div>
+                </a>
+
+                <!-- Breeding Records -->
+                <a href="/admin/farm/breeding-records" class="group flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-xl transition-all duration-200 hover:shadow-md" role="menuitem">
+                    <div class="w-10 h-10 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-200">
+                        <i class="fas fa-clipboard-list text-gray-600 dark:text-gray-400 text-lg"></i>
+                    </div>
+                    <div class="flex-1">
+                        <span class="font-semibold text-sm">Breeding Records</span>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Active & Pregnant</p>
+                    </div>
+                </a>
+
+                <!-- Failed Conceptions -->
+                <a href="/admin/farm/failed-conceptions" class="group flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-xl transition-all duration-200 hover:shadow-md" role="menuitem">
+                    <div class="w-10 h-10 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-200">
+                        <i class="fas fa-times-circle text-gray-600 dark:text-gray-400 text-lg"></i>
+                    </div>
+                    <div class="flex-1">
+                        <span class="font-semibold text-sm">Failed Conceptions</span>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Failed Attempts</p>
+                    </div>
+                </a>
+
+                <!-- Completed Farrowings -->
+                <a href="/admin/farm/completed-farrowings" class="group flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-xl transition-all duration-200 hover:shadow-md" role="menuitem">
+                    <div class="w-10 h-10 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-200">
+                        <i class="fas fa-check-circle text-gray-600 dark:text-gray-400 text-lg"></i>
+                    </div>
+                    <div class="flex-1">
+                        <span class="font-semibold text-sm">Completed Farrowings</span>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Successful Births</p>
+                    </div>
+                </a>
+
+                <!-- Family Tree (Active) -->
+                <a href="/admin/farm/family-tree" class="group flex items-center px-4 py-4 bg-gradient-to-r from-purple-50 via-purple-100 to-pink-50 dark:from-purple-900/40 dark:via-purple-800/40 dark:to-pink-900/40 text-purple-700 dark:text-purple-300 rounded-xl shadow-lg border border-purple-200 dark:border-purple-700/50 relative overflow-hidden" role="menuitem" aria-current="page">
+                    <div class="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10"></div>
+                    <div class="w-12 h-12 bg-gradient-to-br from-purple-500 via-purple-600 to-pink-500 rounded-xl flex items-center justify-center shadow-lg mr-4 group-hover:scale-110 transition-transform duration-200 relative z-10">
+                        <i class="fas fa-sitemap text-white text-lg"></i>
+                    </div>
+                    <div class="flex-1 relative z-10">
+                        <span class="font-bold text-sm text-gray-900 dark:text-white block">Family Tree</span>
+                        <span class="text-xs text-purple-600 dark:text-purple-400 font-medium">Pedigree View</span>
+                    </div>
+                    <div class="w-2 h-2 bg-purple-500 rounded-full animate-pulse-slow"></div>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Sidebar Footer -->
+        <div class="absolute bottom-0 left-0 right-0 p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+            <div class="flex items-center space-x-4">
+                <div class="w-12 h-12 bg-gradient-to-br from-accent-500 to-accent-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <i class="fas fa-user text-white text-lg"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-bold text-gray-900 dark:text-white truncate">Admin User</p>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 font-medium">Administrator</p>
+                    <div class="flex items-center mt-1">
+                        <div class="w-2 h-2 bg-accent-500 rounded-full mr-2"></div>
+                        <span class="text-xs text-accent-600 dark:text-accent-400 font-medium">Online</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Overlay -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden md:hidden transition-opacity duration-300"></div>
+
+    <!-- Main Content -->
+    <main class="md:ml-72 min-h-screen bg-gradient-to-br from-gray-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-all duration-300 ease-in-out">
+        <div class="p-6 lg:p-8">
+            <!-- Page Header -->
+            <div class="mb-8 animate-fade-in">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+                    <!-- Header Background -->
+                    <div class="h-2 bg-gradient-to-r from-purple-500 via-pink-500 to-rose-500"></div>
+                    
+                    <div class="p-8">
+                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-6 lg:space-y-0">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center shadow-lg">
+                                    <i class="fas fa-sitemap text-white text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h1 class="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">Family Tree</h1>
+                                    <p class="text-gray-600 dark:text-gray-400 font-medium mt-1">Complete pedigree view of all sows and boars in the farm</p>
+                                    <div class="flex items-center mt-2">
+                                        <div class="w-2 h-2 bg-purple-500 rounded-full mr-2 animate-pulse"></div>
+                                        <span class="text-sm text-purple-600 dark:text-purple-400 font-medium">Pedigree Management</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center space-x-4">
+                                <!-- Mobile Menu Button -->
+                                <button id="mobile-menu-btn" class="lg:hidden p-3 text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-xl transition-all duration-200 hover:shadow-md" aria-label="Open menu">
+                                    <i class="fas fa-bars text-lg"></i>
+                                </button>
+                                
+                                <!-- Refresh Button -->
+                                <button onclick="loadFamilyTree()" class="group p-3 text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-xl transition-all duration-200 hover:shadow-md hover:-translate-y-0.5" aria-label="Refresh data">
+                                    <i class="fas fa-sync-alt text-lg group-hover:rotate-180 transition-transform duration-500"></i>
+                                </button>
+                                
+                                <!-- Dark Mode Toggle -->
+                                <button onclick="toggleDarkMode()" class="p-3 text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-xl transition-all duration-200 hover:shadow-md" aria-label="Toggle dark mode">
+                                    <i class="fas fa-moon dark:hidden text-lg"></i>
+                                    <i class="fas fa-sun hidden dark:block text-lg"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 animate-slide-up">
+                <!-- Total Sows Card -->
+                <div class="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden relative">
+                    <div class="absolute inset-0 bg-gradient-to-br from-pink-500/5 to-pink-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div class="relative z-10">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 bg-gradient-to-br from-pink-100 to-pink-200 dark:from-pink-900/30 dark:to-pink-800/30 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-female text-pink-600 dark:text-pink-400 text-lg"></i>
+                            </div>
+                            <div class="w-2 h-2 bg-pink-500 rounded-full animate-pulse"></div>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-1">Total Sows</p>
+                            <p id="total-sows-count" class="text-3xl font-bold text-gray-900 dark:text-white">0</p>
+                            <p class="text-xs text-pink-600 dark:text-pink-400 font-medium mt-1">Female pigs</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Total Boars Card -->
+                <div class="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden relative">
+                    <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-blue-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div class="relative z-10">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/30 dark:to-blue-800/30 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-male text-blue-600 dark:text-blue-400 text-lg"></i>
+                            </div>
+                            <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-1">Total Boars</p>
+                            <p id="total-boars-count" class="text-3xl font-bold text-gray-900 dark:text-white">0</p>
+                            <p class="text-xs text-blue-600 dark:text-blue-400 font-medium mt-1">Male pigs</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Active Breeders Card -->
+                <div class="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden relative">
+                    <div class="absolute inset-0 bg-gradient-to-br from-green-500/5 to-green-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div class="relative z-10">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 bg-gradient-to-br from-green-100 to-green-200 dark:from-green-900/30 dark:to-green-800/30 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-heart text-green-600 dark:text-green-400 text-lg"></i>
+                            </div>
+                            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-1">Active Breeders</p>
+                            <p id="active-breeders-count" class="text-3xl font-bold text-gray-900 dark:text-white">0</p>
+                            <p class="text-xs text-green-600 dark:text-green-400 font-medium mt-1">Available for breeding</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Total Breedings Card -->
+                <div class="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden relative">
+                    <div class="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-purple-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div class="relative z-10">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 bg-gradient-to-br from-purple-100 to-purple-200 dark:from-purple-900/30 dark:to-purple-800/30 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-chart-line text-purple-600 dark:text-purple-400 text-lg"></i>
+                            </div>
+                            <div class="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-1">Total Breedings</p>
+                            <p id="total-breedings-count" class="text-3xl font-bold text-gray-900 dark:text-white">0</p>
+                            <p class="text-xs text-purple-600 dark:text-purple-400 font-medium mt-1">All time</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Family Tree Content -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-slide-up">
+                <!-- Sows Section -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+                    <!-- Section Header -->
+                    <div class="px-8 py-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-pink-50 to-pink-100 dark:from-pink-900/20 dark:to-pink-800/20">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 bg-gradient-to-br from-pink-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
+                                    <i class="fas fa-female text-white text-lg"></i>
+                                </div>
+                                <div>
+                                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Sows</h2>
+                                    <p class="text-gray-600 dark:text-gray-400 font-medium">Female breeding pigs</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-pink-100 to-pink-200 dark:from-pink-900/30 dark:to-pink-800/30 rounded-xl border border-pink-200 dark:border-pink-700">
+                                <div class="w-2 h-2 bg-pink-500 rounded-full animate-pulse"></div>
+                                <span class="text-sm font-semibold text-pink-700 dark:text-pink-300" id="sows-count">0 Sows</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sows Container -->
+                    <div id="sows-container" class="p-6 space-y-4 max-h-96 overflow-y-auto scrollbar-thin">
+                        <!-- Sows will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Boars Section -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+                    <!-- Section Header -->
+                    <div class="px-8 py-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+                                    <i class="fas fa-male text-white text-lg"></i>
+                                </div>
+                                <div>
+                                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Boars</h2>
+                                    <p class="text-gray-600 dark:text-gray-400 font-medium">Male breeding pigs</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-100 to-blue-200 dark:from-blue-900/30 dark:to-blue-800/30 rounded-xl border border-blue-200 dark:border-blue-700">
+                                <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                                <span class="text-sm font-semibold text-blue-700 dark:text-blue-300" id="boars-count">0 Boars</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Boars Container -->
+                    <div id="boars-container" class="p-6 space-y-4 max-h-96 overflow-y-auto scrollbar-thin">
+                        <!-- Boars will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Dark mode toggle functionality
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('darkMode', document.documentElement.classList.contains('dark'));
+        }
+
+        // Initialize dark mode from localStorage
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.documentElement.classList.add('dark');
+        }
+
+        // Mobile sidebar functionality
+        function setupMobileMenu() {
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+            const closeSidebarBtn = document.getElementById('close-sidebar');
+
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', function() {
+                    sidebar.classList.remove('-translate-x-full');
+                    sidebarOverlay.classList.remove('hidden');
+                    document.body.style.overflow = 'hidden';
+                });
+            }
+
+            if (closeSidebarBtn) {
+                closeSidebarBtn.addEventListener('click', function() {
+                    sidebar.classList.add('-translate-x-full');
+                    sidebarOverlay.classList.add('hidden');
+                    document.body.style.overflow = '';
+                });
+            }
+
+            if (sidebarOverlay) {
+                sidebarOverlay.addEventListener('click', function() {
+                    sidebar.classList.add('-translate-x-full');
+                    sidebarOverlay.classList.add('hidden');
+                    document.body.style.overflow = '';
+                });
+            }
+        }
+
+        // Load family tree data
+        async function loadFamilyTree() {
+            try {
+                console.log('Loading family tree data...');
+                
+                // Load all pigs using the existing working endpoint
+                const response = await fetch('/api/pig/list');
+                const data = await response.json();
+                console.log('Pigs response:', data);
+                
+                if (data.success) {
+                    const allPigs = data.pigs || [];
+                    console.log('Total pigs found:', allPigs.length);
+                    console.log('All pigs data:', allPigs);
+                    
+                    // Check what gender values we actually have
+                    const genderValues = [...new Set(allPigs.map(pig => pig.gender))];
+                    console.log('Unique gender values found:', genderValues);
+                    
+                    // Filter sows and boars using the correct field name 'gender'
+                    const sows = allPigs.filter(pig => 
+                        pig.gender === 'female' || 
+                        pig.gender === 'F' || 
+                        pig.gender === 'Female' ||
+                        pig.gender === 'f'
+                    );
+                    const boars = allPigs.filter(pig => 
+                        pig.gender === 'male' || 
+                        pig.gender === 'M' || 
+                        pig.gender === 'Male' ||
+                        pig.gender === 'm'
+                    );
+                    
+                    console.log('Sows count:', sows.length);
+                    console.log('Boars count:', boars.length);
+                    
+                    // If no gender is set, show all pigs in both sections with a note
+                    if (sows.length === 0 && boars.length === 0) {
+                        console.log('No gender data found - showing all pigs in both sections');
+                        // Show all pigs in both sections until gender is properly set
+                        displaySows(allPigs, true); // true indicates "no gender data"
+                        displayBoars(allPigs, true);
+                        
+                        // Update statistics to show total pigs
+                        document.getElementById('total-sows-count').textContent = allPigs.length;
+                        document.getElementById('total-boars-count').textContent = allPigs.length;
+                        document.getElementById('sows-count').textContent = `${allPigs.length} Pigs (No Gender Data)`;
+                        document.getElementById('boars-count').textContent = `${allPigs.length} Pigs (No Gender Data)`;
+                    } else {
+                        // Update statistics
+                        document.getElementById('total-sows-count').textContent = sows.length;
+                        document.getElementById('total-boars-count').textContent = boars.length;
+                        document.getElementById('sows-count').textContent = `${sows.length} Sows`;
+                        document.getElementById('boars-count').textContent = `${boars.length} Boars`;
+                        
+                        // Display sows and boars
+                        displaySows(sows);
+                        displayBoars(boars);
+                    }
+                    
+                    // Calculate active breeders (available status)
+                    const activeSows = sows.filter(sow => sow.breeding_status === 'available').length;
+                    const activeBoars = boars.filter(boar => boar.breeding_status === 'available').length;
+                    document.getElementById('active-breeders-count').textContent = activeSows + activeBoars;
+                    
+                    // Calculate total breedings (we'll set this to 0 for now since we don't have breeding data)
+                    document.getElementById('total-breedings-count').textContent = '0';
+                    
+                    // Display sows
+                    displaySows(sows);
+                    displayBoars(boars);
+                } else {
+                    console.error('API call failed:', data);
+                    // Show error message
+                    document.getElementById('sows-container').innerHTML = `
+                        <div class="text-center py-8">
+                            <div class="w-16 h-16 bg-gradient-to-br from-red-100 to-red-200 dark:from-red-700 dark:to-red-800 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                                <i class="fas fa-exclamation-triangle text-red-400 text-2xl"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Error Loading Data</h3>
+                            <p class="text-gray-600 dark:text-gray-400">Failed to load pigs data.</p>
+                        </div>
+                    `;
+                    document.getElementById('boars-container').innerHTML = `
+                        <div class="text-center py-8">
+                            <div class="w-16 h-16 bg-gradient-to-br from-red-100 to-red-200 dark:from-red-700 dark:to-red-800 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                                <i class="fas fa-exclamation-triangle text-red-400 text-2xl"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Error Loading Data</h3>
+                            <p class="text-gray-600 dark:text-gray-400">Failed to load pigs data.</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading family tree:', error);
+            }
+        }
+
+        // Display sows
+        function displaySows(sows, noGenderData = false) {
+            const container = document.getElementById('sows-container');
+            container.innerHTML = '';
+            
+            if (sows.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8">
+                        <div class="w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                            <i class="fas fa-female text-gray-400 text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">No Sows Found</h3>
+                        <p class="text-gray-600 dark:text-gray-400">No female pigs found in the system.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            if (noGenderData) {
+                // Show a note that gender data is missing
+                const noteDiv = document.createElement('div');
+                noteDiv.className = 'mb-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg';
+                noteDiv.innerHTML = `
+                    <div class="flex items-center">
+                        <i class="fas fa-exclamation-triangle text-yellow-600 dark:text-yellow-400 mr-2"></i>
+                        <span class="text-sm text-yellow-800 dark:text-yellow-200">
+                            <strong>Note:</strong> Gender data not set for pigs. Showing all pigs in both sections.
+                        </span>
+                    </div>
+                `;
+                container.appendChild(noteDiv);
+            }
+            
+            // Create table structure
+            const table = document.createElement('div');
+            table.className = 'overflow-x-auto';
+            table.innerHTML = `
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                    <thead class="bg-gray-50 dark:bg-gray-700">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Tag ID</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Breed</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Age</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Type</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Purpose</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Farm</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                        ${sows.map((sow, index) => `
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 animate-slide-up" style="animation-delay: ${index * 0.1}s">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="w-8 h-8 bg-gradient-to-br from-pink-100 to-pink-200 dark:from-pink-900/30 dark:to-pink-800/30 rounded-lg flex items-center justify-center mr-3">
+                                            <i class="fas fa-female text-pink-600 dark:text-pink-400 text-sm"></i>
+                                        </div>
+                                        <div class="text-sm font-medium text-gray-900 dark:text-white">${sow.tag_id}</div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">${sow.breed || 'Unknown'}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">${sow.age_days ? Math.floor(sow.age_days / 30) : 'N/A'} months</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">${sow.pig_type || 'N/A'}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">${sow.purpose || 'N/A'}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getBreedingStatusColor(sow.breeding_status)}">
+                                        ${sow.breeding_status ? sow.breeding_status.toUpperCase() : 'UNKNOWN'}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${sow.farm_name || 'Unknown'}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            container.appendChild(table);
+        }
+
+        // Display boars
+        function displayBoars(boars, noGenderData = false) {
+            const container = document.getElementById('boars-container');
+            container.innerHTML = '';
+            
+            if (boars.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8">
+                        <div class="w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                            <i class="fas fa-male text-gray-400 text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">No Boars Found</h3>
+                        <p class="text-gray-600 dark:text-gray-400">No male pigs found in the system.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            if (noGenderData) {
+                // Show a note that gender data is missing
+                const noteDiv = document.createElement('div');
+                noteDiv.className = 'mb-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg';
+                noteDiv.innerHTML = `
+                    <div class="flex items-center">
+                        <i class="fas fa-exclamation-triangle text-yellow-600 dark:text-yellow-400 mr-2"></i>
+                        <span class="text-sm text-yellow-800 dark:text-yellow-200">
+                            <strong>Note:</strong> Gender data not set for pigs. Showing all pigs in both sections.
+                        </span>
+                    </div>
+                `;
+                container.appendChild(noteDiv);
+            }
+            
+            // Create table structure
+            const table = document.createElement('div');
+            table.className = 'overflow-x-auto';
+            table.innerHTML = `
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                    <thead class="bg-gray-50 dark:bg-gray-700">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Tag ID</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Breed</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Age</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Type</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Purpose</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Farm</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                        ${boars.map((boar, index) => `
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 animate-slide-up" style="animation-delay: ${index * 0.1}s">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="w-8 h-8 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/30 dark:to-blue-800/30 rounded-lg flex items-center justify-center mr-3">
+                                            <i class="fas fa-male text-blue-600 dark:text-blue-400 text-sm"></i>
+                                        </div>
+                                        <div class="text-sm font-medium text-gray-900 dark:text-white">${boar.tag_id}</div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">${boar.breed || 'Unknown'}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">${boar.age_days ? Math.floor(boar.age_days / 30) : 'N/A'} months</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">${boar.pig_type || 'N/A'}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">${boar.purpose || 'N/A'}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getBreedingStatusColor(boar.breeding_status)}">
+                                        ${boar.breeding_status ? boar.breeding_status.toUpperCase() : 'UNKNOWN'}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${boar.farm_name || 'Unknown'}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            container.appendChild(table);
+        }
+
+        // Get breeding status color
+        function getBreedingStatusColor(status) {
+            if (!status) return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200';
+            
+            switch (status.toLowerCase()) {
+                case 'available': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+                case 'served': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
+                case 'pregnant': return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200';
+                case 'farrowed': return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200';
+                case 'young': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
+                default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200';
+            }
+        }
+
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFamilyTree();
+            setupMobileMenu();
+        });
+    </script>
+</body>
+</html>
