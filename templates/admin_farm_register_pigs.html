@@ -368,10 +368,10 @@
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Sex <span class="text-red-500">*</span>
+                                        Gender <span class="text-red-500">*</span>
                                     </label>
-                                    <select id="sex" name="sex" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
-                                        <option value="">Select sex</option>
+                                    <select id="gender" name="gender" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                                        <option value="">Select gender</option>
                                         <option value="male">Male</option>
                                         <option value="female">Female</option>
                                     </select>
@@ -642,15 +642,15 @@
             
             if (pigType === 'grown_pig') {
                 grownPigFields.classList.remove('hidden');
-                // Make breed, sex, and purpose required
+                // Make breed, gender, and purpose required
                 document.getElementById('breed').required = true;
-                document.getElementById('sex').required = true;
+                document.getElementById('gender').required = true;
                 document.getElementById('purpose').required = true;
             } else {
                 grownPigFields.classList.add('hidden');
                 // Remove required attributes
                 document.getElementById('breed').required = false;
-                document.getElementById('sex').required = false;
+                document.getElementById('gender').required = false;
                 document.getElementById('purpose').required = false;
             }
             
@@ -720,11 +720,11 @@
 
             if (pigType === 'grown_pig') {
                 const breed = formData.get('breed');
-                const sex = formData.get('sex');
+                const gender = formData.get('gender');
                 const purpose = formData.get('purpose');
                 
-                if (!breed || !sex || !purpose) {
-                    showToast('Breed, sex, and purpose are required for grown pigs', 'error');
+                if (!breed || !gender || !purpose) {
+                    showToast('Breed, gender, and purpose are required for grown pigs', 'error');
                     return;
                 }
             }
@@ -735,7 +735,7 @@
                 pig_type: pigType,
                 pig_source: pigSource,
                 breed: formData.get('breed') || null,
-                sex: formData.get('sex') || null,
+                gender: formData.get('gender') || null,
                 purpose: formData.get('purpose') || null,
                 birth_date: birthDate,
                 purchase_date: purchaseDate || null

@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Smart Animal Farming - Employee Dashboard{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        // Error handling for external script conflicts
+        window.addEventListener('error', function(e) {
+            // Ignore errors from external scripts that might conflict
+            if (e.filename && (e.filename.includes('screen-shader.js') || e.filename.includes('night-mode.js'))) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .dark .glass-effect {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #00A86B, #FF7A00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Enhanced animations and responsiveness */
+        @media (max-width: 1024px) {
+            #sidebar {
+                z-index: 50;
+            }
+            
+            #sidebar-overlay {
+                z-index: 45;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            #sidebar {
+                width: 100vw;
+                max-width: 320px;
+            }
+            
+            .mobile-full-width {
+                width: 100vw;
+                margin-left: 0;
+            }
+            
+            .mobile-padding {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+        }
+        
+        /* Smooth scroll for navigation */
+        .nav-scroll {
+            scrollbar-width: thin;
+            scrollbar-color: #e5e7eb transparent;
+        }
+        
+        .nav-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .nav-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .nav-scroll::-webkit-scrollbar-thumb {
+            background: #e5e7eb;
+            border-radius: 2px;
+        }
+        
+        .nav-scroll::-webkit-scrollbar-thumb:hover {
+            background: #d1d5db;
+        }
+        
+        /* Pulse animation for active items */
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
+            50% { box-shadow: 0 0 0 8px rgba(59, 130, 246, 0); }
+        }
+        
+        .pulse-glow {
+            animation: pulse-glow 2s infinite;
+        }
+        
+        /* Hover effects for navigation items */
+        .nav-item {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .nav-item:hover::before {
+            left: 100%;
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <!-- Professional Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 shadow-sm">
+        <div class="flex items-center justify-between px-4 sm:px-6 lg:px-8 h-16">
+            <!-- Left Section: Mobile Menu + Logo + Page Title -->
+            <div class="flex items-center space-x-4">
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                    <svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+                
+                <!-- Farm Logo and Name -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-green-500 to-orange-500 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-seedling text-white text-sm sm:text-lg"></i>
+                    </div>
+                    <div class="hidden sm:block">
+                        <h1 class="text-lg font-bold gradient-text">Smart Animal Farming</h1>
+                        <p class="text-xs text-gray-600 dark:text-gray-400">Employee Dashboard</p>
+                    </div>
+                </div>
+                
+                <!-- Current Page Indicator -->
+                <div class="hidden lg:flex items-center space-x-2 ml-6">
+                    <span class="text-gray-400 dark:text-gray-500">/</span>
+                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{% block page_title %}Dashboard{% endblock %}</span>
+                </div>
+            </div>
+            
+            <!-- Right Section: Time, Theme Toggle, and User Profile -->
+            <div class="flex items-center space-x-3 sm:space-x-4">
+                <!-- Live Time and Date -->
+                <div class="hidden sm:block text-right">
+                    <div id="live-time" class="text-sm font-medium text-gray-900 dark:text-white">12:00:00 PM</div>
+                    <div id="live-date" class="text-xs text-gray-600 dark:text-gray-400">January 1, 2024</div>
+                </div>
+                
+                <!-- Theme Toggle -->
+                <button id="theme-toggle" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                    <svg id="sun-icon" class="w-5 h-5 text-gray-600 dark:text-gray-300 hidden" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>
+                    </svg>
+                    <svg id="moon-icon" class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                    </svg>
+                </button>
+                
+                <!-- User Profile Dropdown -->
+                <div class="relative">
+                    <button id="user-dropdown-btn" class="flex items-center space-x-2 sm:space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                        <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                            <span class="text-white font-bold text-sm">{{ session.employee_name[0] if session.employee_name else 'E' }}</span>
+                        </div>
+                        <div class="hidden sm:block text-left">
+                            <div class="text-sm font-medium text-gray-900 dark:text-white">{{ session.employee_name or 'Employee' }}</div>
+                            <div class="text-xs text-gray-600 dark:text-gray-400">{{ session.employee_role or 'Employee' }}</div>
+                        </div>
+                        <svg class="w-4 h-4 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    
+                    <!-- Dropdown Menu -->
+                    <div id="user-dropdown" class="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 hidden">
+                        <!-- User Info Section -->
+                        <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                                    <span class="text-white font-bold text-sm">{{ session.employee_name[0] if session.employee_name else 'E' }}</span>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold text-gray-900 dark:text-white">{{ session.employee_name or 'Employee' }}</div>
+                                    <div class="text-xs text-gray-600 dark:text-gray-400">{{ session.employee_email or 'employee@farm.com' }}</div>
+                                    <div class="text-xs text-blue-600 dark:text-blue-400 font-medium">{{ session.employee_role or 'Employee' }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Menu Items -->
+                        <div class="py-2">
+                            <a href="/employee/profile" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                <i class="fas fa-user w-4 h-4 mr-3"></i>
+                                My Profile
+                            </a>
+                            <a href="/employee/settings" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                <i class="fas fa-cog w-4 h-4 mr-3"></i>
+                                Account Settings
+                            </a>
+                            <a href="/employee/preferences" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                <i class="fas fa-sliders-h w-4 h-4 mr-3"></i>
+                                Preferences
+                            </a>
+                            <hr class="my-2 border-gray-200 dark:border-gray-700">
+                            <button id="logout-btn" class="w-full flex items-center px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+                                <i class="fas fa-sign-out-alt w-4 h-4 mr-3"></i>
+                                Sign Out
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Admin Preview Banner (only shown when accessed via admin) -->
+    <div id="admin-preview-banner" class="fixed top-16 left-0 right-0 z-40 bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-2 px-4 shadow-lg" style="display: none;">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <span class="text-lg">👑</span>
+                <span class="font-medium">Admin Preview Mode - Viewing as Employee</span>
+            </div>
+            <a href="/admin/role-view" class="bg-white/20 hover:bg-white/30 text-white px-4 py-1 rounded-lg transition-colors text-sm font-medium">
+                ← Back to Admin Panel
+            </a>
+        </div>
+    </div>
+
+    <!-- Modern Sidebar -->
+    <aside id="sidebar" class="fixed left-0 top-0 h-full w-72 bg-gradient-to-b from-white via-gray-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 shadow-2xl z-40 transform -translate-x-full lg:translate-x-0 transition-all duration-300 ease-in-out border-r border-gray-200 dark:border-gray-700">
+        <div class="flex flex-col h-full">
+            <!-- Sidebar Header -->
+            <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-gradient-to-br from-green-500 to-orange-500 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-seedling text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold gradient-text">Smart Animal Farming</h2>
+                        <p class="text-xs text-gray-600 dark:text-gray-400">Employee Portal</p>
+                    </div>
+                </div>
+                <button id="close-sidebar" class="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                    <svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Navigation Menu -->
+            <nav class="flex-1 p-4 space-y-2 overflow-y-auto nav-scroll">
+                <!-- Dashboard -->
+                <a href="/employee/dashboard" class="nav-item group flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg hover:scale-105 transition-all duration-300 transform {% if request.endpoint == 'employee_dashboard' %}bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg scale-105 pulse-glow{% endif %}">
+                    <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 text-white group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-tachometer-alt text-sm"></i>
+                    </div>
+                    <span class="font-medium">Dashboard</span>
+                </a>
+
+                <!-- Animal Management -->
+                <div class="space-y-1">
+                    <button class="nav-item group flex items-center justify-between w-full px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-green-500 hover:to-teal-600 hover:text-white hover:shadow-lg hover:scale-105 transition-all duration-300 transform" onclick="toggleSubmenu('animals')">
+                        <div class="flex items-center space-x-3">
+                            <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-green-500 to-teal-600 text-white group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-paw text-sm"></i>
+                            </div>
+                            <span class="font-medium">Animal Management</span>
+                        </div>
+                        <i class="fas fa-chevron-down w-4 h-4 transition-all duration-300 group-hover:scale-110" id="animals-arrow"></i>
+                    </button>
+                    <div id="animals-submenu" class="ml-6 space-y-1 hidden overflow-hidden">
+                        <a href="/employee/pig-management" class="nav-item group flex items-center space-x-3 px-4 py-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gradient-to-r hover:from-pink-500 hover:to-rose-600 hover:text-white hover:shadow-md hover:scale-105 transition-all duration-300 transform">
+                            <div class="flex items-center justify-center w-6 h-6 rounded-md bg-gradient-to-br from-pink-500 to-rose-600 text-white group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-piggy-bank text-xs"></i>
+                            </div>
+                            <span class="text-sm font-medium">Pig Management</span>
+                        </a>
+                        <a href="/employee/cow-management" class="nav-item group flex items-center space-x-3 px-4 py-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gradient-to-r hover:from-orange-500 hover:to-amber-600 hover:text-white hover:shadow-md hover:scale-105 transition-all duration-300 transform">
+                            <div class="flex items-center justify-center w-6 h-6 rounded-md bg-gradient-to-br from-orange-500 to-amber-600 text-white group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-cow text-xs"></i>
+                            </div>
+                            <span class="text-sm font-medium">Cow Management</span>
+                        </a>
+                        <a href="/employee/chicken-management" class="nav-item group flex items-center space-x-3 px-4 py-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gradient-to-r hover:from-yellow-500 hover:to-orange-600 hover:text-white hover:shadow-md hover:scale-105 transition-all duration-300 transform">
+                            <div class="flex items-center justify-center w-6 h-6 rounded-md bg-gradient-to-br from-yellow-500 to-orange-600 text-white group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-egg text-xs"></i>
+                            </div>
+                            <span class="text-sm font-medium">Chicken Management</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Human Resource Management -->
+                <a href="/employee/hr" class="nav-item group flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-indigo-500 hover:to-blue-600 hover:text-white hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
+                    <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-blue-600 text-white group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-users text-sm"></i>
+                    </div>
+                    <span class="font-medium">Human Resource Management</span>
+                </a>
+
+                <!-- Feeds Management -->
+                <a href="/employee/feeds" class="nav-item group flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-green-600 hover:text-white hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
+                    <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-green-600 text-white group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-seedling text-sm"></i>
+                    </div>
+                    <span class="font-medium">Feeds Management</span>
+                </a>
+
+                <!-- Inventory Management -->
+                <a href="/employee/inventory" class="nav-item group flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-violet-500 hover:to-purple-600 hover:text-white hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
+                    <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 text-white group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-boxes text-sm"></i>
+                    </div>
+                    <span class="font-medium">Inventory Management</span>
+                </a>
+
+                <!-- Reports and Analytics -->
+                <a href="/employee/reports" class="nav-item group flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-cyan-500 hover:to-blue-600 hover:text-white hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
+                    <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 text-white group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-chart-bar text-sm"></i>
+                    </div>
+                    <span class="font-medium">Reports and Analytics</span>
+                </a>
+
+                <!-- System Settings -->
+                <a href="/employee/settings" class="nav-item group flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-gray-500 hover:to-slate-600 hover:text-white hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
+                    <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-gray-500 to-slate-600 text-white group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-cog text-sm"></i>
+                    </div>
+                    <span class="font-medium">System Settings</span>
+                </a>
+            </nav>
+
+            <!-- Sidebar Footer -->
+            <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+                <div class="text-center">
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Smart Animal Farming</p>
+                    <p class="text-xs text-gray-400 dark:text-gray-500">v2.0.1</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="pt-16 sm:pt-20 min-h-screen lg:ml-72">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 mt-16 md:ml-72">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center space-x-3 mb-4 md:mb-0">
+                    <div class="w-8 h-8 bg-gradient-to-br from-green-500 to-orange-500 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-seedling text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-800 dark:text-white">Smart Animal Farming</p>
+                        <p class="text-xs text-gray-600 dark:text-gray-400">Employee Management System</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <a href="/privacy" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white transition-colors">Privacy Policy</a>
+                    <a href="/terms" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white transition-colors">Terms of Service</a>
+                    <a href="/support" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white transition-colors">Support</a>
+                </div>
+            </div>
+            <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 text-center">
+                <p class="text-xs text-gray-500 dark:text-gray-400">© 2024 Smart Animal Farming. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Overlay for mobile sidebar -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden md:hidden"></div>
+
+    <script>
+        // Theme Toggle Functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+        
+        // Check for saved theme preference or default to light mode
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.classList.toggle('dark', currentTheme === 'dark');
+        updateThemeIcon();
+        
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            updateThemeIcon();
+        });
+        
+        function updateThemeIcon() {
+            const isDark = document.documentElement.classList.contains('dark');
+            sunIcon.classList.toggle('hidden', isDark);
+            moonIcon.classList.toggle('hidden', !isDark);
+        }
+
+        // Logout functionality
+        document.getElementById('logout-btn').addEventListener('click', async function() {
+            try {
+                const response = await fetch('/api/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    window.location.href = data.redirect;
+                }
+            } catch (error) {
+                console.error('Logout error:', error);
+                // Redirect anyway
+                window.location.href = '/';
+            }
+        });
+
+        // User Dropdown Functionality
+        const userDropdownBtn = document.getElementById('user-dropdown-btn');
+        const userDropdown = document.getElementById('user-dropdown');
+        
+        userDropdownBtn.addEventListener('click', () => {
+            userDropdown.classList.toggle('hidden');
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!userDropdownBtn.contains(e.target) && !userDropdown.contains(e.target)) {
+                userDropdown.classList.add('hidden');
+            }
+        });
+
+        // Mobile Sidebar Functionality
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const closeSidebarBtn = document.getElementById('close-sidebar');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            sidebar.classList.remove('-translate-x-full');
+            sidebarOverlay.classList.remove('hidden');
+        });
+        
+        closeSidebarBtn.addEventListener('click', () => {
+            sidebar.classList.add('-translate-x-full');
+            sidebarOverlay.classList.add('hidden');
+        });
+
+        sidebarOverlay.addEventListener('click', () => {
+            sidebar.classList.add('-translate-x-full');
+            sidebarOverlay.classList.add('hidden');
+        });
+
+        // Submenu Toggle Functionality with Smooth Animations
+        function toggleSubmenu(menuId) {
+            const submenu = document.getElementById(menuId + '-submenu');
+            const arrow = document.getElementById(menuId + '-arrow');
+            
+            if (submenu.classList.contains('hidden')) {
+                // Show submenu with animation
+                submenu.classList.remove('hidden');
+                submenu.style.maxHeight = '0px';
+                submenu.style.opacity = '0';
+                
+                // Trigger reflow
+                submenu.offsetHeight;
+                
+                // Animate in
+                submenu.style.transition = 'max-height 0.3s ease-in-out, opacity 0.3s ease-in-out';
+                submenu.style.maxHeight = '200px';
+                submenu.style.opacity = '1';
+                
+                // Rotate arrow
+                arrow.style.transition = 'transform 0.3s ease-in-out';
+                arrow.style.transform = 'rotate(180deg)';
+            } else {
+                // Hide submenu with animation
+                submenu.style.transition = 'max-height 0.3s ease-in-out, opacity 0.3s ease-in-out';
+                submenu.style.maxHeight = '0px';
+                submenu.style.opacity = '0';
+                
+                // Rotate arrow back
+                arrow.style.transition = 'transform 0.3s ease-in-out';
+                arrow.style.transform = 'rotate(0deg)';
+                
+                // Hide after animation
+                setTimeout(() => {
+                    submenu.classList.add('hidden');
+                }, 300);
+            }
+        }
+
+        // Live Time and Date
+        function updateTime() {
+            const now = new Date();
+            const timeElement = document.getElementById('live-time');
+            const dateElement = document.getElementById('live-date');
+            
+            timeElement.textContent = now.toLocaleTimeString('en-US', {
+                hour12: true,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            
+            dateElement.textContent = now.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+        
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        // Check if accessed via admin route and show admin preview banner
+        if (window.location.pathname.includes('/admin/access/')) {
+            const adminBanner = document.getElementById('admin-preview-banner');
+            if (adminBanner) {
+                adminBanner.style.display = 'block';
+                // Adjust main content padding to account for banner
+                document.querySelector('.pt-16').classList.add('pt-24');
+            }
+        }
+
+        // Initialize navigation highlighting and submenu states based on current page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add active state highlighting based on current page
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('nav a');
+            
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('bg-green-100', 'dark:bg-green-900', 'text-green-700', 'dark:text-green-300');
+                }
+            });
+
+            // Auto-expand Animal Management submenu if on animal management pages
+            if (currentPath.includes('/pig-management') || currentPath.includes('/cow-management') || currentPath.includes('/chicken-management')) {
+                toggleSubmenu('animals');
+            }
+        });
+    </script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

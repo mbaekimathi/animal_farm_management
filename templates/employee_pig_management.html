@@ -1,0 +1,363 @@
+{% extends 'base_employee.html' %}
+
+{% block title %}Pig Management - Smart Animal Farming{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Custom sidebar styling for pig management */
+    .pig-sidebar {
+        background: linear-gradient(135deg, #fdf2f8 0%, #f3e8ff 50%, #dbeafe 100%);
+    }
+    
+    .dark .pig-sidebar {
+        background: linear-gradient(135deg, #1f2937 0%, #312e81 50%, #1e3a8a 100%);
+    }
+    
+    .pig-nav-item {
+        transition: all 0.3s ease;
+    }
+    
+    .pig-nav-item:hover {
+        transform: translateX(8px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* Responsive improvements for pig management */
+    @media (max-width: 1024px) {
+        #pig-sidebar {
+            z-index: 50;
+        }
+        
+        #pig-sidebar-overlay {
+            z-index: 45;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        #pig-sidebar {
+            width: 100vw;
+            max-width: 320px;
+        }
+        
+        .mobile-full-width {
+            width: 100vw;
+            margin-left: 0;
+        }
+        
+        .mobile-padding {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Custom Pig Management Sidebar -->
+<aside id="pig-sidebar" class="fixed left-0 top-0 h-full w-72 pig-sidebar shadow-2xl z-50 transform -translate-x-full lg:translate-x-0 transition-all duration-300 ease-in-out border-r border-gray-200 dark:border-gray-700">
+    <div class="flex flex-col h-full">
+        <!-- Sidebar Header -->
+        <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-gradient-to-br from-pink-500 to-purple-600 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-piggy-bank text-white text-sm"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-white">Pig Management</h2>
+                    <p class="text-xs text-gray-600 dark:text-gray-400">Management Portal</p>
+                </div>
+            </div>
+            <button id="close-pig-sidebar" class="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                <svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Pig Management Navigation -->
+        <nav class="flex-1 p-4 space-y-2 overflow-y-auto nav-scroll">
+            <!-- Register New Pig -->
+            <a href="/employee/pig-management/register" class="pig-nav-item group flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-green-500 hover:to-emerald-600 hover:text-white hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
+                <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 text-white group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-plus text-sm"></i>
+                </div>
+                <span class="font-medium">Register New Pig</span>
+            </a>
+
+            <!-- Health Management -->
+            <a href="/employee/pig-management/health" class="pig-nav-item group flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-red-500 hover:to-pink-600 hover:text-white hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
+                <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-pink-600 text-white group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-heartbeat text-sm"></i>
+                </div>
+                <span class="font-medium">Health Management</span>
+            </a>
+
+            <!-- Breeding Management -->
+            <a href="/employee/pig-management/breeding" class="pig-nav-item group flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-purple-500 hover:to-indigo-600 hover:text-white hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
+                <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-600 text-white group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-dna text-sm"></i>
+                </div>
+                <span class="font-medium">Breeding Management</span>
+            </a>
+
+            <!-- Pig Production -->
+            <a href="/employee/pig-management/pig-production" class="pig-nav-item group flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-500 hover:to-cyan-600 hover:text-white hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
+                <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-600 text-white group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-chart-line text-sm"></i>
+                </div>
+                <span class="font-medium">Pig Production</span>
+            </a>
+
+            <!-- Notifications -->
+            <a href="/employee/pig-management/notifications" class="pig-nav-item group flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-orange-500 hover:to-yellow-600 hover:text-white hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
+                <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-yellow-600 text-white group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-bell text-sm"></i>
+                </div>
+                <span class="font-medium">Notifications</span>
+            </a>
+
+            <!-- Back to Dashboard -->
+            <div class="pt-4 border-t border-gray-200 dark:border-gray-700 mt-4">
+                <a href="/employee/dashboard" class="pig-nav-item group flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-600 dark:text-gray-400 hover:bg-gradient-to-r hover:from-gray-500 hover:to-slate-600 hover:text-white hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
+                    <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-gray-500 to-slate-600 text-white group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-arrow-left text-sm"></i>
+                    </div>
+                    <span class="font-medium">Back to Dashboard</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Sidebar Footer -->
+        <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+            <div class="text-center">
+                <p class="text-xs text-gray-500 dark:text-gray-400">Pig Management System</p>
+            </div>
+        </div>
+    </div>
+</aside>
+
+<!-- Sidebar Overlay for Mobile -->
+<div id="pig-sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-45 hidden lg:hidden"></div>
+
+<!-- Main Content -->
+<main class="pt-16 lg:ml-72 min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <!-- Simple Page Header -->
+        <div class="mb-8">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-pink-500 via-purple-500 to-blue-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-piggy-bank text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Pig Management</h1>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Use the sidebar to navigate pig management features</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Registered Pigs Section -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 mb-8">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-piggy-bank text-white"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Registered Pigs</h2>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">All registered pigs in the system</p>
+                    </div>
+                </div>
+                <a href="/employee/pig-management/register" class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all duration-300 flex items-center space-x-2">
+                    <i class="fas fa-plus"></i>
+                    <span>Add New Pig</span>
+                </a>
+            </div>
+            
+            <!-- Pigs Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                <!-- Sample Pig Cards -->
+                <div class="bg-gradient-to-br from-pink-50 to-purple-50 dark:from-pink-900/20 dark:to-purple-900/20 rounded-xl p-4 border border-pink-200 dark:border-pink-700">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-8 h-8 bg-gradient-to-br from-pink-500 to-purple-600 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-piggy-bank text-white text-sm"></i>
+                        </div>
+                        <span class="text-xs bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 px-2 py-1 rounded-full">Active</span>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 dark:text-white mb-1">Pig #001</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Breed: Yorkshire</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Age: 8 months</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Weight: 120 kg</p>
+                </div>
+                
+                <div class="bg-gradient-to-br from-pink-50 to-purple-50 dark:from-pink-900/20 dark:to-purple-900/20 rounded-xl p-4 border border-pink-200 dark:border-pink-700">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-8 h-8 bg-gradient-to-br from-pink-500 to-purple-600 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-piggy-bank text-white text-sm"></i>
+                        </div>
+                        <span class="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 px-2 py-1 rounded-full">Breeding</span>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 dark:text-white mb-1">Pig #002</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Breed: Duroc</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Age: 12 months</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Weight: 150 kg</p>
+                </div>
+                
+                <div class="bg-gradient-to-br from-pink-50 to-purple-50 dark:from-pink-900/20 dark:to-purple-900/20 rounded-xl p-4 border border-pink-200 dark:border-pink-700">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-8 h-8 bg-gradient-to-br from-pink-500 to-purple-600 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-piggy-bank text-white text-sm"></i>
+                        </div>
+                        <span class="text-xs bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 px-2 py-1 rounded-full">Pregnant</span>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 dark:text-white mb-1">Pig #003</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Breed: Hampshire</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Age: 18 months</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Weight: 180 kg</p>
+                </div>
+                
+                <div class="bg-gradient-to-br from-pink-50 to-purple-50 dark:from-pink-900/20 dark:to-purple-900/20 rounded-xl p-4 border border-pink-200 dark:border-pink-700">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-8 h-8 bg-gradient-to-br from-pink-500 to-purple-600 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-piggy-bank text-white text-sm"></i>
+                        </div>
+                        <span class="text-xs bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 px-2 py-1 rounded-full">Active</span>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 dark:text-white mb-1">Pig #004</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Breed: Landrace</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Age: 6 months</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Weight: 90 kg</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Litters Section -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-baby text-white"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Pig Litters</h2>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Recent litters and piglets</p>
+                    </div>
+                </div>
+                <a href="/employee/pig-management/breeding" class="bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all duration-300 flex items-center space-x-2">
+                    <i class="fas fa-plus"></i>
+                    <span>Add Litter</span>
+                </a>
+            </div>
+            
+            <!-- Litters Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Sample Litter Cards -->
+                <div class="bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-xl p-4 border border-purple-200 dark:border-purple-700">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-baby text-white text-sm"></i>
+                        </div>
+                        <span class="text-xs bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 px-2 py-1 rounded-full">Healthy</span>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 dark:text-white mb-1">Litter #001</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Mother: Pig #003</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Piglets: 8</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Born: 2 weeks ago</p>
+                </div>
+                
+                <div class="bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-xl p-4 border border-purple-200 dark:border-purple-700">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-baby text-white text-sm"></i>
+                        </div>
+                        <span class="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 px-2 py-1 rounded-full">Weaning</span>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 dark:text-white mb-1">Litter #002</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Mother: Pig #005</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Piglets: 6</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Born: 6 weeks ago</p>
+                </div>
+                
+                <div class="bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-xl p-4 border border-purple-200 dark:border-purple-700">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-baby text-white text-sm"></i>
+                        </div>
+                        <span class="text-xs bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 px-2 py-1 rounded-full">New</span>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 dark:text-white mb-1">Litter #003</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Mother: Pig #007</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Piglets: 10</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Born: 3 days ago</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Pig Management Sidebar Functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const pigSidebar = document.getElementById('pig-sidebar');
+        const pigSidebarOverlay = document.getElementById('pig-sidebar-overlay');
+        const closePigSidebar = document.getElementById('close-pig-sidebar');
+        
+        // Mobile menu toggle (if needed)
+        function togglePigSidebar() {
+            if (pigSidebar.classList.contains('-translate-x-full')) {
+                pigSidebar.classList.remove('-translate-x-full');
+                pigSidebarOverlay.classList.remove('hidden');
+            } else {
+                pigSidebar.classList.add('-translate-x-full');
+                pigSidebarOverlay.classList.add('hidden');
+            }
+        }
+        
+        // Close sidebar on mobile
+        if (closePigSidebar) {
+            closePigSidebar.addEventListener('click', () => {
+                pigSidebar.classList.add('-translate-x-full');
+                pigSidebarOverlay.classList.add('hidden');
+            });
+        }
+        
+        // Close sidebar when clicking overlay
+        if (pigSidebarOverlay) {
+            pigSidebarOverlay.addEventListener('click', () => {
+                pigSidebar.classList.add('-translate-x-full');
+                pigSidebarOverlay.classList.add('hidden');
+            });
+        }
+        
+        // Hide default sidebar and show pig sidebar
+        const defaultSidebar = document.getElementById('sidebar');
+        if (defaultSidebar) {
+            defaultSidebar.style.display = 'none';
+        }
+        
+        // Show pig sidebar on desktop, hide on mobile initially
+        if (pigSidebar) {
+            if (window.innerWidth >= 1024) {
+                pigSidebar.classList.remove('-translate-x-full');
+            } else {
+                pigSidebar.classList.add('-translate-x-full');
+            }
+        }
+        
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 1024) {
+                pigSidebar.classList.remove('-translate-x-full');
+                pigSidebarOverlay.classList.add('hidden');
+            } else {
+                pigSidebar.classList.add('-translate-x-full');
+            }
+        });
+        
+        console.log('Pig Management page loaded with custom sidebar');
+    });
+</script>
+{% endblock %}

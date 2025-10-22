@@ -1,0 +1,722 @@
+{% extends "base_employee.html" %}
+
+{% block title %}🐔 Chicken Production Management - AgriTech Pro{% endblock %}
+
+{% block content %}
+<main class="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-red-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-6">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">
+                        <i class="fas fa-chart-line text-yellow-600 mr-3"></i>
+                        Chicken Production Management
+                    </h1>
+                    <p class="text-gray-600 dark:text-gray-400">Track and manage chicken production records</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="text-right">
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Welcome back,</p>
+                        <p class="font-semibold text-gray-900 dark:text-white">{{ user.name }}</p>
+                    </div>
+                    <div class="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-user text-white text-lg"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Production Statistics -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Today's Production -->
+            <div class="bg-gradient-to-br from-yellow-500 to-orange-600 rounded-2xl p-6 text-white shadow-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-yellow-100 text-sm font-medium">Today's Production</p>
+                        <p class="text-3xl font-bold" id="todayProduction">0</p>
+                        <p class="text-yellow-100 text-sm">Items</p>
+                    </div>
+                    <div class="w-16 h-16 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-egg text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Chickens -->
+            <div class="bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl p-6 text-white shadow-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-orange-100 text-sm font-medium">Total Chickens</p>
+                        <p class="text-3xl font-bold" id="totalChickens">0</p>
+                        <p class="text-orange-100 text-sm">Active</p>
+                    </div>
+                    <div class="w-16 h-16 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-chicken text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Average per Chicken -->
+            <div class="bg-gradient-to-br from-red-500 to-pink-600 rounded-2xl p-6 text-white shadow-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-red-100 text-sm font-medium">Avg per Chicken</p>
+                        <p class="text-3xl font-bold" id="avgPerChicken">0</p>
+                        <p class="text-red-100 text-sm">Items (7 days)</p>
+                    </div>
+                    <div class="w-16 h-16 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-chart-bar text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Week's Total -->
+            <div class="bg-gradient-to-br from-pink-500 to-purple-600 rounded-2xl p-6 text-white shadow-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-pink-100 text-sm font-medium">This Week's Total</p>
+                        <p class="text-3xl font-bold" id="weekTotal">0</p>
+                        <p class="text-pink-100 text-sm">Items</p>
+                    </div>
+                    <div class="w-16 h-16 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-calendar-week text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <!-- Record Production -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer" onclick="openChickenProductionModal()">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-plus text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Record Production</h3>
+                        <p class="text-gray-600 dark:text-gray-400">Add new production data</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View Records -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer" onclick="loadProductionRecords()">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-list text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">View Records</h3>
+                        <p class="text-gray-600 dark:text-gray-400">Browse production history</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-chart-pie text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Analytics</h3>
+                        <p class="text-gray-600 dark:text-gray-400">View trends and insights</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Production Records -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-white">All Production Records</h2>
+                <div class="flex items-center space-x-3">
+                    <button onclick="loadProductionRecords()" class="px-4 py-2 bg-gradient-to-r from-blue-500 to-cyan-600 text-white rounded-lg hover:from-blue-600 hover:to-cyan-700 transition-all duration-300">
+                        <i class="fas fa-sync-alt mr-2"></i>
+                        Refresh
+                    </button>
+                    <button onclick="openChickenProductionModal()" class="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all duration-300">
+                        <i class="fas fa-plus mr-2"></i>
+                        Add Record
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Loading State -->
+            <div id="productionLoading" class="text-center py-8">
+                <div class="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <p class="text-gray-600 dark:text-gray-400">Loading production records...</p>
+            </div>
+            
+            <!-- Production Records List -->
+            <div id="productionRecords" class="hidden">
+                <!-- Records will be loaded here -->
+            </div>
+            
+            <!-- Empty State -->
+            <div id="productionEmpty" class="hidden text-center py-8">
+                <div class="w-16 h-16 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-egg text-white text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">No production records yet</h3>
+                <p class="text-gray-600 dark:text-gray-400 mb-4">Start by recording your first chicken production</p>
+                <button onclick="openChickenProductionModal()" class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all duration-300 transform hover:scale-105">
+                    <i class="fas fa-plus mr-2"></i>
+                    Record First Production
+                </button>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Chicken Production Modal -->
+<div id="chickenProductionModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl w-full max-w-4xl max-h-[95vh] overflow-y-auto">
+        <!-- Modal Header -->
+        <div class="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-6 rounded-t-3xl">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-chicken text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Record Chicken Production</h2>
+                        <p class="text-gray-600 dark:text-gray-400">Track eggs and meat production with detailed metrics</p>
+                    </div>
+                </div>
+                <button onclick="closeChickenProductionModal()" class="w-10 h-10 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full flex items-center justify-center transition-colors">
+                    <i class="fas fa-times text-gray-500 dark:text-gray-400"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="p-6">
+            <form id="chickenProductionForm" class="space-y-8">
+                <!-- Basic Information Section -->
+                <div class="bg-gray-50 dark:bg-gray-700 rounded-2xl p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6 flex items-center">
+                        <i class="fas fa-info-circle mr-3 text-blue-500"></i>
+                        Basic Information
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Chicken Selection -->
+                        <div class="lg:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                                <i class="fas fa-chicken mr-2 text-yellow-500"></i>
+                                Select Chicken
+                            </label>
+                            <select id="chickenId" name="chicken_id" required class="w-full px-4 py-4 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:text-white transition-colors text-lg">
+                                <option value="">Choose a chicken...</option>
+                            </select>
+                        </div>
+
+                        <!-- Production Date -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                                <i class="fas fa-calendar mr-2 text-green-500"></i>
+                                Production Date
+                            </label>
+                            <input type="date" id="productionDate" name="production_date" required class="w-full px-4 py-4 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:text-white transition-colors text-lg">
+                        </div>
+
+                        <!-- Production Type -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                                <i class="fas fa-tag mr-2 text-purple-500"></i>
+                                Production Type
+                            </label>
+                            <select id="productionType" name="production_type" required class="w-full px-4 py-4 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:text-white transition-colors text-lg" onchange="toggleMeatProductionFields()">
+                                <option value="">Select type...</option>
+                                <option value="eggs">🥚 Eggs Production</option>
+                                <option value="meat">🥩 Meat Production</option>
+                            </select>
+                        </div>
+
+                        <!-- Quantity -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                                <i class="fas fa-hashtag mr-2 text-orange-500"></i>
+                                Quantity
+                            </label>
+                            <input type="number" id="quantity" name="quantity" min="1" required class="w-full px-4 py-4 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:text-white transition-colors text-lg" placeholder="Enter quantity">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Meat Production Weight Tracking Section -->
+                <div id="meatProductionFields" class="hidden bg-red-50 dark:bg-red-900/20 rounded-2xl p-6 border-2 border-red-200 dark:border-red-800">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6 flex items-center">
+                        <i class="fas fa-weight mr-3 text-red-500"></i>
+                        Meat Production Weight Tracking
+                    </h3>
+                    
+
+                    <!-- Weight Inputs Container -->
+                    <div id="weightInputsContainer" class="space-y-4">
+                        <!-- Weight inputs will be dynamically generated here -->
+                    </div>
+                    
+                    <!-- Auto-generation info -->
+                    <div id="autoGenInfo" class="hidden mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                        <p class="text-sm text-blue-700 dark:text-blue-300">
+                            <i class="fas fa-info-circle mr-2"></i>
+                            Weight input fields are automatically generated based on the quantity you entered.
+                        </p>
+                    </div>
+
+                    <!-- Add Weight Input Button -->
+                    <button type="button" id="addWeightInput" class="mt-6 w-full px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-xl transition-colors font-medium text-sm">
+                        <i class="fas fa-plus mr-2"></i>
+                        Add Additional Weight Entry (Optional)
+                    </button>
+                </div>
+
+                <!-- Notes Section -->
+                <div class="bg-blue-50 dark:bg-blue-900/20 rounded-2xl p-6 border-2 border-blue-200 dark:border-blue-800">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                        <i class="fas fa-sticky-note mr-3 text-blue-500"></i>
+                        Additional Notes
+                    </h3>
+                    <textarea id="notes" name="notes" rows="4" class="w-full px-4 py-4 border-2 border-blue-200 dark:border-blue-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:text-white transition-colors text-lg resize-none" placeholder="Add any additional notes about the production..."></textarea>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="flex items-center justify-end space-x-4 pt-6 border-t-2 border-gray-200 dark:border-gray-700">
+                    <button type="button" onclick="closeChickenProductionModal()" class="px-8 py-4 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors font-medium text-lg">
+                        <i class="fas fa-times mr-2"></i>
+                        Cancel
+                    </button>
+                    <button type="submit" id="submitProductionBtn" class="px-8 py-4 bg-gradient-to-r from-blue-500 to-cyan-600 text-white rounded-xl hover:from-blue-600 hover:to-cyan-700 transition-all duration-300 font-medium text-lg shadow-lg">
+                        <i class="fas fa-save mr-2"></i>
+                        Record Production
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Container -->
+<div id="toastContainer" class="fixed top-4 right-4 z-50 space-y-2"></div>
+
+<script>
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+        // Show chicken production sidebar
+        const chickenProductionSidebar = document.getElementById('chickenProductionSidebar');
+        if (chickenProductionSidebar) {
+            chickenProductionSidebar.classList.remove('-translate-x-full');
+        }
+        
+        // Initialize page
+        loadProductionStats();
+        loadProductionRecords();
+        loadChickens();
+        
+        // Set today's date as default
+        document.getElementById('productionDate').value = new Date().toISOString().split('T')[0];
+        
+        // Auto-refresh production records every 30 seconds
+        setInterval(() => {
+            loadProductionRecords();
+        }, 30000);
+        
+        // Add event listeners for meat production
+        document.getElementById('addWeightInput').addEventListener('click', addWeightInput);
+        document.getElementById('quantity').addEventListener('input', autoGenerateWeightInputs);
+        
+        console.log('Chicken Production page loaded with custom sidebar');
+    });
+
+    // Toggle meat production fields
+    function toggleMeatProductionFields() {
+        const productionType = document.getElementById('productionType').value;
+        const meatFields = document.getElementById('meatProductionFields');
+        
+        if (productionType === 'meat') {
+            meatFields.classList.remove('hidden');
+            // Auto-generate weight inputs if quantity is already set
+            autoGenerateWeightInputs();
+        } else {
+            meatFields.classList.add('hidden');
+        }
+    }
+
+    // Auto-generate weight inputs based on quantity when production type is meat
+    function autoGenerateWeightInputs() {
+        const productionType = document.getElementById('productionType').value;
+        const quantity = parseInt(document.getElementById('quantity').value) || 0;
+        const autoGenInfo = document.getElementById('autoGenInfo');
+        
+        if (productionType === 'meat' && quantity > 0) {
+            // Generate weight inputs directly based on quantity
+            generateWeightInputsFromQuantity(quantity);
+            // Show auto-generation info
+            autoGenInfo.classList.remove('hidden');
+        } else {
+            // Hide auto-generation info and clear weight inputs
+            autoGenInfo.classList.add('hidden');
+            document.getElementById('weightInputsContainer').innerHTML = '';
+        }
+    }
+
+    // Generate weight inputs directly from quantity
+    function generateWeightInputsFromQuantity(quantity) {
+        const container = document.getElementById('weightInputsContainer');
+        
+        container.innerHTML = '';
+        
+        for (let i = 1; i <= quantity; i++) {
+            const weightInput = document.createElement('div');
+            weightInput.className = 'bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600';
+            weightInput.innerHTML = `
+                <h6 class="font-semibold text-gray-900 dark:text-white mb-3">Chicken ${i}</h6>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Alive Weight (kg) *</label>
+                        <input type="number" step="0.001" min="0" name="alive_weight_${i}" class="alive-weight w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Dead Weight (kg) *</label>
+                        <input type="number" step="0.001" min="0" name="dead_weight_${i}" class="dead-weight w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white" required>
+                    </div>
+                </div>
+            `;
+            container.appendChild(weightInput);
+        }
+    }
+
+    // Generate weight inputs based on slaughter count (legacy function for manual additions)
+    function generateWeightInputs() {
+        const slaughterCount = parseInt(document.getElementById('slaughterCount').value) || 0;
+        const container = document.getElementById('weightInputsContainer');
+        
+        container.innerHTML = '';
+        
+        for (let i = 1; i <= slaughterCount; i++) {
+            const weightInput = document.createElement('div');
+            weightInput.className = 'bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600';
+            weightInput.innerHTML = `
+                <h6 class="font-semibold text-gray-900 dark:text-white mb-3">Chicken ${i}</h6>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Alive Weight (kg) *</label>
+                        <input type="number" step="0.001" min="0" name="alive_weight_${i}" class="alive-weight w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Dead Weight (kg) *</label>
+                        <input type="number" step="0.001" min="0" name="dead_weight_${i}" class="dead-weight w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white" required>
+                    </div>
+                </div>
+            `;
+            container.appendChild(weightInput);
+        }
+    }
+
+    // Add weight input manually
+    function addWeightInput() {
+        const container = document.getElementById('weightInputsContainer');
+        const currentCount = container.children.length + 1;
+        
+        const weightInput = document.createElement('div');
+        weightInput.className = 'bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600';
+        weightInput.innerHTML = `
+            <div class="flex justify-between items-center mb-3">
+                <h6 class="font-semibold text-gray-900 dark:text-white">Chicken ${currentCount}</h6>
+                <button type="button" onclick="removeWeightInput(this)" class="text-red-500 hover:text-red-700">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Alive Weight (kg) *</label>
+                    <input type="number" step="0.001" min="0" name="alive_weight_${currentCount}" class="alive-weight w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Dead Weight (kg) *</label>
+                    <input type="number" step="0.001" min="0" name="dead_weight_${currentCount}" class="dead-weight w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white" required>
+                </div>
+            </div>
+        `;
+        container.appendChild(weightInput);
+    }
+
+    // Remove weight input
+    function removeWeightInput(button) {
+        button.closest('.bg-gray-50').remove();
+    }
+
+    // Modal functions
+    function openChickenProductionModal() {
+        document.getElementById('chickenProductionModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeChickenProductionModal() {
+        document.getElementById('chickenProductionModal').classList.add('hidden');
+        document.body.style.overflow = 'auto';
+        document.getElementById('chickenProductionForm').reset();
+        document.getElementById('productionDate').value = new Date().toISOString().split('T')[0];
+    }
+
+    // Load production stats
+    async function loadProductionStats() {
+        try {
+            const response = await fetch('/api/chicken/production/stats');
+            const result = await response.json();
+            
+            if (result.success) {
+                document.getElementById('todayProduction').textContent = result.today_production || 0;
+                document.getElementById('totalChickens').textContent = result.total_chickens || 0;
+                document.getElementById('avgPerChicken').textContent = result.avg_per_chicken || 0;
+                document.getElementById('weekTotal').textContent = result.week_total || 0;
+            }
+        } catch (error) {
+            console.error('Error loading production stats:', error);
+        }
+    }
+
+    // Load production records
+    async function loadProductionRecords() {
+        const productionLoading = document.getElementById('productionLoading');
+        const productionRecords = document.getElementById('productionRecords');
+        const productionEmpty = document.getElementById('productionEmpty');
+        
+        // Show loading state
+        productionLoading.classList.remove('hidden');
+        productionRecords.classList.add('hidden');
+        productionEmpty.classList.add('hidden');
+        
+        try {
+            console.log('Fetching production records...');
+            const response = await fetch('/api/chicken/production/records');
+            console.log('Production response status:', response.status);
+            console.log('Production response ok:', response.ok);
+            
+            const result = await response.json();
+            console.log('Production records response:', result);
+            console.log('Production records response type:', typeof result);
+            console.log('Production records response keys:', Object.keys(result));
+            
+            if (result.success && result.records && Array.isArray(result.records) && result.records.length > 0) {
+                console.log(`Displaying ${result.records.length} production records`);
+                displayProductionRecords(result.records);
+                productionLoading.classList.add('hidden');
+                productionRecords.classList.remove('hidden');
+            } else {
+                console.log('No production records found or API error:', result.message || 'Unknown error');
+                console.log('Result success:', result.success);
+                console.log('Result records:', result.records);
+                console.log('Result records type:', typeof result.records);
+                console.log('Result records length:', result.records ? result.records.length : 'undefined');
+                productionLoading.classList.add('hidden');
+                productionEmpty.classList.remove('hidden');
+            }
+        } catch (error) {
+            console.error('Error loading production records:', error);
+            productionLoading.classList.add('hidden');
+            productionEmpty.classList.remove('hidden');
+            showToast('Error loading production records. Please try again.', 'error');
+        }
+    }
+    
+    // Display production records
+    function displayProductionRecords(records) {
+        const productionRecords = document.getElementById('productionRecords');
+        
+        const recordsHTML = `
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b border-gray-200 dark:border-gray-600">
+                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Date</th>
+                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Time</th>
+                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Chicken</th>
+                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Type</th>
+                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Quantity</th>
+                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${records.map(record => `
+                            <tr class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                <td class="py-4 px-4">
+                                    <span class="text-gray-900 dark:text-white font-medium">
+                                        ${new Date(record.production_date).toLocaleDateString()}
+                                    </span>
+                                </td>
+                                <td class="py-4 px-4">
+                                    <span class="text-gray-600 dark:text-gray-400">
+                                        ${new Date(record.created_at).toLocaleTimeString()}
+                                    </span>
+                                </td>
+                                <td class="py-4 px-4">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-8 h-8 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-chicken text-white text-sm"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-semibold text-gray-900 dark:text-white">${record.name || 'Unknown Chicken'}</p>
+                                            <p class="text-sm text-gray-600 dark:text-gray-400">${record.ear_tag}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-4">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                                        record.production_type === 'eggs' 
+                                            ? 'bg-yellow-100 text-yellow-800 border border-yellow-200' 
+                                            : 'bg-red-100 text-red-800 border border-red-200'
+                                    }">
+                                        <i class="fas fa-${record.production_type === 'eggs' ? 'egg' : 'drumstick-bite'} mr-2"></i>
+                                        ${record.production_type.charAt(0).toUpperCase() + record.production_type.slice(1)}
+                                    </span>
+                                </td>
+                                <td class="py-4 px-4">
+                                    <span class="text-lg font-bold text-yellow-600 dark:text-yellow-400">${record.quantity}</span>
+                                </td>
+                                <td class="py-4 px-4">
+                                    <span class="text-gray-700 dark:text-gray-300">${record.notes || 'No notes'}</span>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+        
+        productionRecords.innerHTML = recordsHTML;
+    }
+
+    // Load chickens for dropdown
+    async function loadChickens() {
+        try {
+            console.log('Fetching chicken list...');
+            const response = await fetch('/api/chicken/list');
+            console.log('Response status:', response.status);
+            console.log('Response ok:', response.ok);
+            
+            const result = await response.json();
+            console.log('Chicken list response:', result);
+            console.log('Chicken list response type:', typeof result);
+            console.log('Chicken list response keys:', Object.keys(result));
+            
+            if (result.success && result.chickens && Array.isArray(result.chickens)) {
+                const chickenSelect = document.getElementById('chickenId');
+                chickenSelect.innerHTML = '<option value="">Choose a chicken...</option>';
+                
+                console.log(`Loading ${result.chickens.length} chickens into dropdown`);
+                
+                result.chickens.forEach(chicken => {
+                    const option = document.createElement('option');
+                    option.value = chicken.id;
+                    option.textContent = `${chicken.chicken_id} - ${chicken.batch_name || 'Unnamed Chicken'}`;
+                    chickenSelect.appendChild(option);
+                });
+            } else {
+                console.log('No chickens found or API error:', result.message || 'Unknown error');
+                console.log('Result success:', result.success);
+                console.log('Result chickens:', result.chickens);
+                console.log('Result chickens type:', typeof result.chickens);
+                console.log('Result chickens length:', result.chickens ? result.chickens.length : 'undefined');
+            }
+        } catch (error) {
+            console.error('Error loading chickens:', error);
+        }
+    }
+
+    // Submit chicken production
+    async function submitChickenProduction() {
+        const form = document.getElementById('chickenProductionForm');
+        const formData = new FormData(form);
+        
+        const data = {
+            chicken_id: formData.get('chicken_id'),
+            production_date: formData.get('production_date'),
+            production_type: formData.get('production_type'),
+            quantity: parseInt(formData.get('quantity')),
+            notes: formData.get('notes')
+        };
+        
+        // Add meat production data if applicable
+        if (data.production_type === 'meat') {
+            const aliveWeights = Array.from(document.querySelectorAll('.alive-weight')).map(input => parseFloat(input.value) || 0);
+            const deadWeights = Array.from(document.querySelectorAll('.dead-weight')).map(input => parseFloat(input.value) || 0);
+            
+            data.alive_weights = aliveWeights;
+            data.dead_weights = deadWeights;
+            data.avg_alive_weight = aliveWeights.reduce((sum, weight) => sum + weight, 0) / aliveWeights.length;
+            data.avg_dead_weight = deadWeights.reduce((sum, weight) => sum + weight, 0) / deadWeights.length;
+        }
+        
+        try {
+            const response = await fetch('/api/chicken/production/record', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                showToast('Chicken production recorded successfully!', 'success');
+                closeChickenProductionModal();
+                loadProductionStats();
+                loadProductionRecords();
+            } else {
+                showToast(result.message || 'Failed to record production', 'error');
+            }
+        } catch (error) {
+            console.error('Error recording production:', error);
+            showToast('Error recording production. Please try again.', 'error');
+        }
+    }
+
+    // Form submission
+    document.getElementById('chickenProductionForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        submitChickenProduction();
+    });
+
+    // Toast notification function
+    function showToast(message, type = 'info') {
+        const toastContainer = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        
+        const colors = {
+            success: 'bg-green-500',
+            error: 'bg-red-500',
+            warning: 'bg-yellow-500',
+            info: 'bg-blue-500'
+        };
+        
+        toast.className = `${colors[type]} text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 translate-x-full`;
+        toast.innerHTML = `
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'times' : type === 'warning' ? 'exclamation' : 'info'}-circle"></i>
+                <span>${message}</span>
+            </div>
+        `;
+        
+        toastContainer.appendChild(toast);
+        
+        // Animate in
+        setTimeout(() => {
+            toast.classList.remove('translate-x-full');
+        }, 100);
+        
+        // Auto remove
+        setTimeout(() => {
+            toast.classList.add('translate-x-full');
+            setTimeout(() => {
+                toastContainer.removeChild(toast);
+            }, 300);
+        }, 3000);
+    }
+</script>
+{% endblock %}

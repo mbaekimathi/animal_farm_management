@@ -1,0 +1,1552 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Production Records - AgriTech Pro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'agri-emerald': {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            200: '#a7f3d0',
+                            300: '#6ee7b7',
+                            400: '#34d399',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                        }
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    animation: {
+                        'fadeIn': 'fadeIn 0.5s ease-in-out',
+                        'slideUp': 'slideUp 0.5s ease-out',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+        
+        .sidebar {
+            transition: transform 0.3s ease-in-out;
+        }
+        .sidebar.closed {
+            transform: translateX(-100%);
+        }
+        @media (min-width: 768px) {
+            .sidebar.closed {
+                transform: translateX(0);
+            }
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 font-inter transition-colors duration-300">
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-700/50 shadow-lg">
+        <div class="flex items-center justify-between px-4 sm:px-6 lg:px-8 h-16">
+            <div class="flex items-center space-x-4">
+                <button id="mobile-menu-btn" class="lg:hidden p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200">
+                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+                
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <span class="text-white font-bold text-lg sm:text-xl">📊</span>
+                    </div>
+                    <div class="hidden sm:block">
+                        <h1 class="text-lg font-bold text-slate-900 dark:text-white">AgriTech Pro</h1>
+                        <p class="text-xs text-slate-600 dark:text-slate-400">Production Records</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <button id="theme-toggle" class="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200">
+                    <svg id="sun-icon" class="w-5 h-5 text-slate-600 dark:text-slate-300 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                    <svg id="moon-icon" class="w-5 h-5 text-slate-600 dark:text-slate-300 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                    </svg>
+                </button>
+                
+                <div class="flex items-center space-x-3">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-sm font-medium text-slate-900 dark:text-white">{{ user.name }}</p>
+                        <p class="text-xs text-slate-600 dark:text-slate-400">{{ user.role }}</p>
+                    </div>
+                    <div class="w-8 h-8 bg-gradient-to-br from-slate-600 to-slate-700 rounded-full flex items-center justify-center">
+                        <span class="text-white font-bold text-sm">{{ user.name[0] }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="fixed top-16 left-0 w-72 h-[calc(100vh-4rem)] bg-white dark:bg-slate-800 border-r border-slate-200/50 dark:border-slate-700/50 shadow-xl z-40 sidebar">
+        <div class="p-6 h-full overflow-y-auto">
+            <!-- Navigation -->
+            <div class="space-y-2">
+                <div class="mb-6">
+                    <h2 class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">Production Records</h2>
+                    
+                    <div class="space-y-1">
+                        <button onclick="showSlaughterRecords()" id="slaughter-tab" class="w-full flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 rounded-xl transition-all duration-200 group">
+                            <div class="w-8 h-8 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                                <span class="text-white font-bold text-sm">🥩</span>
+                            </div>
+                            <span class="font-medium">Slaughter Records</span>
+                        </button>
+                        
+                        <button onclick="showDeathRecords()" id="death-tab" class="w-full flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-gray-900/20 hover:text-gray-600 dark:hover:text-gray-400 rounded-xl transition-all duration-200 group">
+                            <div class="w-8 h-8 bg-gradient-to-br from-gray-500 to-gray-600 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                                <span class="text-white font-bold text-sm">💀</span>
+                            </div>
+                            <span class="font-medium">Death Records</span>
+                        </button>
+                        
+                        <button onclick="showSaleRecords()" id="sale-tab" class="w-full flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-green-50 dark:hover:bg-green-900/20 hover:text-green-600 dark:hover:text-green-400 rounded-xl transition-all duration-200 group">
+                            <div class="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                                <span class="text-white font-bold text-sm">💰</span>
+                            </div>
+                            <span class="font-medium">Sale Records</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- General Navigation -->
+                <div class="border-t border-slate-200/50 dark:border-slate-700/50 pt-4">
+                    <a href="/admin/farm/slaughter" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:text-slate-900 dark:hover:text-white rounded-xl transition-all duration-200 group">
+                        <div class="w-8 h-8 bg-gradient-to-br from-slate-500 to-slate-600 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                            <span class="text-white font-bold text-sm">←</span>
+                        </div>
+                        <span class="font-medium">Back to Slaughter</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Mobile Overlay -->
+    <div id="mobile-overlay" class="fixed inset-0 bg-black/50 z-30 lg:hidden hidden"></div>
+
+    <!-- Main Content -->
+    <main class="pt-16 lg:pl-72 min-h-screen bg-slate-50 dark:bg-slate-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+            <!-- Page Header -->
+            <div class="mb-6 sm:mb-8 animate-fade-in">
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                    <div class="flex-1">
+                        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white mb-2">Production Records</h1>
+                        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400">View all slaughter, death, and sale records</p>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <button onclick="refreshData()" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                            </svg>
+                            Refresh Data
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg border border-slate-200/50 dark:border-slate-700/50">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-slate-600 dark:text-slate-400">Total Slaughtered</p>
+                            <p id="total-slaughtered" class="text-2xl font-bold text-slate-900 dark:text-white">-</p>
+                        </div>
+                        <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center">
+                            <span class="text-white font-bold text-lg">🥩</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg border border-slate-200/50 dark:border-slate-700/50">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-slate-600 dark:text-slate-400">Total Deaths</p>
+                            <p id="total-deaths" class="text-2xl font-bold text-slate-900 dark:text-white">-</p>
+                        </div>
+                        <div class="w-12 h-12 bg-gradient-to-br from-gray-500 to-gray-600 rounded-xl flex items-center justify-center">
+                            <span class="text-white font-bold text-lg">💀</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg border border-slate-200/50 dark:border-slate-700/50">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-slate-600 dark:text-slate-400">Total Sales</p>
+                            <p id="total-sales" class="text-2xl font-bold text-slate-900 dark:text-white">-</p>
+                        </div>
+                        <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center">
+                            <span class="text-white font-bold text-lg">💰</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Records Section -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200/50 dark:border-slate-700/50">
+                <!-- Tab Navigation -->
+                <div class="border-b border-slate-200/50 dark:border-slate-700/50">
+                    <nav class="flex space-x-8 px-6" aria-label="Tabs">
+                        <button onclick="showSlaughterRecords()" id="slaughter-tab-nav" class="py-4 px-1 border-b-2 border-red-500 font-medium text-sm text-red-600 dark:text-red-400">
+                            Slaughter Records
+                        </button>
+                        <button onclick="showDeathRecords()" id="death-tab-nav" class="py-4 px-1 border-b-2 border-transparent font-medium text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300">
+                            Death Records
+                        </button>
+                        <button onclick="showSaleRecords()" id="sale-tab-nav" class="py-4 px-1 border-b-2 border-transparent font-medium text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300">
+                            Sale Records
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Records Content -->
+                <div class="p-6">
+                    <!-- Slaughter Records -->
+                    <div id="slaughter-records" class="space-y-4">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Slaughter Records</h3>
+                            <div class="flex items-center space-x-2">
+                                <span class="text-sm text-slate-600 dark:text-slate-400">Total: <span id="slaughter-count">0</span></span>
+                            </div>
+                        </div>
+                        <div id="slaughter-records-list" class="space-y-3">
+                            <!-- Records will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- Death Records -->
+                    <div id="death-records" class="space-y-4 hidden">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Death Records</h3>
+                            <div class="flex items-center space-x-2">
+                                <span class="text-sm text-slate-600 dark:text-slate-400">Total: <span id="death-count">0</span></span>
+                            </div>
+                        </div>
+                        <div id="death-records-list" class="space-y-3">
+                            <!-- Records will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- Sale Records -->
+                    <div id="sale-records" class="space-y-4 hidden">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Sale Records</h3>
+                            <div class="flex items-center space-x-2">
+                                <span class="text-sm text-slate-600 dark:text-slate-400">Total: <span id="sale-count">0</span></span>
+                            </div>
+                        </div>
+                        <div id="sale-records-list" class="space-y-3">
+                            <!-- Records will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Theme toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+        const html = document.documentElement;
+
+        themeToggle.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            const isDark = html.classList.contains('dark');
+            localStorage.setItem('darkMode', isDark);
+        });
+
+        // Load theme preference
+        const savedTheme = localStorage.getItem('darkMode');
+        if (savedTheme === 'true') {
+            html.classList.add('dark');
+        }
+
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const sidebar = document.getElementById('sidebar');
+        const mobileOverlay = document.getElementById('mobile-overlay');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('closed');
+            mobileOverlay.classList.toggle('hidden');
+        });
+
+        mobileOverlay.addEventListener('click', () => {
+            sidebar.classList.add('closed');
+            mobileOverlay.classList.add('hidden');
+        });
+
+        // Data storage
+        let slaughterRecords = [];
+        let deathRecords = [];
+        let saleRecords = [];
+
+        // Load all data
+        async function loadAllData() {
+            try {
+                await Promise.all([
+                    loadSlaughterRecords(),
+                    loadDeathRecords(),
+                    loadSaleRecords()
+                ]);
+                updateStatistics();
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
+
+        // Load slaughter records
+        async function loadSlaughterRecords() {
+            try {
+                const response = await fetch('/api/slaughter/records');
+                const data = await response.json();
+                
+                if (data.success) {
+                    slaughterRecords = data.records;
+                    console.log('Loaded slaughter records:', slaughterRecords);
+                    displaySlaughterRecords();
+                }
+            } catch (error) {
+                console.error('Error loading slaughter records:', error);
+            }
+        }
+
+        // Load death records
+        async function loadDeathRecords() {
+            try {
+                const response = await fetch('/api/death/records');
+                const data = await response.json();
+                
+                if (data.success) {
+                    deathRecords = data.records;
+                    console.log('Loaded death records:', deathRecords);
+                    displayDeathRecords();
+                }
+            } catch (error) {
+                console.error('Error loading death records:', error);
+            }
+        }
+
+        // Load sale records
+        async function loadSaleRecords() {
+            try {
+                const response = await fetch('/api/sale/records');
+                const data = await response.json();
+                
+                if (data.success) {
+                    saleRecords = data.records;
+                    displaySaleRecords();
+                }
+            } catch (error) {
+                console.error('Error loading sale records:', error);
+            }
+        }
+
+        // Display slaughter records
+        function displaySlaughterRecords() {
+            const container = document.getElementById('slaughter-records-list');
+            const countElement = document.getElementById('slaughter-count');
+            
+            countElement.textContent = slaughterRecords.length;
+            
+            if (slaughterRecords.length === 0) {
+                container.innerHTML = '<div class="text-center py-8 text-slate-500 dark:text-slate-400">No slaughter records found</div>';
+                return;
+            }
+
+            container.innerHTML = slaughterRecords.map(record => `
+                <div class="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4 border border-slate-200/50 dark:border-slate-600/50">
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-3 mb-2">
+                                <span class="px-2 py-1 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 text-xs font-medium rounded-full">
+                                    Slaughter
+                                </span>
+                                ${record.is_edited ? 
+                                    `<button onclick="viewSlaughterAudit(${record.id})" class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline cursor-pointer font-medium" title="Click to view edit history">
+                                        ${new Date(record.slaughter_date).toLocaleDateString()} ✏️
+                                    </button>` :
+                                    `<span class="text-sm text-slate-600 dark:text-slate-400">${new Date(record.slaughter_date).toLocaleDateString()}</span>`
+                                }
+                            </div>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                                <div>
+                                    <span class="text-slate-500 dark:text-slate-400">Type:</span>
+                                    <span class="ml-1 font-medium">${record.pig_type}</span>
+                                </div>
+                                <div>
+                                    <span class="text-slate-500 dark:text-slate-400">Weight:</span>
+                                    <span class="ml-1 font-medium">${record.live_weight}kg</span>
+                                </div>
+                                <div>
+                                    <span class="text-slate-500 dark:text-slate-400">Carcass:</span>
+                                    <span class="ml-1 font-medium">${record.carcass_weight}kg</span>
+                                </div>
+                                <div>
+                                    <span class="text-slate-500 dark:text-slate-400">Revenue:</span>
+                                    <span class="ml-1 font-medium text-green-600 dark:text-green-400">$${record.total_revenue}</span>
+                                </div>
+                            </div>
+                            <div class="mt-2 text-sm text-slate-600 dark:text-slate-400">
+                                Buyer: ${record.buyer_name} | Grade: ${record.meat_grade}
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="editSlaughterRecord(${record.id})" class="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white text-xs rounded-lg transition-colors">
+                                Edit
+                            </button>
+                            <button onclick="deleteSlaughterRecord(${record.id})" class="px-3 py-1 bg-red-500 hover:bg-red-600 text-white text-xs rounded-lg transition-colors">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Display death records
+        function displayDeathRecords() {
+            const container = document.getElementById('death-records-list');
+            const countElement = document.getElementById('death-count');
+            
+            countElement.textContent = deathRecords.length;
+            
+            if (deathRecords.length === 0) {
+                container.innerHTML = '<div class="text-center py-8 text-slate-500 dark:text-slate-400">No death records found</div>';
+                return;
+            }
+
+            container.innerHTML = deathRecords.map(record => `
+                <div class="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4 border border-slate-200/50 dark:border-slate-600/50">
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-3 mb-2">
+                                <span class="px-2 py-1 bg-gray-100 dark:bg-gray-900/30 text-gray-800 dark:text-gray-300 text-xs font-medium rounded-full">
+                                    Death
+                                </span>
+                                ${record.is_edited ? 
+                                    `<button onclick="viewDeathAudit(${record.id})" class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline cursor-pointer font-medium" title="Click to view edit history">
+                                        ${new Date(record.death_date).toLocaleDateString()} ✏️
+                                    </button>` :
+                                    `<span class="text-sm text-slate-600 dark:text-slate-400">${new Date(record.death_date).toLocaleDateString()}</span>`
+                                }
+                            </div>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                                <div>
+                                    <span class="text-slate-500 dark:text-slate-400">Type:</span>
+                                    <span class="ml-1 font-medium">${record.pig_type}</span>
+                                </div>
+                                <div>
+                                    <span class="text-slate-500 dark:text-slate-400">Weight:</span>
+                                    <span class="ml-1 font-medium">${record.weight_at_death}kg</span>
+                                </div>
+                                <div>
+                                    <span class="text-slate-500 dark:text-slate-400">Cause:</span>
+                                    <span class="ml-1 font-medium">${record.cause_of_death}</span>
+                                </div>
+                                <div>
+                                    <span class="text-slate-500 dark:text-slate-400">Age:</span>
+                                    <span class="ml-1 font-medium">${record.age_at_death || 'N/A'}</span>
+                                </div>
+                            </div>
+                            ${record.additional_details ? `<div class="mt-2 text-sm text-slate-600 dark:text-slate-400">Details: ${record.additional_details}</div>` : ''}
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="editDeathRecord(${record.id})" class="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white text-xs rounded-lg transition-colors">
+                                Edit
+                            </button>
+                            <button onclick="deleteDeathRecord(${record.id})" class="px-3 py-1 bg-red-500 hover:bg-red-600 text-white text-xs rounded-lg transition-colors">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Display sale records
+        function displaySaleRecords() {
+            const container = document.getElementById('sale-records-list');
+            const countElement = document.getElementById('sale-count');
+            
+            countElement.textContent = saleRecords.length;
+            
+            if (saleRecords.length === 0) {
+                container.innerHTML = '<div class="text-center py-8 text-slate-500 dark:text-slate-400">No sale records found</div>';
+                return;
+            }
+
+            container.innerHTML = saleRecords.map(record => `
+                <div class="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4 border border-slate-200/50 dark:border-slate-600/50">
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-3 mb-2">
+                                <span class="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 text-xs font-medium rounded-full">
+                                    Sale
+                                </span>
+                                ${record.is_edited ? 
+                                    `<button onclick="viewSaleAudit(${record.id})" class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline cursor-pointer font-medium" title="Click to view edit history">
+                                        ${new Date(record.sale_date).toLocaleDateString()} ✏️
+                                    </button>` :
+                                    `<span class="text-sm text-slate-600 dark:text-slate-400">${new Date(record.sale_date).toLocaleDateString()}</span>`
+                                }
+                            </div>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                                <div>
+                                    <span class="text-slate-500 dark:text-slate-400">Type:</span>
+                                    <span class="ml-1 font-medium">${record.pig_type}</span>
+                                </div>
+                                <div>
+                                    <span class="text-slate-500 dark:text-slate-400">Buyer:</span>
+                                    <span class="ml-1 font-medium">${record.buyer_name}</span>
+                                </div>
+                                <div>
+                                    <span class="text-slate-500 dark:text-slate-400">Price:</span>
+                                    <span class="ml-1 font-medium">$${record.sale_price}</span>
+                                </div>
+                                <div>
+                                    <span class="text-slate-500 dark:text-slate-400">Revenue:</span>
+                                    <span class="ml-1 font-medium text-green-600 dark:text-green-400">$${record.total_revenue}</span>
+                                </div>
+                            </div>
+                            ${record.notes ? `<div class="mt-2 text-sm text-slate-600 dark:text-slate-400">Notes: ${record.notes}</div>` : ''}
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="editSaleRecord(${record.id})" class="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white text-xs rounded-lg transition-colors">
+                                Edit
+                            </button>
+                            <button onclick="deleteSaleRecord(${record.id})" class="px-3 py-1 bg-red-500 hover:bg-red-600 text-white text-xs rounded-lg transition-colors">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Update statistics
+        function updateStatistics() {
+            document.getElementById('total-slaughtered').textContent = slaughterRecords.length;
+            document.getElementById('total-deaths').textContent = deathRecords.length;
+            document.getElementById('total-sales').textContent = saleRecords.length;
+        }
+
+        // Tab switching functions
+        function showSlaughterRecords() {
+            // Hide all sections
+            document.getElementById('slaughter-records').classList.remove('hidden');
+            document.getElementById('death-records').classList.add('hidden');
+            document.getElementById('sale-records').classList.add('hidden');
+            
+            // Update tab navigation
+            document.getElementById('slaughter-tab-nav').classList.add('border-red-500', 'text-red-600', 'dark:text-red-400');
+            document.getElementById('slaughter-tab-nav').classList.remove('border-transparent', 'text-slate-500', 'dark:text-slate-400');
+            
+            document.getElementById('death-tab-nav').classList.remove('border-red-500', 'text-red-600', 'dark:text-red-400');
+            document.getElementById('death-tab-nav').classList.add('border-transparent', 'text-slate-500', 'dark:text-slate-400');
+            
+            document.getElementById('sale-tab-nav').classList.remove('border-red-500', 'text-red-600', 'dark:text-red-400');
+            document.getElementById('sale-tab-nav').classList.add('border-transparent', 'text-slate-500', 'dark:text-slate-400');
+        }
+
+        function showDeathRecords() {
+            // Hide all sections
+            document.getElementById('slaughter-records').classList.add('hidden');
+            document.getElementById('death-records').classList.remove('hidden');
+            document.getElementById('sale-records').classList.add('hidden');
+            
+            // Update tab navigation
+            document.getElementById('death-tab-nav').classList.add('border-red-500', 'text-red-600', 'dark:text-red-400');
+            document.getElementById('death-tab-nav').classList.remove('border-transparent', 'text-slate-500', 'dark:text-slate-400');
+            
+            document.getElementById('slaughter-tab-nav').classList.remove('border-red-500', 'text-red-600', 'dark:text-red-400');
+            document.getElementById('slaughter-tab-nav').classList.add('border-transparent', 'text-slate-500', 'dark:text-slate-400');
+            
+            document.getElementById('sale-tab-nav').classList.remove('border-red-500', 'text-red-600', 'dark:text-red-400');
+            document.getElementById('sale-tab-nav').classList.add('border-transparent', 'text-slate-500', 'dark:text-slate-400');
+        }
+
+        function showSaleRecords() {
+            // Hide all sections
+            document.getElementById('slaughter-records').classList.add('hidden');
+            document.getElementById('death-records').classList.add('hidden');
+            document.getElementById('sale-records').classList.remove('hidden');
+            
+            // Update tab navigation
+            document.getElementById('sale-tab-nav').classList.add('border-red-500', 'text-red-600', 'dark:text-red-400');
+            document.getElementById('sale-tab-nav').classList.remove('border-transparent', 'text-slate-500', 'dark:text-slate-400');
+            
+            document.getElementById('slaughter-tab-nav').classList.remove('border-red-500', 'text-red-600', 'dark:text-red-400');
+            document.getElementById('slaughter-tab-nav').classList.add('border-transparent', 'text-slate-500', 'dark:text-slate-400');
+            
+            document.getElementById('death-tab-nav').classList.remove('border-red-500', 'text-red-600', 'dark:text-red-400');
+            document.getElementById('death-tab-nav').classList.add('border-transparent', 'text-slate-500', 'dark:text-slate-400');
+        }
+
+        // Refresh data function
+        function refreshData() {
+            loadAllData();
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+        });
+
+        // Edit slaughter record
+        function editSlaughterRecord(recordId) {
+            const record = slaughterRecords.find(r => r.id === recordId);
+            if (!record) {
+                alert('Record not found');
+                return;
+            }
+            
+            // Debug: Log the record data
+            console.log('Slaughter record data:', record);
+            console.log('Slaughter date:', record.slaughter_date);
+            
+            // Populate the edit form with current values
+            // Handle date formatting properly
+            let slaughterDate;
+            if (record.slaughter_date) {
+                if (typeof record.slaughter_date === 'string') {
+                    slaughterDate = record.slaughter_date.includes('T') ? 
+                        record.slaughter_date.split('T')[0] : 
+                        record.slaughter_date;
+                } else {
+                    // Handle Date object
+                    slaughterDate = new Date(record.slaughter_date).toISOString().split('T')[0];
+                }
+            } else {
+                slaughterDate = new Date().toISOString().split('T')[0];
+            }
+            
+            console.log('Formatted slaughter date:', slaughterDate);
+            
+            // Check if form elements exist
+            const dateElement = document.getElementById('editSlaughterDate');
+            console.log('Date element found:', dateElement);
+            
+            if (dateElement) {
+                dateElement.value = slaughterDate;
+                console.log('Date value set to:', dateElement.value);
+            } else {
+                console.error('editSlaughterDate element not found!');
+            }
+            
+            document.getElementById('editSlaughterLiveWeight').value = record.live_weight || '';
+            document.getElementById('editSlaughterCarcassWeight').value = record.carcass_weight || '';
+            document.getElementById('editSlaughterBuyer').value = record.buyer_name || '';
+            document.getElementById('editSlaughterPrice').value = record.price_per_kg || '';
+            document.getElementById('editSlaughterRevenue').value = record.total_revenue || '';
+            document.getElementById('editSlaughterGrade').value = record.meat_grade || 'A';
+            document.getElementById('editSlaughterNotes').value = record.notes || '';
+            
+            // Store the record ID for the form submission
+            document.getElementById('editSlaughterForm').dataset.recordId = recordId;
+            
+            // Show the modal
+            showSlaughterEditModal();
+        }
+
+        // Delete slaughter record
+        function deleteSlaughterRecord(recordId) {
+            if (confirm('Are you sure you want to delete this slaughter record? This action cannot be undone.')) {
+                fetch(`/api/slaughter/record/${recordId}/delete`, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (response.status === 404) {
+                        // Record already deleted or doesn't exist
+                        alert('Record not found or already deleted');
+                        loadSlaughterRecords(); // Refresh the list
+                        return;
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data && data.success) {
+                        alert('Slaughter record deleted successfully!');
+                        loadSlaughterRecords();
+                    } else if (data) {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting slaughter record:', error);
+                    alert('Error deleting slaughter record');
+                });
+            }
+        }
+
+        // Edit death record
+        function editDeathRecord(recordId) {
+            const record = deathRecords.find(r => r.id === recordId);
+            if (!record) {
+                alert('Record not found');
+                return;
+            }
+            
+            // Debug: Log the record data
+            console.log('Death record data:', record);
+            console.log('Death date:', record.death_date);
+            
+            // Populate the edit form with current values
+            // Handle date formatting properly
+            let deathDate;
+            if (record.death_date) {
+                if (typeof record.death_date === 'string') {
+                    deathDate = record.death_date.includes('T') ? 
+                        record.death_date.split('T')[0] : 
+                        record.death_date;
+                } else {
+                    // Handle Date object
+                    deathDate = new Date(record.death_date).toISOString().split('T')[0];
+                }
+            } else {
+                deathDate = new Date().toISOString().split('T')[0];
+            }
+            
+            console.log('Formatted death date:', deathDate);
+            
+            // Check if form elements exist
+            const dateElement = document.getElementById('editDeathDate');
+            console.log('Death date element found:', dateElement);
+            
+            if (dateElement) {
+                dateElement.value = deathDate;
+                console.log('Death date value set to:', dateElement.value);
+            } else {
+                console.error('editDeathDate element not found!');
+            }
+            
+            document.getElementById('editDeathWeight').value = record.weight_at_death || '';
+            document.getElementById('editDeathCause').value = record.cause_of_death || '';
+            document.getElementById('editDeathDetails').value = record.additional_details || '';
+            
+            // Store the record ID for the form submission
+            document.getElementById('editDeathForm').dataset.recordId = recordId;
+            
+            // Show the modal
+            showDeathEditModal();
+        }
+
+        // Delete death record
+        function deleteDeathRecord(recordId) {
+            if (confirm('Are you sure you want to delete this death record? This action cannot be undone.')) {
+                fetch(`/api/death/record/${recordId}/delete`, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (response.status === 404) {
+                        // Record already deleted or doesn't exist
+                        alert('Record not found or already deleted');
+                        loadDeathRecords(); // Refresh the list
+                        return;
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data && data.success) {
+                        alert('Death record deleted successfully!');
+                        loadDeathRecords();
+                    } else if (data) {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting death record:', error);
+                    alert('Error deleting death record');
+                });
+            }
+        }
+
+        // Edit sale record
+        function editSaleRecord(recordId) {
+            const record = saleRecords.find(r => r.id === recordId);
+            if (!record) {
+                alert('Record not found');
+                return;
+            }
+            
+            // Populate the edit form with current values
+            // Handle date formatting properly
+            let saleDate;
+            if (record.sale_date) {
+                if (typeof record.sale_date === 'string') {
+                    saleDate = record.sale_date.includes('T') ? 
+                        record.sale_date.split('T')[0] : 
+                        record.sale_date;
+                } else {
+                    // Handle Date object
+                    saleDate = new Date(record.sale_date).toISOString().split('T')[0];
+                }
+            } else {
+                saleDate = new Date().toISOString().split('T')[0];
+            }
+            
+            document.getElementById('editSaleDate').value = saleDate;
+            document.getElementById('editSaleBuyer').value = record.buyer_name || '';
+            document.getElementById('editSaleContact').value = record.buyer_contact || '';
+            document.getElementById('editSalePrice').value = record.sale_price || '';
+            document.getElementById('editSaleRevenue').value = record.total_revenue || '';
+            document.getElementById('editSaleNotes').value = record.notes || '';
+            
+            // Store the record ID for the form submission
+            document.getElementById('editSaleForm').dataset.recordId = recordId;
+            
+            // Show the modal
+            showSaleEditModal();
+        }
+
+        // Delete sale record
+        function deleteSaleRecord(recordId) {
+            if (confirm('Are you sure you want to delete this sale record? This action cannot be undone.')) {
+                fetch(`/api/sale/record/${recordId}/delete`, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (response.status === 404) {
+                        // Record already deleted or doesn't exist
+                        alert('Record not found or already deleted');
+                        loadSaleRecords(); // Refresh the list
+                        return;
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data && data.success) {
+                        alert('Sale record deleted successfully!');
+                        loadSaleRecords();
+                    } else if (data) {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting sale record:', error);
+                    alert('Error deleting sale record');
+                });
+            }
+        }
+
+        // Show/hide edit modals
+        function showSlaughterEditModal() {
+            document.getElementById('slaughterEditModal').classList.remove('hidden');
+        }
+
+        function closeSlaughterEditModal() {
+            document.getElementById('slaughterEditModal').classList.add('hidden');
+        }
+
+        function showDeathEditModal() {
+            document.getElementById('deathEditModal').classList.remove('hidden');
+        }
+
+        function closeDeathEditModal() {
+            document.getElementById('deathEditModal').classList.add('hidden');
+        }
+
+        function showSaleEditModal() {
+            document.getElementById('saleEditModal').classList.remove('hidden');
+        }
+
+        function closeSaleEditModal() {
+            document.getElementById('saleEditModal').classList.add('hidden');
+        }
+
+        // Form submission handlers
+        function submitSlaughterEdit() {
+            const form = document.getElementById('editSlaughterForm');
+            const recordId = form.dataset.recordId;
+            
+            const updateData = {
+                slaughter_date: document.getElementById('editSlaughterDate').value,
+                live_weight: parseFloat(document.getElementById('editSlaughterLiveWeight').value),
+                carcass_weight: parseFloat(document.getElementById('editSlaughterCarcassWeight').value),
+                buyer_name: document.getElementById('editSlaughterBuyer').value,
+                price_per_kg: parseFloat(document.getElementById('editSlaughterPrice').value),
+                total_revenue: parseFloat(document.getElementById('editSlaughterRevenue').value),
+                meat_grade: document.getElementById('editSlaughterGrade').value,
+                notes: document.getElementById('editSlaughterNotes').value
+            };
+            
+            fetch(`/api/slaughter/record/${recordId}/edit`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updateData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Slaughter record updated successfully!');
+                    closeSlaughterEditModal();
+                    loadSlaughterRecords();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error updating slaughter record:', error);
+                alert('Error updating slaughter record');
+            });
+        }
+
+        function submitDeathEdit() {
+            const form = document.getElementById('editDeathForm');
+            const recordId = form.dataset.recordId;
+            
+            const updateData = {
+                death_date: document.getElementById('editDeathDate').value,
+                cause_of_death: document.getElementById('editDeathCause').value,
+                weight_at_death: parseFloat(document.getElementById('editDeathWeight').value),
+                additional_details: document.getElementById('editDeathDetails').value
+            };
+            
+            fetch(`/api/death/record/${recordId}/edit`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updateData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Death record updated successfully!');
+                    closeDeathEditModal();
+                    loadDeathRecords();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error updating death record:', error);
+                alert('Error updating death record');
+            });
+        }
+
+        function submitSaleEdit() {
+            const form = document.getElementById('editSaleForm');
+            const recordId = form.dataset.recordId;
+            
+            const updateData = {
+                sale_date: document.getElementById('editSaleDate').value,
+                buyer_name: document.getElementById('editSaleBuyer').value,
+                buyer_contact: document.getElementById('editSaleContact').value,
+                sale_price: parseFloat(document.getElementById('editSalePrice').value),
+                total_revenue: parseFloat(document.getElementById('editSaleRevenue').value),
+                notes: document.getElementById('editSaleNotes').value
+            };
+            
+            fetch(`/api/sale/record/${recordId}/edit`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updateData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Sale record updated successfully!');
+                    closeSaleEditModal();
+                    loadSaleRecords();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error updating sale record:', error);
+                alert('Error updating sale record');
+            });
+        }
+
+        // View slaughter audit history
+        function viewSlaughterAudit(recordId) {
+            fetch(`/api/slaughter/record/${recordId}/audit`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showSlaughterAuditModal(data.audit_records);
+                    } else {
+                        alert('Failed to load audit history');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading audit history:', error);
+                    alert('Error loading audit history');
+                });
+        }
+
+        // View death audit history
+        function viewDeathAudit(recordId) {
+            fetch(`/api/death/record/${recordId}/audit`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showDeathAuditModal(data.audit_records);
+                    } else {
+                        alert('Failed to load audit history');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading audit history:', error);
+                    alert('Error loading audit history');
+                });
+        }
+
+        // View sale audit history
+        function viewSaleAudit(recordId) {
+            fetch(`/api/sale/record/${recordId}/audit`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showSaleAuditModal(data.audit_records);
+                    } else {
+                        alert('Failed to load audit history');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading audit history:', error);
+                    alert('Error loading audit history');
+                });
+        }
+
+        // Show slaughter audit modal
+        function showSlaughterAuditModal(auditRecords) {
+            const modal = document.getElementById('slaughterAuditModal');
+            const modalContent = modal.querySelector('.bg-white, .dark\\:bg-slate-800');
+            const tbody = document.getElementById('slaughterAuditTableBody');
+            
+            if (auditRecords.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                            No edit history found for this record
+                        </td>
+                    </tr>
+                `;
+            } else {
+                tbody.innerHTML = auditRecords.map(record => `
+                    <tr class="hover:bg-gray-50 dark:hover:bg-slate-700/50">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                            ${record.field_name.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            ${record.old_value || '-'}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            ${record.new_value || '-'}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            ${record.edited_by_name}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            ${new Date(record.edited_at).toLocaleString()}
+                        </td>
+                    </tr>
+                `).join('');
+            }
+            
+            modal.classList.remove('hidden');
+            
+            // Force a reflow to ensure the modal is visible before animation
+            modal.offsetHeight;
+            setTimeout(() => {
+                if (modalContent) {
+                    modalContent.classList.remove('scale-95', 'opacity-0');
+                    modalContent.classList.add('scale-100', 'opacity-100');
+                }
+            }, 10);
+        }
+
+        // Show death audit modal
+        function showDeathAuditModal(auditRecords) {
+            const modal = document.getElementById('deathAuditModal');
+            const modalContent = modal.querySelector('.bg-white, .dark\\:bg-slate-800');
+            const tbody = document.getElementById('deathAuditTableBody');
+            
+            if (auditRecords.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                            No edit history found for this record
+                        </td>
+                    </tr>
+                `;
+            } else {
+                tbody.innerHTML = auditRecords.map(record => `
+                    <tr class="hover:bg-gray-50 dark:hover:bg-slate-700/50">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                            ${record.field_name.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            ${record.old_value || '-'}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            ${record.new_value || '-'}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            ${record.edited_by_name}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            ${new Date(record.edited_at).toLocaleString()}
+                        </td>
+                    </tr>
+                `).join('');
+            }
+            
+            modal.classList.remove('hidden');
+            
+            // Force a reflow to ensure the modal is visible before animation
+            modal.offsetHeight;
+            setTimeout(() => {
+                if (modalContent) {
+                    modalContent.classList.remove('scale-95', 'opacity-0');
+                    modalContent.classList.add('scale-100', 'opacity-100');
+                }
+            }, 10);
+        }
+
+        // Show sale audit modal
+        function showSaleAuditModal(auditRecords) {
+            const modal = document.getElementById('saleAuditModal');
+            const modalContent = modal.querySelector('.bg-white, .dark\\:bg-slate-800');
+            const tbody = document.getElementById('saleAuditTableBody');
+            
+            if (auditRecords.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                            No edit history found for this record
+                        </td>
+                    </tr>
+                `;
+            } else {
+                tbody.innerHTML = auditRecords.map(record => `
+                    <tr class="hover:bg-gray-50 dark:hover:bg-slate-700/50">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                            ${record.field_name.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            ${record.old_value || '-'}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            ${record.new_value || '-'}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            ${record.edited_by_name}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            ${new Date(record.edited_at).toLocaleString()}
+                        </td>
+                    </tr>
+                `).join('');
+            }
+            
+            modal.classList.remove('hidden');
+            
+            // Force a reflow to ensure the modal is visible before animation
+            modal.offsetHeight;
+            setTimeout(() => {
+                if (modalContent) {
+                    modalContent.classList.remove('scale-95', 'opacity-0');
+                    modalContent.classList.add('scale-100', 'opacity-100');
+                }
+            }, 10);
+        }
+
+        // Close slaughter audit modal
+        function closeSlaughterAuditModal() {
+            const modal = document.getElementById('slaughterAuditModal');
+            const modalContent = modal.querySelector('.bg-white, .dark\\:bg-slate-800');
+            
+            if (modalContent) {
+                modalContent.classList.remove('scale-100', 'opacity-100');
+                modalContent.classList.add('scale-95', 'opacity-0');
+            }
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        // Close death audit modal
+        function closeDeathAuditModal() {
+            const modal = document.getElementById('deathAuditModal');
+            const modalContent = modal.querySelector('.bg-white, .dark\\:bg-slate-800');
+            
+            if (modalContent) {
+                modalContent.classList.remove('scale-100', 'opacity-100');
+                modalContent.classList.add('scale-95', 'opacity-0');
+            }
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        // Close sale audit modal
+        function closeSaleAuditModal() {
+            const modal = document.getElementById('saleAuditModal');
+            const modalContent = modal.querySelector('.bg-white, .dark\\:bg-slate-800');
+            
+            if (modalContent) {
+                modalContent.classList.remove('scale-100', 'opacity-100');
+                modalContent.classList.add('scale-95', 'opacity-0');
+            }
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+    </script>
+
+    <!-- Slaughter Audit Modal -->
+    <div id="slaughterAuditModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden z-50 transition-all duration-300">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto transform scale-95 opacity-0 transition-all duration-300">
+                <!-- Modal Header -->
+                <div class="px-6 py-6 border-b border-gray-200 dark:border-slate-700">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg">
+                                <i class="fas fa-history text-white text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-900 dark:text-white">Slaughter Record Edit History</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">View all changes made to this slaughter record</p>
+                            </div>
+                        </div>
+                        <button onclick="closeSlaughterAuditModal()" class="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-xl transition-all duration-200">
+                            <i class="fas fa-times text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="p-6">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
+                            <thead class="bg-gray-50 dark:bg-slate-700">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Field</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Old Value</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">New Value</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Edited By</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Date & Time</th>
+                                </tr>
+                            </thead>
+                            <tbody id="slaughterAuditTableBody" class="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
+                                <!-- Audit records will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="px-6 py-4 bg-gray-50 dark:bg-slate-700/50 rounded-b-2xl">
+                    <div class="flex justify-end">
+                        <button onclick="closeSlaughterAuditModal()" class="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Death Audit Modal -->
+    <div id="deathAuditModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden z-50 transition-all duration-300">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto transform scale-95 opacity-0 transition-all duration-300">
+                <!-- Modal Header -->
+                <div class="px-6 py-6 border-b border-gray-200 dark:border-slate-700">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-gradient-to-br from-gray-500 to-gray-600 rounded-xl flex items-center justify-center shadow-lg">
+                                <i class="fas fa-history text-white text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-900 dark:text-white">Death Record Edit History</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">View all changes made to this death record</p>
+                            </div>
+                        </div>
+                        <button onclick="closeDeathAuditModal()" class="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-xl transition-all duration-200">
+                            <i class="fas fa-times text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="p-6">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
+                            <thead class="bg-gray-50 dark:bg-slate-700">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Field</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Old Value</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">New Value</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Edited By</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Date & Time</th>
+                                </tr>
+                            </thead>
+                            <tbody id="deathAuditTableBody" class="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
+                                <!-- Audit records will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="px-6 py-4 bg-gray-50 dark:bg-slate-700/50 rounded-b-2xl">
+                    <div class="flex justify-end">
+                        <button onclick="closeDeathAuditModal()" class="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sale Audit Modal -->
+    <div id="saleAuditModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden z-50 transition-all duration-300">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto transform scale-95 opacity-0 transition-all duration-300">
+                <!-- Modal Header -->
+                <div class="px-6 py-6 border-b border-gray-200 dark:border-slate-700">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
+                                <i class="fas fa-history text-white text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-900 dark:text-white">Sale Record Edit History</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">View all changes made to this sale record</p>
+                            </div>
+                        </div>
+                        <button onclick="closeSaleAuditModal()" class="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-xl transition-all duration-200">
+                            <i class="fas fa-times text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="p-6">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
+                            <thead class="bg-gray-50 dark:bg-slate-700">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Field</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Old Value</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">New Value</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Edited By</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Date & Time</th>
+                                </tr>
+                            </thead>
+                            <tbody id="saleAuditTableBody" class="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
+                                <!-- Audit records will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="px-6 py-4 bg-gray-50 dark:bg-slate-700/50 rounded-b-2xl">
+                    <div class="flex justify-end">
+                        <button onclick="closeSaleAuditModal()" class="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slaughter Edit Modal -->
+    <div id="slaughterEditModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Edit Slaughter Record</h3>
+            <form id="editSlaughterForm">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Slaughter Date</label>
+                        <input type="date" id="editSlaughterDate" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Live Weight (kg)</label>
+                        <input type="number" id="editSlaughterLiveWeight" step="0.1" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Carcass Weight (kg)</label>
+                        <input type="number" id="editSlaughterCarcassWeight" step="0.1" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Buyer Name</label>
+                        <input type="text" id="editSlaughterBuyer" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Price per kg</label>
+                        <input type="number" id="editSlaughterPrice" step="0.01" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Total Revenue</label>
+                        <input type="number" id="editSlaughterRevenue" step="0.01" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Meat Grade</label>
+                        <select id="editSlaughterGrade" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            <option value="A">Grade A</option>
+                            <option value="B">Grade B</option>
+                            <option value="C">Grade C</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Notes</label>
+                        <textarea id="editSlaughterNotes" rows="3" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button type="button" onclick="closeSlaughterEditModal()" class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-600 hover:bg-gray-200 dark:hover:bg-gray-500 rounded-md">
+                        Cancel
+                    </button>
+                    <button type="button" onclick="submitSlaughterEdit()" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md">
+                        Update Record
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Death Edit Modal -->
+    <div id="deathEditModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Edit Death Record</h3>
+            <form id="editDeathForm">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Death Date</label>
+                        <input type="date" id="editDeathDate" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Weight at Death (kg)</label>
+                        <input type="number" id="editDeathWeight" step="0.1" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Cause of Death</label>
+                        <input type="text" id="editDeathCause" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Additional Details</label>
+                        <textarea id="editDeathDetails" rows="3" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button type="button" onclick="closeDeathEditModal()" class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-600 hover:bg-gray-200 dark:hover:bg-gray-500 rounded-md">
+                        Cancel
+                    </button>
+                    <button type="button" onclick="submitDeathEdit()" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md">
+                        Update Record
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Sale Edit Modal -->
+    <div id="saleEditModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Edit Sale Record</h3>
+            <form id="editSaleForm">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Sale Date</label>
+                        <input type="date" id="editSaleDate" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Buyer Name</label>
+                        <input type="text" id="editSaleBuyer" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Buyer Contact</label>
+                        <input type="text" id="editSaleContact" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Sale Price</label>
+                        <input type="number" id="editSalePrice" step="0.01" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Total Revenue</label>
+                        <input type="number" id="editSaleRevenue" step="0.01" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Notes</label>
+                        <textarea id="editSaleNotes" rows="3" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button type="button" onclick="closeSaleEditModal()" class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-600 hover:bg-gray-200 dark:hover:bg-gray-500 rounded-md">
+                        Cancel
+                    </button>
+                    <button type="button" onclick="submitSaleEdit()" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md">
+                        Update Record
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

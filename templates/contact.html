@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Smart Animal Farming - Get in Touch</title>
+    <meta name="description" content="Contact Smart Animal Farming for smart farming solutions. Get support, schedule demos, or learn more about our agricultural technology platform.">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <style>
+        .font-poppins { font-family: 'Poppins', sans-serif; }
+        .font-inter { font-family: 'Inter', sans-serif; }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #00A86B, #FF7A00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+        
+        .form-input {
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 168, 107, 0.2);
+        }
+        
+        .contact-icon {
+            transition: all 0.3s ease;
+        }
+        
+        .contact-icon:hover {
+            transform: scale(1.1);
+        }
+        
+        /* Mobile menu animations */
+        #mobile-menu {
+            transition: all 0.3s ease-in-out;
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+        
+        #mobile-menu.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        #mobile-menu-button i {
+            transition: transform 0.3s ease;
+        }
+        
+        #mobile-menu-button:hover i {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body class="font-inter bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white/95 backdrop-blur-md shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center">
+                    <a href="/" class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-orange-500 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-seedling text-white text-xl"></i>
+                        </div>
+                        <span class="text-2xl font-bold gradient-text">Smart Animal Farming</span>
+                    </a>
+                </div>
+                
+                <div class="hidden lg:flex items-center space-x-8">
+                    <a href="/" class="text-gray-700 hover:text-green-600 transition-colors">Home</a>
+                    <a href="/solutions" class="text-gray-700 hover:text-green-600 transition-colors">Solutions</a>
+                    <a href="/features" class="text-gray-700 hover:text-green-600 transition-colors">Features</a>
+                    <a href="/about" class="text-gray-700 hover:text-green-600 transition-colors">About</a>
+                    <a href="/contact" class="text-green-600 font-semibold">Contact</a>
+                </div>
+                
+                <div class="hidden lg:flex items-center space-x-4">
+                    <a href="/employee/login" class="text-gray-700 hover:text-green-600 transition-colors">Login</a>
+                    <a href="/employee/signup" class="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-2 rounded-full font-semibold hover:shadow-lg transition-all">Get Started</a>
+                </div>
+                
+                <button id="mobile-menu-button" class="lg:hidden text-gray-700 hover:text-green-600 transition-colors">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+            
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="lg:hidden hidden bg-white border-t border-gray-200">
+                <div class="px-4 py-6 space-y-4">
+                    <a href="/" class="block text-gray-700 hover:text-green-600 transition-colors py-2">Home</a>
+                    <a href="/solutions" class="block text-gray-700 hover:text-green-600 transition-colors py-2">Solutions</a>
+                    <a href="/features" class="block text-gray-700 hover:text-green-600 transition-colors py-2">Features</a>
+                    <a href="/about" class="block text-gray-700 hover:text-green-600 transition-colors py-2">About</a>
+                    <a href="/contact" class="block text-green-600 font-semibold py-2">Contact</a>
+                    <div class="border-t border-gray-200 pt-4 mt-4">
+                        <a href="/employee/login" class="block text-gray-700 hover:text-green-600 transition-colors py-2">Login</a>
+                        <a href="/employee/signup" class="block bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-full font-semibold text-center hover:shadow-lg transition-all">Get Started</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-br from-green-50 to-orange-50 py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-5xl md:text-6xl font-bold text-gray-900 mb-6" data-aos="fade-up">
+                Get in <span class="gradient-text">Touch</span>
+            </h1>
+            <p class="text-xl text-gray-600 mb-8 max-w-3xl mx-auto" data-aos="fade-up" data-aos-delay="100">
+                Ready to transform your farm with smart technology? Contact our team for personalized 
+                support, product demos, or to learn more about our solutions.
+            </p>
+        </div>
+    </section>
+
+    <!-- Contact Form & Information -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <!-- Contact Form -->
+                <div data-aos="fade-right">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-6">Send Us a Message</h2>
+                    <p class="text-gray-600 mb-8">
+                        Have questions about our smart farming solutions? Fill out the form below 
+                        and our team will get back to you within 24 hours.
+                    </p>
+                    
+                    <form class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="firstName" class="block text-sm font-semibold text-gray-700 mb-2">First Name</label>
+                                <input type="text" id="firstName" name="firstName" 
+                                       class="form-input w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                       placeholder="Enter your first name">
+                            </div>
+                            <div>
+                                <label for="lastName" class="block text-sm font-semibold text-gray-700 mb-2">Last Name</label>
+                                <input type="text" id="lastName" name="lastName" 
+                                       class="form-input w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                       placeholder="Enter your last name">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
+                            <input type="email" id="email" name="email" 
+                                   class="form-input w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                   placeholder="Enter your email address">
+                        </div>
+                        
+                        <div>
+                            <label for="phone" class="block text-sm font-semibold text-gray-700 mb-2">Phone Number</label>
+                            <input type="tel" id="phone" name="phone" 
+                                   class="form-input w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                   placeholder="Enter your phone number">
+                        </div>
+                        
+                        <div>
+                            <label for="farmType" class="block text-sm font-semibold text-gray-700 mb-2">Farm Type</label>
+                            <select id="farmType" name="farmType" 
+                                    class="form-input w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                                <option value="">Select your farm type</option>
+                                <option value="dairy">Dairy Farming</option>
+                                <option value="beef">Beef Cattle</option>
+                                <option value="poultry">Poultry Farming</option>
+                                <option value="pig">Pig Farming</option>
+                                <option value="mixed">Mixed Farming</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label for="message" class="block text-sm font-semibold text-gray-700 mb-2">Message</label>
+                            <textarea id="message" name="message" rows="4" 
+                                      class="form-input w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                      placeholder="Tell us about your farming needs and how we can help..."></textarea>
+                        </div>
+                        
+                        <button type="submit" 
+                                class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white px-8 py-4 rounded-xl font-semibold hover:shadow-lg transition-all">
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Contact Information -->
+                <div data-aos="fade-left">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-6">Contact Information</h2>
+                    <p class="text-gray-600 mb-8">
+                        Get in touch with us through any of the following channels. We're here to help 
+                        you succeed with smart farming technology.
+                    </p>
+                    
+                    <div class="space-y-6">
+                        <!-- Phone -->
+                        <div class="card-hover bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center flex-shrink-0 contact-icon">
+                                    <i class="fas fa-phone text-white text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-1">Phone</h3>
+                                    <p class="text-gray-600 mb-2">Call us for immediate support</p>
+                                    <p class="text-green-600 font-semibold">+254 700 123 456</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="card-hover bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center flex-shrink-0 contact-icon">
+                                    <i class="fas fa-envelope text-white text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-1">Email</h3>
+                                    <p class="text-gray-600 mb-2">Send us an email anytime</p>
+                                    <p class="text-blue-600 font-semibold">info@jotechsolutions.com</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Address -->
+                        <div class="card-hover bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center flex-shrink-0 contact-icon">
+                                    <i class="fas fa-map-marker-alt text-white text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-1">Address</h3>
+                                    <p class="text-gray-600 mb-2">Visit our office</p>
+                                    <p class="text-orange-600 font-semibold">
+                                        Westlands Business Centre<br>
+                                        Nairobi, Kenya
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Business Hours -->
+                        <div class="card-hover bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0 contact-icon">
+                                    <i class="fas fa-clock text-white text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-1">Business Hours</h3>
+                                    <p class="text-gray-600 mb-2">When we're available</p>
+                                    <div class="text-purple-600 font-semibold">
+                                        <p>Monday - Friday: 8:00 AM - 6:00 PM</p>
+                                        <p>Saturday: 9:00 AM - 2:00 PM</p>
+                                        <p>Sunday: Closed</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Support Options -->
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-900 mb-6" data-aos="fade-up">
+                    How Can We Help You?
+                </h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto" data-aos="fade-up" data-aos-delay="100">
+                    Choose the support option that best fits your needs. Our team is ready to assist you 
+                    with everything from product demos to technical support.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Product Demo -->
+                <div class="card-hover bg-white rounded-2xl p-8 shadow-lg border border-gray-100 text-center" data-aos="fade-up" data-aos-delay="100">
+                    <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-desktop text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Product Demo</h3>
+                    <p class="text-gray-600 mb-6">
+                        Schedule a personalized demo to see how our platform can transform your farm operations.
+                    </p>
+                    <a href="#" class="inline-block bg-green-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-green-600 transition-colors">
+                        Schedule Demo
+                    </a>
+                </div>
+
+                <!-- Technical Support -->
+                <div class="card-hover bg-white rounded-2xl p-8 shadow-lg border border-gray-100 text-center" data-aos="fade-up" data-aos-delay="200">
+                    <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-headset text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Technical Support</h3>
+                    <p class="text-gray-600 mb-6">
+                        Get help with technical issues, platform setup, and troubleshooting from our expert team.
+                    </p>
+                    <a href="#" class="inline-block bg-blue-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-600 transition-colors">
+                        Get Support
+                    </a>
+                </div>
+
+                <!-- Training -->
+                <div class="card-hover bg-white rounded-2xl p-8 shadow-lg border border-gray-100 text-center" data-aos="fade-up" data-aos-delay="300">
+                    <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-graduation-cap text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Training & Onboarding</h3>
+                    <p class="text-gray-600 mb-6">
+                        Comprehensive training programs to help you and your team master our platform.
+                    </p>
+                    <a href="#" class="inline-block bg-purple-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-purple-600 transition-colors">
+                        Learn More
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="py-20 bg-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-900 mb-6" data-aos="fade-up">
+                    Frequently Asked Questions
+                </h2>
+                <p class="text-xl text-gray-600" data-aos="fade-up" data-aos-delay="100">
+                    Find answers to common questions about our smart farming platform.
+                </p>
+            </div>
+
+            <div class="space-y-6">
+                <div class="card-hover bg-white rounded-2xl p-6 shadow-lg border border-gray-100" data-aos="fade-up" data-aos-delay="100">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">How quickly can I get started with the platform?</h3>
+                    <p class="text-gray-600">
+                        You can start using our platform immediately after signing up. Our onboarding process 
+                        takes just 15 minutes, and you'll have access to all features during your free trial period.
+                    </p>
+                </div>
+
+                <div class="card-hover bg-white rounded-2xl p-6 shadow-lg border border-gray-100" data-aos="fade-up" data-aos-delay="200">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Do I need technical expertise to use the platform?</h3>
+                    <p class="text-gray-600">
+                        Not at all! Our platform is designed to be user-friendly for farmers of all technical levels. 
+                        We provide comprehensive training and support to ensure you can use all features effectively.
+                    </p>
+                </div>
+
+                <div class="card-hover bg-white rounded-2xl p-6 shadow-lg border border-gray-100" data-aos="fade-up" data-aos-delay="300">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">What types of farms can use your platform?</h3>
+                    <p class="text-gray-600">
+                        Our platform is designed for all types of livestock farming including dairy, beef, poultry, 
+                        and pig farming. We also support mixed farming operations and can customize features for specific needs.
+                    </p>
+                </div>
+
+                <div class="card-hover bg-white rounded-2xl p-6 shadow-lg border border-gray-100" data-aos="fade-up" data-aos-delay="400">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Is my farm data secure?</h3>
+                    <p class="text-gray-600">
+                        Absolutely! We use enterprise-grade security with end-to-end encryption, secure cloud storage, 
+                        and comply with international data protection standards. Your data is always safe with us.
+                    </p>
+                </div>
+
+                <div class="card-hover bg-white rounded-2xl p-6 shadow-lg border border-gray-100" data-aos="fade-up" data-aos-delay="500">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Do you offer mobile access?</h3>
+                    <p class="text-gray-600">
+                        Yes! Our platform is fully mobile-optimized and works on smartphones and tablets. You can access 
+                        all features, record data, and monitor your farm from anywhere with an internet connection.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 bg-gradient-to-r from-green-600 to-orange-600">
+        <div class="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl font-bold text-white mb-6" data-aos="fade-up">
+                Ready to Get Started?
+            </h2>
+            <p class="text-xl text-white/90 mb-8" data-aos="fade-up" data-aos-delay="100">
+                Join thousands of farmers who have already transformed their operations with our smart farming platform.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center" data-aos="fade-up" data-aos-delay="200">
+                <a href="/employee/signup" class="bg-white text-green-600 px-8 py-4 rounded-full font-semibold hover:shadow-lg transition-all">
+                    Start Free Trial
+                </a>
+                <a href="tel:+254700123456" class="border-2 border-white text-white px-8 py-4 rounded-full font-semibold hover:bg-white hover:text-green-600 transition-all">
+                    Call Us Now
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-2xl font-bold mb-4">Smart Animal Farming</h3>
+                    <p class="text-gray-400 mb-4">Smart farming solutions for modern agriculture.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-facebook text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-twitter text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-linkedin text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Solutions</h4>
+                    <ul class="space-y-2">
+                        <li><a href="/solutions" class="text-gray-400 hover:text-white transition-colors">Cattle Management</a></li>
+                        <li><a href="/solutions" class="text-gray-400 hover:text-white transition-colors">Pig Management</a></li>
+                        <li><a href="/solutions" class="text-gray-400 hover:text-white transition-colors">Poultry Management</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Company</h4>
+                    <ul class="space-y-2">
+                        <li><a href="/about" class="text-gray-400 hover:text-white transition-colors">About Us</a></li>
+                        <li><a href="/contact" class="text-gray-400 hover:text-white transition-colors">Contact</a></li>
+                        <li><a href="/features" class="text-gray-400 hover:text-white transition-colors">Features</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Support</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Help Center</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Documentation</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">API</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 Smart Animal Farming. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Initialize AOS -->
+    <script>
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true
+        });
+        
+        // Mobile menu functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const menuIcon = mobileMenuButton.querySelector('i');
+            
+            mobileMenuButton.addEventListener('click', function() {
+                // Toggle mobile menu visibility
+                if (mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.remove('hidden');
+                    // Use setTimeout to ensure the element is visible before adding animation class
+                    setTimeout(() => {
+                        mobileMenu.classList.add('show');
+                    }, 10);
+                    menuIcon.classList.remove('fa-bars');
+                    menuIcon.classList.add('fa-times');
+                } else {
+                    mobileMenu.classList.remove('show');
+                    // Wait for animation to complete before hiding
+                    setTimeout(() => {
+                        mobileMenu.classList.add('hidden');
+                    }, 300);
+                    menuIcon.classList.remove('fa-times');
+                    menuIcon.classList.add('fa-bars');
+                }
+            });
+            
+            // Close mobile menu when clicking on a link
+            const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+            mobileMenuLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    mobileMenu.classList.remove('show');
+                    setTimeout(() => {
+                        mobileMenu.classList.add('hidden');
+                    }, 300);
+                    menuIcon.classList.remove('fa-times');
+                    menuIcon.classList.add('fa-bars');
+                });
+            });
+            
+            // Close mobile menu when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!mobileMenuButton.contains(event.target) && !mobileMenu.contains(event.target)) {
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.remove('show');
+                        setTimeout(() => {
+                            mobileMenu.classList.add('hidden');
+                        }, 300);
+                        menuIcon.classList.remove('fa-times');
+                        menuIcon.classList.add('fa-bars');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

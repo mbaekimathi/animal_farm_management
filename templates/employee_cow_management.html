@@ -1,0 +1,245 @@
+{% extends 'base_employee.html' %}
+
+{% block title %}Cow Management - Smart Animal Farming{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Custom sidebar styling for cow management */
+    .cow-sidebar {
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #f59e0b 100%);
+    }
+    
+    .dark .cow-sidebar {
+        background: linear-gradient(135deg, #1f2937 0%, #92400e 50%, #d97706 100%);
+    }
+    
+    .cow-nav-item {
+        transition: all 0.3s ease;
+    }
+    
+    .cow-nav-item:hover {
+        transform: translateX(8px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* Responsive improvements for cow management */
+    @media (max-width: 1024px) {
+        #cow-sidebar {
+            z-index: 50;
+        }
+        
+        #cow-sidebar-overlay {
+            z-index: 45;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        #cow-sidebar {
+            width: 100vw;
+            max-width: 320px;
+        }
+        
+        .mobile-full-width {
+            width: 100vw;
+            margin-left: 0;
+        }
+        
+        .mobile-padding {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Custom Cow Management Sidebar -->
+<aside id="cow-sidebar" class="fixed left-0 top-0 h-full w-72 cow-sidebar shadow-2xl z-50 transform -translate-x-full lg:translate-x-0 transition-all duration-300 ease-in-out border-r border-gray-200 dark:border-gray-700">
+    <div class="flex flex-col h-full">
+        <!-- Sidebar Header -->
+        <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-gradient-to-br from-orange-500 to-amber-600 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-cow text-white text-sm"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-white">Cow Management</h2>
+                    <p class="text-xs text-gray-600 dark:text-gray-400">Management Portal</p>
+                </div>
+            </div>
+            <button id="close-cow-sidebar" class="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                <svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Cow Management Navigation -->
+        <nav class="flex-1 p-4 space-y-2 overflow-y-auto nav-scroll">
+            <!-- Register Cow -->
+            <a href="/employee/cow-management/register" class="cow-nav-item group flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-green-500 hover:to-emerald-600 hover:text-white hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
+                <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 text-white group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-plus text-sm"></i>
+                </div>
+                <span class="font-medium">Register Cow</span>
+            </a>
+
+            <!-- Health Management -->
+            <a href="/employee/cow-management/health" class="cow-nav-item group flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-red-500 hover:to-pink-600 hover:text-white hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
+                <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-pink-600 text-white group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-heartbeat text-sm"></i>
+                </div>
+                <span class="font-medium">Health Management</span>
+            </a>
+
+            <!-- Breeding Management -->
+            <a href="/employee/cow-management/breeding" class="cow-nav-item group flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-purple-500 hover:to-indigo-600 hover:text-white hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
+                <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-600 text-white group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-dna text-sm"></i>
+                </div>
+                <span class="font-medium">Breeding Management</span>
+            </a>
+
+            <!-- Cow Production -->
+            <a href="/employee/cow-management/cow-production" class="cow-nav-item group flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-500 hover:to-cyan-600 hover:text-white hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
+                <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-600 text-white group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-chart-line text-sm"></i>
+                </div>
+                <span class="font-medium">Cow Production</span>
+            </a>
+
+            <!-- Notifications -->
+            <a href="/employee/cow-management/notifications" class="cow-nav-item group flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-orange-500 hover:to-yellow-600 hover:text-white hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
+                <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-yellow-600 text-white group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-bell text-sm"></i>
+                </div>
+                <span class="font-medium">Notifications</span>
+            </a>
+
+            <!-- Back to Dashboard -->
+            <div class="pt-4 border-t border-gray-200 dark:border-gray-700 mt-4">
+                <a href="/employee/dashboard" class="cow-nav-item group flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-600 dark:text-gray-400 hover:bg-gradient-to-r hover:from-gray-500 hover:to-slate-600 hover:text-white hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
+                    <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-gray-500 to-slate-600 text-white group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-arrow-left text-sm"></i>
+                    </div>
+                    <span class="font-medium">Back to Dashboard</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Sidebar Footer -->
+        <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+            <div class="text-center">
+                <p class="text-xs text-gray-500 dark:text-gray-400">Cow Management System</p>
+            </div>
+        </div>
+    </div>
+</aside>
+
+<!-- Sidebar Overlay for Mobile -->
+<div id="cow-sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-45 hidden lg:hidden"></div>
+
+<!-- Main Content -->
+<main class="pt-16 lg:ml-72 min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <!-- Simple Page Header -->
+        <div class="mb-8">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-orange-500 via-amber-500 to-yellow-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-cow text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Cow Management</h1>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Use the sidebar to navigate cow management features</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Simple Content Area -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-8">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-gradient-to-br from-orange-500 to-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-cow text-white text-2xl"></i>
+                </div>
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Cow Management System</h2>
+                <p class="text-gray-600 dark:text-gray-400 mb-6">Select a function from the sidebar to get started</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-2xl mx-auto">
+                    <div class="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <i class="fas fa-plus text-green-600"></i>
+                        <span class="text-sm text-gray-700 dark:text-gray-300">Register Cow</span>
+                    </div>
+                    <div class="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <i class="fas fa-heartbeat text-red-600"></i>
+                        <span class="text-sm text-gray-700 dark:text-gray-300">Health Management</span>
+                    </div>
+                    <div class="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <i class="fas fa-dna text-purple-600"></i>
+                        <span class="text-sm text-gray-700 dark:text-gray-300">Breeding Management</span>
+                    </div>
+                    <div class="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <i class="fas fa-chart-line text-blue-600"></i>
+                        <span class="text-sm text-gray-700 dark:text-gray-300">Cow Production</span>
+                    </div>
+                    <div class="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <i class="fas fa-bell text-orange-600"></i>
+                        <span class="text-sm text-gray-700 dark:text-gray-300">Notifications</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Cow Management Sidebar Functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const cowSidebar = document.getElementById('cow-sidebar');
+        const cowSidebarOverlay = document.getElementById('cow-sidebar-overlay');
+        const closeCowSidebar = document.getElementById('close-cow-sidebar');
+        
+        // Mobile menu toggle (if needed)
+        function toggleCowSidebar() {
+            if (cowSidebar.classList.contains('-translate-x-full')) {
+                cowSidebar.classList.remove('-translate-x-full');
+                cowSidebarOverlay.classList.remove('hidden');
+            } else {
+                cowSidebar.classList.add('-translate-x-full');
+                cowSidebarOverlay.classList.add('hidden');
+            }
+        }
+        
+        // Close sidebar on mobile
+        if (closeCowSidebar) {
+            closeCowSidebar.addEventListener('click', () => {
+                cowSidebar.classList.add('-translate-x-full');
+                cowSidebarOverlay.classList.add('hidden');
+            });
+        }
+        
+        // Close sidebar when clicking overlay
+        if (cowSidebarOverlay) {
+            cowSidebarOverlay.addEventListener('click', () => {
+                cowSidebar.classList.add('-translate-x-full');
+                cowSidebarOverlay.classList.add('hidden');
+            });
+        }
+        
+        // Hide default sidebar and show cow sidebar
+        const defaultSidebar = document.getElementById('sidebar');
+        if (defaultSidebar) {
+            defaultSidebar.style.display = 'none';
+        }
+        
+        // Show cow sidebar
+        if (cowSidebar) {
+            cowSidebar.classList.remove('-translate-x-full');
+        }
+        
+        console.log('Cow Management page loaded with custom sidebar');
+    });
+</script>
+{% endblock %}

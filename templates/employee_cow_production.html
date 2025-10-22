@@ -1,0 +1,711 @@
+{% extends 'base_employee.html' %}
+
+{% block title %}Cow Production - Smart Animal Farming{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Custom styling for cow production */
+    .cow-production-sidebar {
+        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #0ea5e9 100%);
+    }
+    
+    .dark .cow-production-sidebar {
+        background: linear-gradient(135deg, #1f2937 0%, #075985 50%, #0284c7 100%);
+    }
+    
+    .cow-production-nav-item {
+        transition: all 0.3s ease;
+    }
+    
+    .cow-production-nav-item:hover {
+        transform: translateX(8px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* Production form styling */
+    .production-card {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
+    }
+    
+    .dark .production-card {
+        background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+        border-color: #374151;
+    }
+    
+    .production-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Form input styling */
+    .form-input {
+        transition: all 0.3s ease;
+    }
+    
+    .form-input:focus {
+        transform: scale(1.02);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    /* Responsive improvements */
+    @media (max-width: 1024px) {
+        #cow-production-sidebar {
+            z-index: 50;
+        }
+        
+        #cow-production-sidebar-overlay {
+            z-index: 45;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        #cow-production-sidebar {
+            width: 100vw;
+            max-width: 320px;
+        }
+        
+        .mobile-full-width {
+            width: 100vw;
+            margin-left: 0;
+        }
+        
+        .mobile-padding {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Custom Cow Production Sidebar -->
+<aside id="cow-production-sidebar" class="fixed left-0 top-0 h-full w-72 cow-production-sidebar shadow-2xl z-50 transform -translate-x-full lg:translate-x-0 transition-all duration-300 ease-in-out border-r border-gray-200 dark:border-gray-700">
+    <div class="flex flex-col h-full">
+        <!-- Sidebar Header -->
+        <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-chart-line text-white text-sm"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-white">Cow Production</h2>
+                    <p class="text-xs text-gray-600 dark:text-gray-400">Production Portal</p>
+                </div>
+            </div>
+            <button id="close-cow-production-sidebar" class="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                <svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Cow Production Navigation -->
+        <nav class="flex-1 p-4 space-y-2 overflow-y-auto nav-scroll">
+            <!-- Record Milk Production -->
+            <a href="#" onclick="openMilkProductionModal()" class="cow-production-nav-item group flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-green-500 hover:to-emerald-600 hover:text-white hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
+                <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 text-white group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-plus text-sm"></i>
+                </div>
+                <span class="font-medium">Record Milk Production</span>
+            </a>
+
+            <!-- View Production Records -->
+            <a href="#" onclick="loadProductionRecords()" class="cow-production-nav-item group flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-500 hover:to-cyan-600 hover:text-white hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
+                <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-600 text-white group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-list text-sm"></i>
+                </div>
+                <span class="font-medium">View Production Records</span>
+            </a>
+
+            <!-- Production Analytics -->
+            <a href="#" onclick="showProductionAnalytics()" class="cow-production-nav-item group flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-purple-500 hover:to-indigo-600 hover:text-white hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
+                <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-600 text-white group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-chart-bar text-sm"></i>
+                </div>
+                <span class="font-medium">Production Analytics</span>
+            </a>
+
+            <!-- Back to Dashboard -->
+            <div class="pt-4 border-t border-gray-200 dark:border-gray-700 mt-4">
+                <a href="/employee/dashboard" class="cow-production-nav-item group flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-600 dark:text-gray-400 hover:bg-gradient-to-r hover:from-gray-500 hover:to-slate-600 hover:text-white hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
+                    <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-gray-500 to-slate-600 text-white group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-arrow-left text-sm"></i>
+                    </div>
+                    <span class="font-medium">Back to Dashboard</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Sidebar Footer -->
+        <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+            <div class="text-center">
+                <p class="text-xs text-gray-500 dark:text-gray-400">Cow Production System</p>
+            </div>
+        </div>
+    </div>
+</aside>
+
+<!-- Sidebar Overlay for Mobile -->
+<div id="cow-production-sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-45 hidden lg:hidden"></div>
+
+<!-- Main Content -->
+<main class="pt-16 lg:ml-72 min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <!-- Page Header -->
+        <div class="mb-8">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 via-cyan-500 to-teal-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-chart-line text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Cow Production</h1>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Track and manage milk production</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Production Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Today's Production -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-blue-100 dark:bg-blue-900">
+                        <i class="fas fa-tint text-blue-600 dark:text-blue-400 text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Today's Production</p>
+                        <p class="text-2xl font-semibold text-gray-900 dark:text-white" id="todayProduction">0 L</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Cows -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-green-100 dark:bg-green-900">
+                        <i class="fas fa-cow text-green-600 dark:text-green-400 text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Cows</p>
+                        <p class="text-2xl font-semibold text-gray-900 dark:text-white" id="totalCows">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Average per Cow -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-yellow-100 dark:bg-yellow-900">
+                        <i class="fas fa-chart-bar text-yellow-600 dark:text-yellow-400 text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Avg per Cow</p>
+                        <p class="text-2xl font-semibold text-gray-900 dark:text-white" id="avgPerCow">0 L</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- This Week's Total -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-purple-100 dark:bg-purple-900">
+                        <i class="fas fa-calendar-week text-purple-600 dark:text-purple-400 text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600 dark:text-gray-400">This Week</p>
+                        <p class="text-2xl font-semibold text-gray-900 dark:text-white" id="weekTotal">0 L</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Record Milk Production Card -->
+            <div class="production-card rounded-2xl p-6 cursor-pointer hover:scale-105 transition-all duration-300" onclick="openMilkProductionModal()">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-plus text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Record Milk Production</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Add today's milk production data</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View Production Records Card -->
+            <div class="production-card rounded-2xl p-6 cursor-pointer hover:scale-105 transition-all duration-300" onclick="loadProductionRecords()">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-list text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">View Production Records</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Browse all production history</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Production Analytics Card -->
+            <div class="production-card rounded-2xl p-6 cursor-pointer hover:scale-105 transition-all duration-300" onclick="showProductionAnalytics()">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-chart-bar text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Production Analytics</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">View production trends and insights</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Production Records -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-white">All Production Records</h2>
+                <div class="flex items-center space-x-3">
+                    <button onclick="loadProductionRecords()" class="px-4 py-2 bg-gradient-to-r from-blue-500 to-cyan-600 text-white rounded-lg hover:from-blue-600 hover:to-cyan-700 transition-all duration-300">
+                        <i class="fas fa-sync-alt mr-2"></i>
+                        Refresh
+                    </button>
+                    <button onclick="openMilkProductionModal()" class="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all duration-300">
+                        <i class="fas fa-plus mr-2"></i>
+                        Add Record
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Loading State -->
+            <div id="productionLoading" class="text-center py-8">
+                <div class="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <p class="text-gray-600 dark:text-gray-400">Loading production records...</p>
+            </div>
+            
+            <!-- Production Records List -->
+            <div id="productionRecords" class="hidden">
+                <!-- Records will be loaded here -->
+            </div>
+            
+            <!-- Empty State -->
+            <div id="productionEmpty" class="hidden text-center py-8">
+                <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-chart-line text-white text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">No production records yet</h3>
+                <p class="text-gray-600 dark:text-gray-400 mb-4">Start by recording your first milk production</p>
+                <button onclick="openMilkProductionModal()" class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all duration-300 transform hover:scale-105">
+                    <i class="fas fa-plus mr-2"></i>
+                    Record First Production
+                </button>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Milk Production Modal -->
+<div id="milkProductionModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-tint text-white"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Record Milk Production</h2>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Add milk production data</p>
+                </div>
+            </div>
+            <button onclick="closeMilkProductionModal()" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                <svg class="w-6 h-6 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="px-3 sm:px-6 lg:px-8 py-3 sm:py-6 lg:py-8 max-h-[60vh] overflow-y-auto">
+            <form id="milkProductionForm" class="space-y-4 sm:space-y-6">
+                <!-- Cow Selection -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 sm:mb-3">
+                        <i class="fas fa-cow mr-2 text-blue-500"></i>
+                        Select Cow <span class="text-red-500">*</span>
+                    </label>
+                    <select id="cowSelect" name="cow_id" required class="w-full px-2 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-lg sm:rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-xs sm:text-base transition-all duration-200 form-input">
+                        <option value="">Select a cow</option>
+                    </select>
+                </div>
+
+                <!-- Production Date -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 sm:mb-3">
+                        <i class="fas fa-calendar mr-2 text-green-500"></i>
+                        Production Date <span class="text-red-500">*</span>
+                    </label>
+                    <input type="date" id="productionDate" name="production_date" required class="w-full px-2 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-lg sm:rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-xs sm:text-base transition-all duration-200 form-input">
+                </div>
+
+                <!-- Milking Session -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 sm:mb-3">
+                        <i class="fas fa-clock mr-2 text-purple-500"></i>
+                        Milking Session <span class="text-red-500">*</span>
+                    </label>
+                    <select id="milkingSession" name="milking_session" required class="w-full px-2 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-lg sm:rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-xs sm:text-base transition-all duration-200 form-input">
+                        <option value="">Select session</option>
+                        <option value="morning">Morning</option>
+                        <option value="afternoon">Afternoon</option>
+                        <option value="evening">Evening</option>
+                    </select>
+                </div>
+
+                <!-- Milk Quantity -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 sm:mb-3">
+                        <i class="fas fa-tint mr-2 text-cyan-500"></i>
+                        Milk Quantity (Liters) <span class="text-red-500">*</span>
+                    </label>
+                    <input type="number" id="milkQuantity" name="milk_quantity" step="0.1" min="0" required class="w-full px-2 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-lg sm:rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-xs sm:text-base transition-all duration-200 form-input" placeholder="Enter quantity in liters">
+                </div>
+
+                <!-- Notes -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 sm:mb-3">
+                        <i class="fas fa-sticky-note mr-2 text-gray-500"></i>
+                        Notes
+                    </label>
+                    <textarea id="notes" name="notes" rows="3" class="w-full px-2 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-lg sm:rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-xs sm:text-base transition-all duration-200 form-input" placeholder="Additional notes about the production"></textarea>
+                </div>
+            </form>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="flex flex-col sm:flex-row gap-3 p-4 sm:p-6 border-t border-gray-200 dark:border-gray-700">
+            <button onclick="closeMilkProductionModal()" class="flex-1 px-4 py-2 sm:py-3 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                Cancel
+            </button>
+            <button onclick="submitMilkProduction()" class="flex-1 px-4 py-2 sm:py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all duration-300 transform hover:scale-105">
+                <i class="fas fa-save mr-2"></i>
+                Record Production
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Container -->
+<div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Cow Production Sidebar Functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const cowProductionSidebar = document.getElementById('cow-production-sidebar');
+        const cowProductionSidebarOverlay = document.getElementById('cow-production-sidebar-overlay');
+        const closeCowProductionSidebar = document.getElementById('close-cow-production-sidebar');
+        
+        // Mobile menu toggle (if needed)
+        function toggleCowProductionSidebar() {
+            if (cowProductionSidebar.classList.contains('-translate-x-full')) {
+                cowProductionSidebar.classList.remove('-translate-x-full');
+                cowProductionSidebarOverlay.classList.remove('hidden');
+            } else {
+                cowProductionSidebar.classList.add('-translate-x-full');
+                cowProductionSidebarOverlay.classList.add('hidden');
+            }
+        }
+        
+        // Close sidebar on mobile
+        if (closeCowProductionSidebar) {
+            closeCowProductionSidebar.addEventListener('click', () => {
+                cowProductionSidebar.classList.add('-translate-x-full');
+                cowProductionSidebarOverlay.classList.add('hidden');
+            });
+        }
+        
+        // Close sidebar when clicking overlay
+        if (cowProductionSidebarOverlay) {
+            cowProductionSidebarOverlay.addEventListener('click', () => {
+                cowProductionSidebar.classList.add('-translate-x-full');
+                cowProductionSidebarOverlay.classList.add('hidden');
+            });
+        }
+        
+        // Hide default sidebar and show cow production sidebar
+        const defaultSidebar = document.getElementById('sidebar');
+        if (defaultSidebar) {
+            defaultSidebar.style.display = 'none';
+        }
+        
+        // Show cow production sidebar
+        if (cowProductionSidebar) {
+            cowProductionSidebar.classList.remove('-translate-x-full');
+        }
+        
+        // Initialize page
+        loadProductionStats();
+        loadProductionRecords();
+        loadCows();
+        
+        // Set today's date as default
+        document.getElementById('productionDate').value = new Date().toISOString().split('T')[0];
+        
+        // Auto-refresh production records every 30 seconds
+        setInterval(() => {
+            loadProductionRecords();
+        }, 30000);
+        
+        console.log('Cow Production page loaded with custom sidebar');
+    });
+
+    // Modal functions
+    function openMilkProductionModal() {
+        document.getElementById('milkProductionModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeMilkProductionModal() {
+        document.getElementById('milkProductionModal').classList.add('hidden');
+        document.body.style.overflow = 'auto';
+        document.getElementById('milkProductionForm').reset();
+        document.getElementById('productionDate').value = new Date().toISOString().split('T')[0];
+    }
+
+    // Load cows for dropdown
+    async function loadCows() {
+        try {
+            const response = await fetch('/api/cow/list');
+            const result = await response.json();
+            
+            if (result.success && result.cows) {
+                const cowSelect = document.getElementById('cowSelect');
+                cowSelect.innerHTML = '<option value="">Select a cow</option>';
+                
+                result.cows.forEach(cow => {
+                    const option = document.createElement('option');
+                    option.value = cow.id;
+                    option.textContent = `${cow.ear_tag} - ${cow.name || 'Unnamed'}`;
+                    cowSelect.appendChild(option);
+                });
+            }
+        } catch (error) {
+            console.error('Error loading cows:', error);
+        }
+    }
+
+    // Load production stats
+    async function loadProductionStats() {
+        try {
+            const response = await fetch('/api/cow/production/stats');
+            const result = await response.json();
+            
+            if (result.success) {
+                document.getElementById('todayProduction').textContent = `${result.today_production || 0} L`;
+                document.getElementById('totalCows').textContent = result.total_cows || 0;
+                document.getElementById('avgPerCow').textContent = `${result.avg_per_cow || 0} L`;
+                document.getElementById('weekTotal').textContent = `${result.week_total || 0} L`;
+            }
+        } catch (error) {
+            console.error('Error loading production stats:', error);
+        }
+    }
+
+    // Load production records
+    async function loadProductionRecords() {
+        const productionLoading = document.getElementById('productionLoading');
+        const productionRecords = document.getElementById('productionRecords');
+        const productionEmpty = document.getElementById('productionEmpty');
+        
+        // Show loading state
+        productionLoading.classList.remove('hidden');
+        productionRecords.classList.add('hidden');
+        productionEmpty.classList.add('hidden');
+        
+        try {
+            const response = await fetch('/api/cow/production/records');
+            const result = await response.json();
+            
+            if (result.success && result.records && result.records.length > 0) {
+                displayProductionRecords(result.records);
+                productionLoading.classList.add('hidden');
+                productionRecords.classList.remove('hidden');
+            } else {
+                productionLoading.classList.add('hidden');
+                productionEmpty.classList.remove('hidden');
+            }
+        } catch (error) {
+            console.error('Error loading production records:', error);
+            productionLoading.classList.add('hidden');
+            productionEmpty.classList.remove('hidden');
+            showToast('Error loading production records. Please try again.', 'error');
+        }
+    }
+    
+    // Display production records
+    function displayProductionRecords(records) {
+        const productionRecords = document.getElementById('productionRecords');
+        
+        const recordsHTML = `
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b border-gray-200 dark:border-gray-600">
+                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Date</th>
+                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Time</th>
+                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Cow</th>
+                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Session</th>
+                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Quantity</th>
+                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${records.map(record => `
+                            <tr class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                <td class="py-4 px-4">
+                                    <span class="text-gray-900 dark:text-white font-medium">
+                                        ${new Date(record.production_date).toLocaleDateString()}
+                                    </span>
+                                </td>
+                                <td class="py-4 px-4">
+                                    <span class="text-gray-600 dark:text-gray-400">
+                                        ${new Date(record.created_at).toLocaleTimeString()}
+                                    </span>
+                                </td>
+                                <td class="py-4 px-4">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-cow text-white text-sm"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-semibold text-gray-900 dark:text-white">${record.cow_name || 'Unknown Cow'}</p>
+                                            <p class="text-sm text-gray-600 dark:text-gray-400">${record.ear_tag}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-4">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                                        record.milking_session === 'morning' 
+                                            ? 'bg-yellow-100 text-yellow-800 border border-yellow-200' 
+                                            : record.milking_session === 'afternoon'
+                                            ? 'bg-orange-100 text-orange-800 border border-orange-200'
+                                            : 'bg-purple-100 text-purple-800 border border-purple-200'
+                                    }">
+                                        <i class="fas fa-${record.milking_session === 'morning' ? 'sun' : record.milking_session === 'afternoon' ? 'sun' : 'moon'} mr-2"></i>
+                                        ${record.milking_session.charAt(0).toUpperCase() + record.milking_session.slice(1)}
+                                    </span>
+                                </td>
+                                <td class="py-4 px-4">
+                                    <span class="text-lg font-bold text-blue-600 dark:text-blue-400">${record.milk_quantity}L</span>
+                                </td>
+                                <td class="py-4 px-4">
+                                    <span class="text-gray-700 dark:text-gray-300">${record.notes || 'No notes'}</span>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+        
+        productionRecords.innerHTML = recordsHTML;
+    }
+
+    // Submit milk production
+    async function submitMilkProduction() {
+        const form = document.getElementById('milkProductionForm');
+        const formData = new FormData(form);
+        
+        // Validate required fields
+        const cowId = formData.get('cow_id');
+        const productionDate = formData.get('production_date');
+        const milkingSession = formData.get('milking_session');
+        const milkQuantity = formData.get('milk_quantity');
+        
+        if (!cowId || !productionDate || !milkingSession || !milkQuantity) {
+            showToast('Please fill in all required fields', 'error');
+            return;
+        }
+
+        // Prepare data for API
+        const data = {
+            cow_id: parseInt(cowId),
+            production_date: productionDate,
+            milking_session: milkingSession,
+            milk_quantity: parseFloat(milkQuantity),
+            notes: formData.get('notes') || null
+        };
+
+        try {
+            const response = await fetch('/api/cow/production/record', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showToast(result.message, 'success');
+                closeMilkProductionModal();
+                // Refresh the stats and records
+                loadProductionStats();
+                loadProductionRecords();
+            } else {
+                showToast(result.message, 'error');
+            }
+        } catch (error) {
+            console.error('Error recording milk production:', error);
+            showToast('Error recording milk production. Please try again.', 'error');
+        }
+    }
+
+    // Show production analytics
+    function showProductionAnalytics() {
+        showToast('Production analytics feature coming soon!', 'info');
+    }
+
+    // Toast notification
+    function showToast(message, type = 'info') {
+        const toastContainer = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        
+        const bgColor = type === 'success' ? 'bg-green-500' : 
+                       type === 'error' ? 'bg-red-500' : 
+                       type === 'warning' ? 'bg-yellow-500' : 'bg-blue-500';
+        
+        toast.className = `${bgColor} text-white px-6 py-3 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300`;
+        toast.innerHTML = `
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'times' : type === 'warning' ? 'exclamation' : 'info'}-circle"></i>
+                <span>${message}</span>
+            </div>
+        `;
+        
+        toastContainer.appendChild(toast);
+        
+        // Animate in
+        setTimeout(() => {
+            toast.classList.remove('translate-x-full');
+        }, 100);
+        
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            toast.classList.add('translate-x-full');
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            }, 300);
+        }, 5000);
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,899 @@
+{% extends 'base_employee.html' %}
+
+{% block title %}Cow Registration - Smart Animal Farming{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Custom styling for cow registration */
+    .cow-register-sidebar {
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #f59e0b 100%);
+    }
+    
+    .dark .cow-register-sidebar {
+        background: linear-gradient(135deg, #1f2937 0%, #92400e 50%, #d97706 100%);
+    }
+    
+    .cow-register-nav-item {
+        transition: all 0.3s ease;
+    }
+    
+    .cow-register-nav-item:hover {
+        transform: translateX(8px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* Registration form styling */
+    .registration-card {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
+    }
+    
+    .dark .registration-card {
+        background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+        border-color: #374151;
+    }
+    
+    .registration-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Form input styling */
+    .form-input {
+        transition: all 0.3s ease;
+    }
+    
+    .form-input:focus {
+        transform: scale(1.02);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    /* Status badges */
+    .status-badge {
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+    
+    /* Responsive improvements */
+    @media (max-width: 1024px) {
+        #cow-register-sidebar {
+            z-index: 50;
+        }
+        
+        #cow-register-sidebar-overlay {
+            z-index: 45;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        #cow-register-sidebar {
+            width: 100vw;
+            max-width: 320px;
+        }
+        
+        .mobile-full-width {
+            width: 100vw;
+            margin-left: 0;
+        }
+        
+        .mobile-padding {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Custom Cow Registration Sidebar -->
+<aside id="cow-register-sidebar" class="fixed left-0 top-0 h-full w-72 cow-register-sidebar shadow-2xl z-50 transform -translate-x-full lg:translate-x-0 transition-all duration-300 ease-in-out border-r border-gray-200 dark:border-gray-700">
+    <div class="flex flex-col h-full">
+        <!-- Sidebar Header -->
+        <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-gradient-to-br from-orange-500 to-amber-600 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-cow text-white text-sm"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-white">Cow Registration</h2>
+                    <p class="text-xs text-gray-600 dark:text-gray-400">Registration Portal</p>
+                </div>
+            </div>
+            <button id="close-cow-register-sidebar" class="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                <svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Cow Registration Navigation -->
+        <nav class="flex-1 p-4 space-y-2 overflow-y-auto nav-scroll">
+            <!-- Register New Cow -->
+            <a href="#" onclick="openCowRegistrationModal()" class="cow-register-nav-item group flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-green-500 hover:to-emerald-600 hover:text-white hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
+                <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 text-white group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-plus text-sm"></i>
+                </div>
+                <span class="font-medium">Register New Cow</span>
+            </a>
+
+            <!-- View All Cows -->
+            <a href="/employee/cow-management" class="cow-register-nav-item group flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-500 hover:to-cyan-600 hover:text-white hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
+                <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-600 text-white group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-list text-sm"></i>
+                </div>
+                <span class="font-medium">View All Cows</span>
+            </a>
+
+            <!-- Health Management -->
+            <a href="/employee/cow-management/health" class="cow-register-nav-item group flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-red-500 hover:to-pink-600 hover:text-white hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
+                <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-pink-600 text-white group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-heartbeat text-sm"></i>
+                </div>
+                <span class="font-medium">Health Management</span>
+            </a>
+
+            <!-- Breeding Management -->
+            <a href="/employee/cow-management/breeding" class="cow-register-nav-item group flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-purple-500 hover:to-indigo-600 hover:text-white hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
+                <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-600 text-white group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-dna text-sm"></i>
+                </div>
+                <span class="font-medium">Breeding Management</span>
+            </a>
+
+            <!-- Back to Dashboard -->
+            <div class="pt-4 border-t border-gray-200 dark:border-gray-700 mt-4">
+                <a href="/employee/dashboard" class="cow-register-nav-item group flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-600 dark:text-gray-400 hover:bg-gradient-to-r hover:from-gray-500 hover:to-slate-600 hover:text-white hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
+                    <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-gray-500 to-slate-600 text-white group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-arrow-left text-sm"></i>
+                    </div>
+                    <span class="font-medium">Back to Dashboard</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Sidebar Footer -->
+        <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+            <div class="text-center">
+                <p class="text-xs text-gray-500 dark:text-gray-400">Cow Registration System</p>
+            </div>
+        </div>
+    </div>
+</aside>
+
+<!-- Sidebar Overlay for Mobile -->
+<div id="cow-register-sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-45 hidden lg:hidden"></div>
+
+<!-- Main Content -->
+<main class="pt-16 lg:ml-72 min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <!-- Page Header -->
+        <div class="mb-8">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-orange-500 via-amber-500 to-yellow-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-cow text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Cow Registration</h1>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Register and manage your cattle</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Register New Cow Card -->
+            <div class="registration-card rounded-2xl p-6 cursor-pointer hover:scale-105 transition-all duration-300" onclick="openCowRegistrationModal()">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-plus text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Register New Cow</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Add a new cow to the system</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View All Cows Card -->
+            <div class="registration-card rounded-2xl p-6 cursor-pointer hover:scale-105 transition-all duration-300" onclick="window.location.href='/employee/cow-management'">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-list text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">View All Cows</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Browse all registered cows</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Health Management Card -->
+            <div class="registration-card rounded-2xl p-6 cursor-pointer hover:scale-105 transition-all duration-300" onclick="window.location.href='/employee/cow-management/health'">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-pink-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-heartbeat text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Health Management</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Monitor cow health status</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Registered Cows List -->
+        <div class="mt-8">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Registered Cows</h2>
+                    <button onclick="loadRegisteredCows()" class="px-4 py-2 bg-gradient-to-r from-blue-500 to-cyan-600 text-white rounded-lg hover:from-blue-600 hover:to-cyan-700 transition-all duration-300">
+                        <i class="fas fa-sync-alt mr-2"></i>
+                        Refresh
+                    </button>
+                </div>
+                
+                <!-- Loading State -->
+                <div id="cowsLoading" class="text-center py-8">
+                    <div class="w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                    <p class="text-gray-600 dark:text-gray-400">Loading cows...</p>
+                </div>
+                
+                <!-- Cows List -->
+                <div id="cowsList" class="hidden">
+                    <!-- Cows will be loaded here -->
+                </div>
+                
+                <!-- Empty State -->
+                <div id="cowsEmpty" class="hidden text-center py-8">
+                    <div class="w-16 h-16 bg-gradient-to-br from-orange-500 to-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-cow text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">No cows registered yet</h3>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">Start by registering your first cow</p>
+                    <button onclick="openCowRegistrationModal()" class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all duration-300 transform hover:scale-105">
+                        <i class="fas fa-plus mr-2"></i>
+                        Register First Cow
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Cow Registration Modal -->
+<div id="cowRegistrationModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-amber-600 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-cow text-white"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Register New Cow</h2>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Add a new cow to your farm</p>
+                </div>
+            </div>
+            <button onclick="closeCowRegistrationModal()" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                <svg class="w-6 h-6 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="px-3 sm:px-6 lg:px-8 py-3 sm:py-6 lg:py-8 max-h-[60vh] overflow-y-auto">
+            <form id="cowRegistrationForm" class="space-y-8">
+                <!-- Basic Information Section -->
+                <div class="bg-gradient-to-r from-rose-50 to-pink-50 dark:from-rose-900/20 dark:to-pink-900/20 rounded-xl p-4 sm:p-6 border border-rose-200 dark:border-rose-700/30">
+                    <div class="flex items-center mb-4 sm:mb-6">
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-rose-500 to-pink-500 rounded-xl flex items-center justify-center mr-3 sm:mr-4">
+                            <i class="fas fa-info-circle text-white text-sm sm:text-lg"></i>
+                        </div>
+                        <h3 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Basic Information</h3>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                        <!-- Ear Tag -->
+                        <div class="sm:col-span-2">
+                            <label for="earTag" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+                                Ear Tag Number <span class="text-red-500">*</span>
+                            </label>
+                            <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                                <input type="text" id="earTag" name="ear_tag" readonly
+                                       class="flex-1 px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base"
+                                       placeholder="Auto-generated">
+                                <button type="button" id="generateTagBtn" 
+                                        class="px-4 py-2 sm:py-3 bg-gradient-to-r from-rose-500 to-pink-500 text-white rounded-xl hover:from-rose-600 hover:to-pink-600 focus:ring-2 focus:ring-rose-500 transition-all duration-200 shadow-lg hover:shadow-xl text-sm sm:text-base">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                            </div>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-2 flex items-center">
+                                <i class="fas fa-info-circle mr-1"></i>Auto-generated ID starting with C
+                            </p>
+                        </div>
+
+                        <!-- Name -->
+                        <div>
+                            <label for="name" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+                                Name (Optional)
+                            </label>
+                            <input type="text" id="name" name="name"
+                                   class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base"
+                                   placeholder="Enter cow name">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mt-4 sm:mt-6">
+                        <!-- Breed -->
+                        <div>
+                            <label for="breed" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+                                Breed <span class="text-red-500">*</span>
+                            </label>
+                            <select id="breed" name="breed" required
+                                    class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base">
+                                <option value="">Select Breed</option>
+                                <option value="Holstein">Holstein</option>
+                                <option value="Jersey">Jersey</option>
+                                <option value="Guernsey">Guernsey</option>
+                                <option value="Ayrshire">Ayrshire</option>
+                                <option value="Brown Swiss">Brown Swiss</option>
+                                <option value="Friesian">Friesian</option>
+                                <option value="Sahiwal">Sahiwal</option>
+                                <option value="Boran">Boran</option>
+                                <option value="Zebu">Zebu</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <!-- Color/Markings -->
+                        <div>
+                            <label for="colorMarkings" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+                                Color/Markings
+                            </label>
+                            <input type="text" id="colorMarkings" name="color_markings"
+                                   class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base"
+                                   placeholder="e.g., Black and white, Brown spots">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Source Selection Section -->
+                <div class="bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl p-4 sm:p-6 border border-blue-200 dark:border-blue-700/30">
+                    <div class="flex items-center mb-4 sm:mb-6">
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center mr-3 sm:mr-4">
+                            <i class="fas fa-question-circle text-white text-sm sm:text-lg"></i>
+                        </div>
+                        <h3 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Source Information</h3>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 sm:mb-4">
+                            How did you acquire this cow? <span class="text-red-500">*</span>
+                        </label>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                            <label class="flex items-center p-3 sm:p-4 border border-gray-300 dark:border-gray-600 rounded-xl cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 hover:shadow-md">
+                                <input type="radio" name="source" value="born" class="mr-3 text-rose-600 focus:ring-rose-500">
+                                <div class="min-w-0">
+                                    <div class="font-semibold text-gray-900 dark:text-white text-sm sm:text-base">Born on Farm</div>
+                                    <div class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Cow was born on this farm</div>
+                                </div>
+                            </label>
+                            <label class="flex items-center p-3 sm:p-4 border border-gray-300 dark:border-gray-600 rounded-xl cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 hover:shadow-md">
+                                <input type="radio" name="source" value="purchased" class="mr-3 text-rose-600 focus:ring-rose-500">
+                                <div class="min-w-0">
+                                    <div class="font-semibold text-gray-900 dark:text-white text-sm sm:text-base">Purchased</div>
+                                    <div class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Cow was purchased from elsewhere</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Birth Date and Gender Section -->
+                <div class="bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-xl p-4 sm:p-6 border border-yellow-200 dark:border-yellow-700/30">
+                    <div class="flex items-center mb-4 sm:mb-6">
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-xl flex items-center justify-center mr-3 sm:mr-4">
+                            <i class="fas fa-calendar-alt text-white text-sm sm:text-lg"></i>
+                        </div>
+                        <h3 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Birth & Gender Information</h3>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                        <!-- Birth Date -->
+                        <div>
+                            <label for="birthDate" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+                                Date of Birth <span class="text-red-500">*</span>
+                            </label>
+                            <input type="date" id="birthDate" name="birth_date" required
+                                   class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base">
+                        </div>
+
+                        <!-- Gender -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+                                Gender <span class="text-red-500">*</span>
+                            </label>
+                            <div class="grid grid-cols-2 gap-2 sm:gap-3">
+                                <label class="flex items-center p-2 sm:p-3 border border-gray-300 dark:border-gray-600 rounded-xl cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 hover:shadow-md">
+                                    <input type="radio" name="gender" value="female" class="mr-2 sm:mr-3 text-rose-600 focus:ring-rose-500">
+                                    <div class="flex items-center min-w-0">
+                                        <i class="fas fa-female text-pink-500 mr-1 sm:mr-2 text-sm sm:text-base"></i>
+                                        <span class="font-semibold text-gray-900 dark:text-white text-xs sm:text-sm">Female</span>
+                                    </div>
+                                </label>
+                                <label class="flex items-center p-2 sm:p-3 border border-gray-300 dark:border-gray-600 rounded-xl cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 hover:shadow-md">
+                                    <input type="radio" name="gender" value="male" class="mr-2 sm:mr-3 text-rose-600 focus:ring-rose-500">
+                                    <div class="flex items-center min-w-0">
+                                        <i class="fas fa-male text-blue-500 mr-1 sm:mr-2 text-sm sm:text-base"></i>
+                                        <span class="font-semibold text-gray-900 dark:text-white text-xs sm:text-sm">Male</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Purchase Information (shown when purchased is selected) -->
+                <div id="purchaseInfo" class="hidden bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 rounded-xl p-4 sm:p-6 border border-orange-200 dark:border-orange-700/30">
+                    <div class="flex items-center mb-4 sm:mb-6">
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center mr-3 sm:mr-4">
+                            <i class="fas fa-shopping-cart text-white text-sm sm:text-lg"></i>
+                        </div>
+                        <h3 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Purchase Information</h3>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                        <div>
+                            <label for="purchaseDate" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+                                Purchase Date
+                            </label>
+                            <input type="date" id="purchaseDate" name="purchase_date"
+                                   class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base">
+                        </div>
+                        <div>
+                            <label for="purchasePlace" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+                                Place Purchased
+                            </label>
+                            <input type="text" id="purchasePlace" name="purchase_place"
+                                   class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base"
+                                   placeholder="e.g., Local Market, Another Farm">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Parent Information Section -->
+                <div class="bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-xl p-4 sm:p-6 border border-purple-200 dark:border-purple-700/30">
+                    <div class="flex items-center mb-4 sm:mb-6">
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-xl flex items-center justify-center mr-3 sm:mr-4">
+                            <i class="fas fa-sitemap text-white text-sm sm:text-lg"></i>
+                        </div>
+                        <h3 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Parent Information</h3>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                        <!-- Sire (Father) -->
+                        <div>
+                            <label for="sireEarTag" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+                                Sire (Father) Ear Tag
+                            </label>
+                            <input type="text" id="sireEarTag" name="sire_ear_tag"
+                                   class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base"
+                                   placeholder="Father's ear tag">
+                        </div>
+                        <div>
+                            <label for="sireDetails" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+                                Sire Details
+                            </label>
+                            <textarea id="sireDetails" name="sire_details" rows="2"
+                                      class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base"
+                                      placeholder="Additional sire information"></textarea>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mt-4 sm:mt-6">
+                        <!-- Dam (Mother) -->
+                        <div>
+                            <label for="damEarTag" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+                                Dam (Mother) Ear Tag
+                            </label>
+                            <input type="text" id="damEarTag" name="dam_ear_tag"
+                                   class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base"
+                                   placeholder="Mother's ear tag">
+                        </div>
+                        <div>
+                            <label for="damDetails" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+                                Dam Details
+                            </label>
+                            <textarea id="damDetails" name="dam_details" rows="2"
+                                      class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base"
+                                      placeholder="Additional dam information"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Buttons -->
+                <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-6 sm:pt-8 border-t border-gray-200 dark:border-gray-700">
+                    <button type="button" id="resetFormBtn"
+                            class="w-full sm:w-auto px-6 sm:px-8 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 focus:ring-2 focus:ring-gray-500 transition-all duration-200 font-semibold text-sm sm:text-base">
+                        <i class="fas fa-undo mr-2"></i>Reset Form
+                    </button>
+                    <button type="submit" id="submitBtn"
+                            class="w-full sm:w-auto px-6 sm:px-8 py-3 bg-gradient-to-r from-rose-500 to-pink-500 text-white rounded-xl hover:from-rose-600 hover:to-pink-600 focus:ring-2 focus:ring-rose-500 transition-all duration-200 shadow-lg hover:shadow-xl font-semibold text-sm sm:text-base">
+                        <i class="fas fa-save mr-2"></i>Register Cow
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="flex flex-col sm:flex-row gap-3 p-4 sm:p-6 border-t border-gray-200 dark:border-gray-700">
+            <button onclick="closeCowRegistrationModal()" class="flex-1 px-4 py-2 sm:py-3 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                Cancel
+            </button>
+            <button onclick="submitCowRegistration()" class="flex-1 px-4 py-2 sm:py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all duration-300 transform hover:scale-105">
+                <i class="fas fa-save mr-2"></i>
+                Register Cow
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Container -->
+<div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Cow Registration Sidebar Functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const cowRegisterSidebar = document.getElementById('cow-register-sidebar');
+        const cowRegisterSidebarOverlay = document.getElementById('cow-register-sidebar-overlay');
+        const closeCowRegisterSidebar = document.getElementById('close-cow-register-sidebar');
+        
+        // Mobile menu toggle (if needed)
+        function toggleCowRegisterSidebar() {
+            if (cowRegisterSidebar.classList.contains('-translate-x-full')) {
+                cowRegisterSidebar.classList.remove('-translate-x-full');
+                cowRegisterSidebarOverlay.classList.remove('hidden');
+            } else {
+                cowRegisterSidebar.classList.add('-translate-x-full');
+                cowRegisterSidebarOverlay.classList.add('hidden');
+            }
+        }
+        
+        // Close sidebar on mobile
+        if (closeCowRegisterSidebar) {
+            closeCowRegisterSidebar.addEventListener('click', () => {
+                cowRegisterSidebar.classList.add('-translate-x-full');
+                cowRegisterSidebarOverlay.classList.add('hidden');
+            });
+        }
+        
+        // Close sidebar when clicking overlay
+        if (cowRegisterSidebarOverlay) {
+            cowRegisterSidebarOverlay.addEventListener('click', () => {
+                cowRegisterSidebar.classList.add('-translate-x-full');
+                cowRegisterSidebarOverlay.classList.add('hidden');
+            });
+        }
+        
+        // Hide default sidebar and show cow register sidebar
+        const defaultSidebar = document.getElementById('sidebar');
+        if (defaultSidebar) {
+            defaultSidebar.style.display = 'none';
+        }
+        
+        // Show cow register sidebar
+        if (cowRegisterSidebar) {
+            cowRegisterSidebar.classList.remove('-translate-x-full');
+        }
+        
+        // Initialize form
+        togglePurchaseFields();
+        
+        // Generate initial ear tag
+        generateEarTag();
+        
+        // Load registered cows
+        loadRegisteredCows();
+        
+        console.log('Cow Registration page loaded with custom sidebar');
+    });
+
+    // Modal functions
+    function openCowRegistrationModal() {
+        document.getElementById('cowRegistrationModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeCowRegistrationModal() {
+        document.getElementById('cowRegistrationModal').classList.add('hidden');
+        document.body.style.overflow = 'auto';
+        document.getElementById('cowRegistrationForm').reset();
+    }
+
+
+    // Generate ear tag
+    async function generateEarTag() {
+        try {
+            const response = await fetch('/api/cow/generate-ear-tag', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({})
+            });
+
+            const result = await response.json();
+            
+            if (result.success) {
+                document.getElementById('earTag').value = result.next_ear_tag;
+                showToast('Ear tag generated successfully', 'success');
+            } else {
+                showToast(result.message, 'error');
+            }
+        } catch (error) {
+            console.error('Error generating ear tag:', error);
+            showToast('Error generating ear tag. Please try again.', 'error');
+        }
+    }
+
+    // Show/hide purchase fields based on source
+    function togglePurchaseFields() {
+        const sourceRadios = document.querySelectorAll('input[name="source"]');
+        const purchaseInfo = document.getElementById('purchaseInfo');
+        
+        let selectedSource = null;
+        sourceRadios.forEach(radio => {
+            if (radio.checked) {
+                selectedSource = radio.value;
+            }
+        });
+        
+        if (selectedSource === 'purchased') {
+            purchaseInfo.classList.remove('hidden');
+        } else {
+            purchaseInfo.classList.add('hidden');
+        }
+    }
+
+    // Add event listeners for source radio buttons
+    document.addEventListener('DOMContentLoaded', function() {
+        const sourceRadios = document.querySelectorAll('input[name="source"]');
+        sourceRadios.forEach(radio => {
+            radio.addEventListener('change', togglePurchaseFields);
+        });
+        
+        // Generate ear tag button
+        const generateTagBtn = document.getElementById('generateTagBtn');
+        if (generateTagBtn) {
+            generateTagBtn.addEventListener('click', generateEarTag);
+        }
+        
+        // Reset form button
+        const resetFormBtn = document.getElementById('resetFormBtn');
+        if (resetFormBtn) {
+            resetFormBtn.addEventListener('click', function() {
+                document.getElementById('cowRegistrationForm').reset();
+                togglePurchaseFields();
+            });
+        }
+        
+        // Form submission
+        const form = document.getElementById('cowRegistrationForm');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                submitCowRegistration();
+            });
+        }
+    });
+
+    // Submit cow registration
+    async function submitCowRegistration() {
+        const form = document.getElementById('cowRegistrationForm');
+        const formData = new FormData(form);
+        
+        // Validate required fields
+        const earTag = formData.get('ear_tag');
+        const breed = formData.get('breed');
+        const gender = formData.get('gender');
+        const source = formData.get('source');
+        const birthDate = formData.get('birth_date');
+        
+        if (!earTag || !breed || !gender || !source || !birthDate) {
+            showToast('Please fill in all required fields', 'error');
+            return;
+        }
+
+        // Prepare data for API
+        const data = {
+            ear_tag: earTag,
+            name: formData.get('name') || null,
+            breed: breed,
+            gender: gender,
+            source: source,
+            birth_date: birthDate,
+            color_markings: formData.get('color_markings') || null,
+            purchase_date: formData.get('purchase_date') || null,
+            purchase_place: formData.get('purchase_place') || null,
+            sire_ear_tag: formData.get('sire_ear_tag') || null,
+            sire_details: formData.get('sire_details') || null,
+            dam_ear_tag: formData.get('dam_ear_tag') || null,
+            dam_details: formData.get('dam_details') || null
+        };
+
+        try {
+            const response = await fetch('/api/cow/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showToast(result.message, 'success');
+                closeCowRegistrationModal();
+                // Refresh the cows list to show new cow
+                loadRegisteredCows();
+            } else {
+                showToast(result.message, 'error');
+            }
+        } catch (error) {
+            console.error('Error registering cow:', error);
+            showToast('Error registering cow. Please try again.', 'error');
+        }
+    }
+
+    // Load registered cows
+    async function loadRegisteredCows() {
+        const cowsLoading = document.getElementById('cowsLoading');
+        const cowsList = document.getElementById('cowsList');
+        const cowsEmpty = document.getElementById('cowsEmpty');
+        
+        // Show loading state
+        cowsLoading.classList.remove('hidden');
+        cowsList.classList.add('hidden');
+        cowsEmpty.classList.add('hidden');
+        
+        try {
+            const response = await fetch('/api/cow/list');
+            const result = await response.json();
+            
+            if (result.success && result.cows && result.cows.length > 0) {
+                displayCows(result.cows);
+                cowsLoading.classList.add('hidden');
+                cowsList.classList.remove('hidden');
+            } else {
+                cowsLoading.classList.add('hidden');
+                cowsEmpty.classList.remove('hidden');
+            }
+        } catch (error) {
+            console.error('Error loading cows:', error);
+            cowsLoading.classList.add('hidden');
+            cowsEmpty.classList.remove('hidden');
+            showToast('Error loading cows. Please try again.', 'error');
+        }
+    }
+    
+    // Display cows in the list
+    function displayCows(cows) {
+        const cowsList = document.getElementById('cowsList');
+        
+        const cowsHTML = `
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b border-gray-200 dark:border-gray-600">
+                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Ear Tag</th>
+                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Name</th>
+                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Breed</th>
+                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Gender</th>
+                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Age</th>
+                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Source</th>
+                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Color</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${cows.map(cow => `
+                            <tr class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                <td class="py-4 px-4">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-8 h-8 bg-gradient-to-br from-orange-500 to-amber-600 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-cow text-white text-sm"></i>
+                                        </div>
+                                        <span class="font-semibold text-gray-900 dark:text-white">${cow.ear_tag}</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-4">
+                                    <span class="text-gray-900 dark:text-white">${cow.name || 'Unnamed'}</span>
+                                </td>
+                                <td class="py-4 px-4">
+                                    <span class="text-gray-700 dark:text-gray-300">${cow.breed}</span>
+                                </td>
+                                <td class="py-4 px-4">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                        cow.gender === 'female' 
+                                            ? 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-300' 
+                                            : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300'
+                                    }">
+                                        <i class="fas fa-${cow.gender === 'female' ? 'female' : 'male'} mr-1"></i>
+                                        ${cow.gender === 'female' ? 'Female' : 'Male'}
+                                    </span>
+                                </td>
+                                <td class="py-4 px-4">
+                                    <span class="text-gray-700 dark:text-gray-300">
+                                        ${Math.floor((new Date() - new Date(cow.birth_date)) / (1000 * 60 * 60 * 24))} days
+                                    </span>
+                                </td>
+                                <td class="py-4 px-4">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                        cow.source === 'born' 
+                                            ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' 
+                                            : 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300'
+                                    }">
+                                        <i class="fas fa-${cow.source === 'born' ? 'home' : 'shopping-cart'} mr-1"></i>
+                                        ${cow.source === 'born' ? 'Born on Farm' : 'Purchased'}
+                                    </span>
+                                </td>
+                                <td class="py-4 px-4">
+                                    <span class="text-gray-700 dark:text-gray-300">
+                                        ${cow.color_markings || 'N/A'}
+                                    </span>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+        
+        cowsList.innerHTML = cowsHTML;
+    }
+
+    // Toast notification
+    function showToast(message, type = 'info') {
+        const toastContainer = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        
+        const bgColor = type === 'success' ? 'bg-green-500' : 
+                       type === 'error' ? 'bg-red-500' : 
+                       type === 'warning' ? 'bg-yellow-500' : 'bg-blue-500';
+        
+        toast.className = `${bgColor} text-white px-6 py-3 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300`;
+        toast.innerHTML = `
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'times' : type === 'warning' ? 'exclamation' : 'info'}-circle"></i>
+                <span>${message}</span>
+            </div>
+        `;
+        
+        toastContainer.appendChild(toast);
+        
+        // Animate in
+        setTimeout(() => {
+            toast.classList.remove('translate-x-full');
+        }, 100);
+        
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            toast.classList.add('translate-x-full');
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            }, 300);
+        }, 5000);
+    }
+</script>
+{% endblock %}

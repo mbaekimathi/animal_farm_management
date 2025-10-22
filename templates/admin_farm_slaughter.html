@@ -3,14 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slaughter Management - Pig Farm Management System</title>
+    <title>Slaughter Management - AgriTech Pro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
+                    colors: {
+                        'agri-emerald': {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            200: '#a7f3d0',
+                            300: '#6ee7b7',
+                            400: '#34d399',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                        }
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
                     animation: {
+                        'fadeIn': 'fadeIn 0.5s ease-in-out',
+                        'slideUp': 'slideUp 0.5s ease-out',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                         'float': 'float 6s ease-in-out infinite',
                     }
                 }
@@ -18,6 +41,22 @@
         }
     </script>
     <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+        
         .sidebar {
             transition: transform 0.3s ease-in-out;
         }
@@ -29,88 +68,100 @@
                 transform: translateX(0);
             }
         }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+        }
     </style>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+<body class="bg-slate-50 dark:bg-slate-900 font-inter transition-colors duration-300">
     <!-- Header -->
-    <header class="fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 shadow-sm">
+    <header class="fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-700/50 shadow-lg">
         <div class="flex items-center justify-between px-4 sm:px-6 lg:px-8 h-16">
             <div class="flex items-center space-x-4">
-                <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                    <svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <button id="mobile-menu-btn" class="lg:hidden p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200">
+                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg>
                 </button>
                 
                 <div class="flex items-center space-x-3">
-                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-red-500 to-pink-500 rounded-lg flex items-center justify-center">
-                        <span class="text-white font-bold text-sm sm:text-lg">🐷</span>
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-red-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <span class="text-white font-bold text-lg sm:text-xl">🥩</span>
                     </div>
                     <div class="hidden sm:block">
-                        <h1 class="text-lg font-bold text-gray-900 dark:text-white">PigFarm Pro</h1>
-                        <p class="text-xs text-gray-600 dark:text-gray-400">Meru Farm Management</p>
+                        <h1 class="text-lg font-bold text-slate-900 dark:text-white">AgriTech Pro</h1>
+                        <p class="text-xs text-slate-600 dark:text-slate-400">Slaughter Management</p>
                     </div>
                 </div>
                 
                 <div class="hidden lg:flex items-center space-x-2 ml-6">
-                    <span class="text-gray-400 dark:text-gray-500">/</span>
-                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Farm Management</span>
-                    <span class="text-gray-400 dark:text-gray-500">/</span>
-                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Slaughter Management</span>
+                    <span class="text-slate-400 dark:text-slate-500">/</span>
+                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Farm Management</span>
+                    <span class="text-slate-400 dark:text-slate-500">/</span>
+                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Slaughter Management</span>
                 </div>
             </div>
             
             <div class="flex items-center space-x-3 sm:space-x-4">
-                <div class="hidden sm:block text-right">
-                    <div id="live-time" class="text-sm font-medium text-gray-900 dark:text-white">12:00:00 PM</div>
-                    <div id="live-date" class="text-xs text-gray-600 dark:text-gray-400">January 1, 2024</div>
-                </div>
+                <!-- Notifications -->
+                <button class="relative p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200">
+                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM4 19h6v-6H4v6zM4 13h6V7H4v6zM4 1h6v6H4V1z"></path>
+                    </svg>
+                    <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
+                </button>
                 
-                <button id="theme-toggle" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                    <svg id="sun-icon" class="w-5 h-5 text-gray-600 dark:text-gray-300 hidden" fill="currentColor" viewBox="0 0 20 20">
+                <!-- Theme Toggle -->
+                <button id="theme-toggle" class="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200">
+                    <svg id="sun-icon" class="w-5 h-5 text-slate-600 dark:text-slate-300 hidden transition-all duration-300" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>
                     </svg>
-                    <svg id="moon-icon" class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                    <svg id="moon-icon" class="w-5 h-5 text-slate-600 dark:text-slate-300 transition-all duration-300" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
                     </svg>
                 </button>
                 
+                <!-- User Profile -->
                 <div class="relative">
-                    <button id="user-dropdown-btn" class="flex items-center space-x-2 sm:space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                        <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                            <span class="text-white font-bold text-sm">👑</span>
+                    <button id="user-dropdown-btn" class="flex items-center space-x-2 sm:space-x-3 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200 group">
+                        <div class="w-8 h-8 sm:w-9 sm:h-9 bg-gradient-to-br from-agri-emerald-500 to-agri-emerald-600 rounded-full flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-200">
+                            <span class="text-white font-bold text-sm">{{ user.name.split()[0][0] + user.name.split()[-1][0] if user.name.split()|length > 1 else user.name[0] }}</span>
                         </div>
                         <div class="hidden sm:block text-left">
-                            <div class="text-sm font-medium text-gray-900 dark:text-white">{{ user.name }}</div>
-                            <div class="text-xs text-gray-600 dark:text-gray-400">{{ user.role.title() }}</div>
+                            <div class="text-sm font-semibold text-slate-900 dark:text-white">{{ user.name }}</div>
+                            <div class="text-xs text-slate-600 dark:text-slate-400">{{ user.role.title() }}</div>
                         </div>
-                        <svg class="w-4 h-4 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4 text-slate-600 dark:text-slate-300 group-hover:rotate-180 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                         </svg>
                     </button>
                     
-                    <div id="user-dropdown" class="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 hidden">
-                        <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                    <div id="user-dropdown" class="absolute right-0 mt-2 w-64 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200/50 dark:border-slate-700/50 hidden animate-fade-in">
+                        <div class="px-6 py-4 border-b border-slate-200/50 dark:border-slate-700/50">
                             <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                                    <span class="text-white font-bold text-sm">👑</span>
+                                <div class="w-12 h-12 bg-gradient-to-br from-agri-emerald-500 to-agri-emerald-600 rounded-full flex items-center justify-center shadow-lg">
+                                    <span class="text-white font-bold">{{ user.name.split()[0][0] + user.name.split()[-1][0] if user.name.split()|length > 1 else user.name[0] }}</span>
                                 </div>
                                 <div>
-                                    <div class="text-sm font-semibold text-gray-900 dark:text-white">{{ user.name }}</div>
-                                    <div class="text-xs text-gray-600 dark:text-gray-400">{{ user.email }}</div>
-                                    <div class="text-xs text-blue-600 dark:text-blue-400 font-medium">{{ user.role.title() }}</div>
+                                    <div class="text-sm font-semibold text-slate-900 dark:text-white">{{ user.name }}</div>
+                                    <div class="text-xs text-slate-600 dark:text-slate-400">{{ user.email }}</div>
+                                    <div class="text-xs text-agri-emerald-600 dark:text-agri-emerald-400 font-medium">{{ user.role.title() }}</div>
                                 </div>
                             </div>
                         </div>
                         
                         <div class="py-2">
-                            <a href="/profile" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <a href="/profile" class="flex items-center px-6 py-3 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
                                 <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                 </svg>
                                 My Profile
                             </a>
-                            <button id="logout-btn" class="w-full flex items-center px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+                            <button id="logout-btn" class="w-full flex items-center px-6 py-3 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
                                 <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                                 </svg>
@@ -124,169 +175,175 @@
     </header>
 
     <!-- Sidebar -->
-    <aside id="sidebar" class="fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 z-40 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out shadow-lg">
+    <aside id="sidebar" class="fixed left-0 top-16 h-[calc(100vh-4rem)] w-72 bg-white dark:bg-slate-800 border-r border-slate-200/50 dark:border-slate-700/50 z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out shadow-xl">
         <div class="flex flex-col h-full">
-            <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+            <!-- Sidebar Header -->
+            <div class="flex items-center justify-between p-6 border-b border-slate-200/50 dark:border-slate-700/50">
                 <div class="flex items-center space-x-3">
-                    <div class="w-8 h-8 bg-gradient-to-r from-red-500 to-pink-500 rounded-lg flex items-center justify-center">
-                        <span class="text-white font-bold text-sm">⚙️</span>
+                    <div class="w-10 h-10 bg-gradient-to-br from-red-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <span class="text-white font-bold text-lg">🥩</span>
                     </div>
-                    <span class="text-lg font-bold text-gray-900 dark:text-white">Admin Panel</span>
+                    <div>
+                        <span class="text-lg font-bold text-slate-900 dark:text-white">Slaughter Hub</span>
+                        <p class="text-xs text-slate-600 dark:text-slate-400">Management Center</p>
                 </div>
-                <button id="close-sidebar" class="md:hidden p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
-                    <svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                </div>
+                <button id="close-sidebar" class="lg:hidden p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
                 </button>
             </div>
             
-            <nav class="flex-1 p-4 space-y-2">
-                <a href="/admin/dashboard" class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z"></path>
-                    </svg>
-                    Dashboard
-                </a>
+            <!-- Navigation Menu -->
+            <nav class="flex-1 p-4 space-y-1">
+                <!-- Slaughter Management Section -->
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-4 px-2">Slaughter Operations</h3>
+                    
+                    <button onclick="openSlaughterModal()" class="w-full flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 rounded-xl transition-all duration-200 group">
+                        <div class="w-8 h-8 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                            <span class="text-white font-bold text-sm">🥩</span>
+                        </div>
+                        <span class="font-medium">Add Slaughter Record</span>
+                    </button>
+                    
+                    <button onclick="openDeathModal()" class="w-full flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white rounded-xl transition-all duration-200 group">
+                        <div class="w-8 h-8 bg-gradient-to-br from-gray-500 to-gray-600 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                            <span class="text-white font-bold text-sm">💀</span>
+                        </div>
+                        <span class="font-medium">Add Death Record</span>
+                    </button>
+                    
+                    <button onclick="openSaleModal()" class="w-full flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-green-50 dark:hover:bg-green-900/20 hover:text-green-600 dark:hover:text-green-400 rounded-xl transition-all duration-200 group">
+                        <div class="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                            <span class="text-white font-bold text-sm">💰</span>
+                        </div>
+                        <span class="font-medium">Add Sale Record</span>
+                    </button>
+                    
+                    <a href="/admin/farm/slaughter/view-production" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 rounded-xl transition-all duration-200 group">
+                        <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                            <span class="text-white font-bold text-sm">📊</span>
+                        </div>
+                        <span class="font-medium">View Production Records</span>
+                    </a>
+                </div>
                 
-                <a href="/admin/farm-management" class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 bg-blue-50 dark:bg-blue-900/20 rounded-lg border-l-4 border-blue-500">
-                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                    </svg>
-                    Farm Management
-                </a>
-                
-                <a href="/admin/human-resource" class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-                    </svg>
-                    Human Resource
-                </a>
-                
-                <a href="/admin/analytics" class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                    </svg>
-                    Analytics
-                </a>
+                <!-- General Navigation -->
+                <div class="border-t border-slate-200/50 dark:border-slate-700/50 pt-4">
+                    <h3 class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-4 px-2">Navigation</h3>
+                    
+                    <a href="/admin/dashboard" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 group">
+                        <div class="w-8 h-8 bg-gradient-to-br from-slate-500 to-slate-600 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                            <span class="text-white font-bold text-sm">📊</span>
+                        </div>
+                        <span class="font-medium">Dashboard</span>
+                    </a>
+                    
+                    <a href="/admin/farm-management" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-all duration-200 group">
+                        <div class="w-8 h-8 bg-gradient-to-br from-agri-emerald-500 to-agri-emerald-600 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                            <span class="text-white font-bold text-sm">🏠</span>
+                        </div>
+                        <span class="font-medium">Farm Management</span>
+                    </a>
+                </div>
             </nav>
             
-            <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+            <!-- Sidebar Footer -->
+            <div class="p-4 border-t border-slate-200/50 dark:border-slate-700/50">
                 <div class="text-center">
-                    <p class="text-xs text-gray-500 dark:text-gray-400">PigFarm Pro v1.0</p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">© 2024 Meru Farm</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">AgriTech Pro v2.0</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">© 2024 Smart Farm</p>
                 </div>
             </div>
         </div>
     </aside>
 
+    <!-- Mobile Overlay -->
+    <div id="mobile-overlay" class="fixed inset-0 bg-black/50 z-30 lg:hidden hidden"></div>
+
     <!-- Main Content -->
-    <div class="pt-16 md:pl-64 min-h-screen">
+    <main class="pt-16 lg:pl-72 min-h-screen bg-slate-50 dark:bg-slate-900">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
             <!-- Page Header -->
-            <div class="mb-6 sm:mb-8">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white mb-2">Slaughter Management</h1>
-                        <p class="text-sm sm:text-base text-gray-600 dark:text-gray-300">Manage slaughter records, meat production, and processing</p>
+            <div class="mb-6 sm:mb-8 animate-fade-in">
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                    <div class="flex-1">
+                        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white mb-2">Slaughter Management</h1>
+                        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400">Manage slaughter records, meat production, and processing operations</p>
                     </div>
-                    <div class="flex items-center space-x-3">
-                        <button id="add-slaughter-btn" class="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <button id="add-slaughter-btn" class="inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 font-semibold">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                             </svg>
-                            Add Slaughter Record
+                            <span class="hidden sm:inline">Add Slaughter Record</span>
+                            <span class="sm:hidden">Add Record</span>
                         </button>
-                        <a href="/admin/farm/pig-management" class="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors">
+                        <a href="/admin/farm/pig-management" class="inline-flex items-center justify-center px-4 py-2 bg-slate-600 text-white rounded-xl hover:bg-slate-700 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 font-semibold">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                             </svg>
-                            Back to Pig Management
+                            <span class="hidden sm:inline">Back to Pig Management</span>
+                            <span class="sm:hidden">Back</span>
                         </a>
                     </div>
                 </div>
             </div>
 
-            <!-- Stats Cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-700">
-                    <div class="flex items-center">
-                        <div class="p-2 sm:p-3 rounded-full bg-red-100 dark:bg-red-900">
-                            <span class="text-xl sm:text-2xl">🥩</span>
-                        </div>
-                        <div class="ml-3 sm:ml-4">
-                            <p class="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Total Slaughtered</p>
-                            <p class="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white">0</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-700">
-                    <div class="flex items-center">
-                        <div class="p-2 sm:p-3 rounded-full bg-orange-100 dark:bg-orange-900">
-                            <span class="text-xl sm:text-2xl">⚖️</span>
-                        </div>
-                        <div class="ml-3 sm:ml-4">
-                            <p class="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Total Meat (kg)</p>
-                            <p class="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white">0</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-700">
-                    <div class="flex items-center">
-                        <div class="p-2 sm:p-3 rounded-full bg-green-100 dark:bg-green-900">
-                            <span class="text-xl sm:text-2xl">💰</span>
-                        </div>
-                        <div class="ml-3 sm:ml-4">
-                            <p class="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Revenue</p>
-                            <p class="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white">$0</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-700">
-                    <div class="flex items-center">
-                        <div class="p-2 sm:p-3 rounded-full bg-blue-100 dark:bg-blue-900">
-                            <span class="text-xl sm:text-2xl">📅</span>
-                        </div>
-                        <div class="ml-3 sm:ml-4">
-                            <p class="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">This Month</p>
-                            <p class="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white">0</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             <!-- Slaughter Records Table -->
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
-                <div class="p-6">
-                    <div class="flex items-center justify-between mb-6">
-                        <h2 class="text-lg font-bold text-gray-900 dark:text-white">Slaughter Records</h2>
-                        <div class="flex items-center space-x-2">
-                            <input type="text" id="search-slaughter" placeholder="Search slaughter records..." class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-white">
-                            <button id="filter-slaughter" class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200/50 dark:border-slate-700/50 animate-slide-up">
+                <div class="px-6 py-6 border-b border-slate-200/50 dark:border-slate-700/50">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div class="flex items-center space-x-3 sm:space-x-4">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg">
+                                <span class="text-white font-bold text-lg sm:text-xl">📋</span>
+                            </div>
+                            <div>
+                                <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">Slaughter Records</h2>
+                                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium">Track and manage all slaughter operations</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 sm:gap-3">
+                            <input type="text" id="search-slaughter" placeholder="Search records..." class="px-3 py-2 sm:px-4 sm:py-2 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 dark:bg-slate-700 dark:text-white text-sm">
+                            <button onclick="loadSlaughterRecords()" class="px-3 py-2 sm:px-4 sm:py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors text-sm font-medium">
+                                <svg class="w-4 h-4 mr-1 sm:mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                </svg>
+                                <span class="hidden sm:inline">Refresh</span>
+                            </button>
+                            <button id="filter-slaughter" class="px-3 py-2 sm:px-4 sm:py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors text-sm font-medium">
                                 Filter
                             </button>
                         </div>
+                        </div>
                     </div>
                     
+                <div class="p-6">
                     <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                            <thead class="bg-gray-50 dark:bg-gray-700">
+                        <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+                            <thead class="bg-slate-50 dark:bg-slate-700/50">
                                 <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Pig ID</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Slaughter Date</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Weight (kg)</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Meat Yield (kg)</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Quality Grade</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Pig ID</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Slaughter Date</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Weight (kg)</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Meat Yield (kg)</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Quality Grade</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody id="slaughter-records-body" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                            <tbody id="slaughter-records-body" class="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
                                 <tr>
-                                    <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
-                                        No slaughter records found
+                                    <td colspan="6" class="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
+                                        <div class="flex flex-col items-center">
+                                            <div class="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mb-4">
+                                                <span class="text-2xl">📋</span>
+                                            </div>
+                                            <p class="text-lg font-medium mb-2">No slaughter records found</p>
+                                            <p class="text-sm">Start by adding your first slaughter record</p>
+                                        </div>
                                     </td>
                                 </tr>
                             </tbody>
@@ -317,7 +374,853 @@
         </div>
     </footer>
 
+    <!-- Slaughter Record Modal -->
+    <div id="slaughterModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4 animate-fade-in">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto animate-slide-up">
+            <div class="px-6 py-6 border-b border-slate-200/50 dark:border-slate-700/50">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg">
+                            <span class="text-white font-bold text-lg">🥩</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-900 dark:text-white">Add Slaughter Record</h3>
+                            <p class="text-sm text-slate-600 dark:text-slate-400">Record a new slaughter operation</p>
+                        </div>
+                    </div>
+                    <button onclick="closeSlaughterModal()" class="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                        <svg class="w-6 h-6 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="p-6">
+                <form id="slaughterForm" class="space-y-6">
+                    <!-- Type Selection -->
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">Select Type of Pig</label>
+                        <select id="pigTypeSelect" class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 dark:bg-slate-700 dark:text-white transition-colors">
+                            <option value="">Select Type</option>
+                            <option value="grown_pig">Grown Pig</option>
+                            <option value="litter">Litter</option>
+                        </select>
+                    </div>
+
+                    <!-- Pig/Litter Selection -->
+                    <div id="pigSelectionDiv" class="hidden">
+                        <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">Search Pig/Litter</label>
+                        <div class="relative">
+                            <input type="text" id="pigSearchInput" placeholder="Type to search for tag ID..." class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 dark:bg-slate-700 dark:text-white transition-colors">
+                            <div id="pigSearchResults" class="absolute z-10 w-full mt-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl shadow-xl hidden max-h-60 overflow-y-auto">
+                                <!-- Search results will be populated here -->
+                            </div>
+                        </div>
+                        <input type="hidden" id="selectedPigId" name="pig_id">
+                        <div id="selectedPigInfo" class="mt-3 p-4 bg-slate-50 dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 hidden">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <span class="font-semibold text-slate-900 dark:text-white" id="selectedPigTag"></span>
+                                    <span class="text-sm text-slate-600 dark:text-slate-400 ml-2" id="selectedPigDetails"></span>
+                                </div>
+                                <button type="button" onclick="clearPigSelection()" class="p-1 text-red-600 hover:text-red-800 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Litter-specific fields -->
+                    <div id="litterPigCountDiv" class="hidden">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Number of Pigs to Slaughter</label>
+                        <input type="text" id="pigsToSlaughter" min="1" placeholder="Enter number of pigs" pattern="[0-9]*" inputmode="numeric" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-white">
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Enter the number of pigs from this litter to be slaughtered (digits only)</p>
+                    </div>
+
+                    <div id="avgWeightDiv" class="hidden bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-4">
+                        <div class="flex items-center mb-2">
+                            <svg class="w-5 h-5 text-blue-600 dark:text-blue-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span class="text-sm font-medium text-blue-800 dark:text-blue-300">Litter Slaughter - Average Values</span>
+                        </div>
+                        <p class="text-xs text-blue-700 dark:text-blue-400">For litter slaughter, enter average weights per pig. Calculations will be multiplied by the number of pigs selected.</p>
+                    </div>
+
+                    <!-- Slaughter Details -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Slaughter Date</label>
+                            <input type="date" id="slaughterDate" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-white">
+                        </div>
+                        <div>
+                            <label id="liveWeightLabel" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Live Weight (before slaughter) - kg</label>
+                            <input type="text" id="liveWeight" placeholder="Enter live weight" pattern="[0-9]*\.?[0-9]*" inputmode="decimal" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-white">
+                        </div>
+                        <div>
+                            <label id="carcassWeightLabel" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Carcass Weight (after slaughter) - kg</label>
+                            <input type="text" id="carcassWeight" placeholder="Enter carcass weight" pattern="[0-9]*\.?[0-9]*" inputmode="decimal" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-white">
+                        </div>
+                        <div>
+                            <label id="dressingPercentageLabel" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Dressing Percentage</label>
+                            <div class="flex items-center">
+                                <input type="text" id="dressingPercentage" readonly class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-l-lg bg-gray-50 dark:bg-gray-600 text-gray-900 dark:text-white">
+                                <span class="px-3 py-2 bg-gray-200 dark:bg-gray-500 text-gray-700 dark:text-gray-300 rounded-r-lg border border-l-0 border-gray-300 dark:border-gray-600">%</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Meat Grade / Quality Category</label>
+                            <select id="meatGrade" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-white">
+                                <option value="">Select Grade</option>
+                                <option value="premium">Premium</option>
+                                <option value="grade_a">Grade A</option>
+                                <option value="grade_b">Grade B</option>
+                                <option value="grade_c">Grade C</option>
+                                <option value="standard">Standard</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Selling Price per Kg</label>
+                            <div class="flex items-center">
+                                <span class="px-3 py-2 bg-gray-200 dark:bg-gray-500 text-gray-700 dark:text-gray-300 rounded-l-lg border border-r-0 border-gray-300 dark:border-gray-600">$</span>
+                                <input type="text" id="pricePerKg" placeholder="0.00" pattern="[0-9]*\.?[0-9]*" inputmode="decimal" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-r-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-white">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Revenue Calculation -->
+                    <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-lg p-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-lg font-semibold text-green-800 dark:text-green-300">Total Revenue:</span>
+                            <span id="totalRevenue" class="text-2xl font-bold text-green-900 dark:text-green-200">$0.00</span>
+                        </div>
+                        <div class="text-sm text-green-700 dark:text-green-400 mt-1">
+                            <span id="revenueCalculation">Carcass Weight × Price per Kg</span>
+                        </div>
+                    </div>
+
+                    <!-- Buyer Information -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Buyer/Customer Name</label>
+                        <input type="text" id="buyerName" placeholder="Enter buyer/customer name" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-white">
+                    </div>
+
+                    <!-- Notes -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Additional Notes</label>
+                        <textarea id="slaughterNotes" rows="3" placeholder="Enter any additional notes..." class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-white"></textarea>
+                    </div>
+
+                    <div class="flex justify-end space-x-3 pt-6 border-t border-slate-200/50 dark:border-slate-700/50">
+                        <button type="button" onclick="closeSlaughterModal()" class="px-6 py-3 text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-600 transition-all duration-200 font-semibold">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-8 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 font-semibold">
+                            Save Slaughter Record
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Death Record Modal -->
+    <div id="deathModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4 animate-fade-in">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-slide-up">
+            <div class="px-6 py-6 border-b border-slate-200/50 dark:border-slate-700/50">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gradient-to-br from-gray-500 to-gray-600 rounded-xl flex items-center justify-center shadow-lg">
+                            <span class="text-white font-bold text-lg">💀</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-900 dark:text-white">Add Death Record</h3>
+                            <p class="text-sm text-slate-600 dark:text-slate-400">Record a pig death</p>
+                        </div>
+                    </div>
+                    <button onclick="closeDeathModal()" class="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                        <svg class="w-6 h-6 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="p-6">
+                <form id="deathForm" class="space-y-6">
+                    <!-- Pig Type Selection -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Pig Type</label>
+                        <select id="deathPigTypeSelect" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 dark:bg-gray-700 dark:text-white" onchange="handleDeathPigTypeChange()">
+                            <option value="">Select Pig Type</option>
+                            <option value="grown_pig">Grown Pig</option>
+                            <option value="litter">Litter</option>
+                        </select>
+                    </div>
+
+                    <!-- Pig/Litter Selection -->
+                    <div id="deathPigSelection" class="hidden">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Search and Select Pig/Litter</label>
+                        <div class="relative">
+                            <input type="text" id="deathPigSearch" placeholder="Search by tag ID or litter ID..." class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 dark:bg-gray-700 dark:text-white" onkeyup="searchDeathPigs()">
+                            <div id="deathPigSearchResults" class="absolute z-10 w-full mt-1 bg-white dark:bg-slate-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg max-h-60 overflow-y-auto hidden">
+                                <!-- Search results will be populated here -->
+                            </div>
+                        </div>
+                        <div id="selectedDeathPig" class="mt-2 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg hidden">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <span class="font-medium text-gray-900 dark:text-white" id="selectedDeathPigTag"></span>
+                                    <span class="text-sm text-gray-500 dark:text-gray-400 ml-2" id="selectedDeathPigDetails"></span>
+                                </div>
+                                <button type="button" onclick="clearDeathPigSelection()" class="text-red-500 hover:text-red-700">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <input type="hidden" id="selectedDeathPigId" value="">
+                    </div>
+
+                    <!-- Number of Pigs (for litters) -->
+                    <div id="deathPigsCount" class="hidden">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Number of Pigs Dead</label>
+                        <input type="number" id="deathPigsCountInput" min="1" value="1" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 dark:bg-gray-700 dark:text-white">
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Enter the number of pigs that died from this litter</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Death Date</label>
+                            <input type="date" id="deathDate" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 dark:bg-gray-700 dark:text-white" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Cause of Death</label>
+                            <select id="causeOfDeath" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 dark:bg-gray-700 dark:text-white" required>
+                                <option value="">Select Cause</option>
+                                <option value="disease">Disease</option>
+                                <option value="injury">Injury</option>
+                                <option value="old_age">Old Age</option>
+                                <option value="predator_attack">Predator Attack</option>
+                                <option value="accident">Accident</option>
+                                <option value="birth_complications">Birth Complications</option>
+                                <option value="unknown">Unknown</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Weight at Death (kg)</label>
+                            <input type="number" id="deathWeight" step="0.1" min="0" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 dark:bg-gray-700 dark:text-white" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Age at Death (days)</label>
+                            <input type="number" id="deathAge" min="0" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 dark:bg-gray-700 dark:text-white bg-gray-100 dark:bg-gray-600" readonly>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Automatically calculated from birth date</p>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Additional Details</label>
+                        <textarea id="deathDetails" rows="3" placeholder="Enter any additional details about the death..." class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 dark:bg-gray-700 dark:text-white"></textarea>
+                    </div>
+                    
+                    <div class="flex justify-end space-x-3 pt-6 border-t border-slate-200/50 dark:border-slate-700/50">
+                        <button type="button" onclick="closeDeathModal()" class="px-6 py-3 text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-600 transition-all duration-200 font-semibold">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-8 py-3 bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 font-semibold">
+                            Save Death Record
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Sale Record Modal -->
+    <div id="saleModal" class="fixed inset-0 bg-black/60 backdrop-blur-md hidden z-50 flex items-center justify-center p-4 animate-fade-in">
+        <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl w-full max-w-4xl max-h-[95vh] overflow-hidden animate-slide-up">
+            <!-- Enhanced Header -->
+            <div class="px-8 py-6 bg-gradient-to-r from-green-500 to-emerald-600 text-white">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg">
+                            <span class="text-white font-bold text-xl">💰</span>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold">Create Sale Record</h3>
+                            <p class="text-green-100 text-sm">Record a pig sale transaction</p>
+                        </div>
+                    </div>
+                    <button onclick="closeSaleModal()" class="p-3 rounded-2xl hover:bg-white/20 transition-all duration-200 group">
+                        <svg class="w-6 h-6 text-white group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Enhanced Form Content -->
+            <div class="p-8 overflow-y-auto max-h-[calc(95vh-120px)]">
+                <form id="saleForm" class="space-y-8">
+                    <!-- Step 1: Animal Selection -->
+                    <div id="animalSelectionSection" class="bg-slate-50 dark:bg-slate-700/50 rounded-2xl p-6">
+                        <div class="flex items-center space-x-3 mb-6">
+                            <div class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold">1</div>
+                            <h4 class="text-lg font-semibold text-slate-900 dark:text-white">Select Animal</h4>
+                        </div>
+                        
+                        <!-- Pig Type Selection -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Animal Type</label>
+                            <div class="grid grid-cols-2 gap-4">
+                                <label class="relative cursor-pointer">
+                                    <input type="radio" name="salePigType" value="grown_pig" class="sr-only" onchange="handleSalePigTypeChange()">
+                                    <div class="p-4 border-2 border-gray-200 dark:border-gray-600 rounded-xl hover:border-green-400 transition-all duration-200 sale-pig-type-option">
+                                        <div class="flex items-center space-x-3">
+                                            <span class="text-2xl">🐷</span>
+                                            <div>
+                                                <div class="font-medium text-gray-900 dark:text-white">Grown Pig</div>
+                                                <div class="text-sm text-gray-500 dark:text-gray-400">Individual adult pig</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </label>
+                                <label class="relative cursor-pointer">
+                                    <input type="radio" name="salePigType" value="litter" class="sr-only" onchange="handleSalePigTypeChange()">
+                                    <div class="p-4 border-2 border-gray-200 dark:border-gray-600 rounded-xl hover:border-green-400 transition-all duration-200 sale-pig-type-option">
+                                        <div class="flex items-center space-x-3">
+                                            <span class="text-2xl">🐽</span>
+                                            <div>
+                                                <div class="font-medium text-gray-900 dark:text-white">Litter</div>
+                                                <div class="text-sm text-gray-500 dark:text-gray-400">Group of piglets</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Animal Search and Selection -->
+                        <div id="salePigSelection" class="hidden">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Search Animal</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                    </svg>
+                                </div>
+                                <input type="text" id="salePigSearch" placeholder="Search by tag ID or litter ID..." 
+                                       class="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white transition-all duration-200" 
+                                       onkeyup="searchSalePigs()">
+                                <div id="salePigSearchResults" class="absolute z-20 w-full mt-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-600 rounded-xl shadow-xl max-h-60 overflow-y-auto hidden">
+                                    <!-- Search results will be populated here -->
+                                </div>
+                            </div>
+                            
+                            <!-- Selected Animal Display -->
+                            <div id="selectedSalePig" class="mt-4 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-xl hidden">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-green-500 text-white rounded-full flex items-center justify-center">
+                                            <span class="text-lg">✓</span>
+                                        </div>
+                                        <div>
+                                            <div class="font-semibold text-gray-900 dark:text-white" id="selectedSalePigTag"></div>
+                                            <div class="text-sm text-gray-600 dark:text-gray-400" id="selectedSalePigDetails"></div>
+                                        </div>
+                                    </div>
+                                    <button type="button" onclick="clearSalePigSelection()" class="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <input type="hidden" id="selectedSalePigId" value="">
+                        </div>
+
+                        <!-- Number of Pigs (for litters) -->
+                        <div id="salePigsCount" class="hidden mt-6">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Number of Pigs to Sell</label>
+                            <div class="flex items-center space-x-4">
+                                <button type="button" onclick="decreasePigCount()" class="w-10 h-10 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center justify-center">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
+                                    </svg>
+                                </button>
+                                <input type="number" id="salePigsCountInput" min="1" value="1" 
+                                       class="w-20 text-center px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white">
+                                <button type="button" onclick="increasePigCount()" class="w-10 h-10 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center justify-center">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Specify how many pigs from this litter are being sold</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Sale Details -->
+                    <div id="saleInfoSection" class="bg-slate-50 dark:bg-slate-700/50 rounded-2xl p-6">
+                        <div class="flex items-center space-x-3 mb-6">
+                            <div class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold">2</div>
+                            <h4 class="text-lg font-semibold text-slate-900 dark:text-white">Sale Information</h4>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Sale Date -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Sale Date</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                    </div>
+                                    <input type="date" id="saleDate" 
+                                           class="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white transition-all duration-200">
+                                </div>
+                            </div>
+
+                            <!-- Buyer Name -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                                    Buyer Name <span class="text-red-500">*</span>
+                                </label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                        </svg>
+                                    </div>
+                                    <input type="text" id="buyerName" placeholder="Enter buyer's full name" 
+                                           class="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white transition-all duration-200">
+                                </div>
+                            </div>
+
+                            <!-- Buyer Contact -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Buyer Contact</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                                        </svg>
+                                    </div>
+                                    <input type="tel" id="buyerContact" placeholder="Phone number or email" 
+                                           class="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white transition-all duration-200">
+                                </div>
+                            </div>
+
+                            <!-- Sale Price -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                                    Price per Pig <span class="text-red-500">*</span>
+                                </label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <span class="text-gray-500 font-medium">$</span>
+                                    </div>
+                                    <input type="number" id="salePrice" step="0.01" min="0" placeholder="0.00" 
+                                           class="w-full pl-8 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white transition-all duration-200" 
+                                           oninput="calculateSaleRevenue()">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Total Revenue Display -->
+                        <div class="mt-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-xl">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 bg-green-500 text-white rounded-full flex items-center justify-center">
+                                        <span class="text-lg">💰</span>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Revenue</div>
+                                        <div class="text-2xl font-bold text-green-600 dark:text-green-400" id="totalSaleRevenue">$0.00</div>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-sm text-gray-500 dark:text-gray-400" id="revenueBreakdown">0 pigs × $0.00</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Additional Notes -->
+                    <div class="bg-slate-50 dark:bg-slate-700/50 rounded-2xl p-6">
+                        <div class="flex items-center space-x-3 mb-6">
+                            <div class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold">3</div>
+                            <h4 class="text-lg font-semibold text-slate-900 dark:text-white">Additional Information</h4>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Sale Notes</label>
+                            <textarea id="saleNotes" rows="4" placeholder="Enter any additional notes about the sale (optional)..." 
+                                      class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white transition-all duration-200 resize-none"></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Enhanced Action Buttons -->
+                    <div class="flex justify-end space-x-4 pt-6 border-t border-slate-200/50 dark:border-slate-700/50">
+                        <button type="button" onclick="closeSaleModal()" 
+                                class="px-8 py-3 text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-600 transition-all duration-200 font-semibold flex items-center space-x-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                            <span>Cancel</span>
+                        </button>
+                        <button type="submit" 
+                                class="px-8 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 font-semibold flex items-center space-x-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>Create Sale Record</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // Global Modal Functions - Must be defined first
+        function openSlaughterModal() {
+            const modal = document.getElementById('slaughterModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                document.body.classList.add('overflow-hidden');
+                // Add focus trap for accessibility
+                const firstInput = modal.querySelector('input, select, textarea');
+                if (firstInput) {
+                    setTimeout(() => firstInput.focus(), 100);
+                }
+            }
+        }
+
+        function closeSlaughterModal() {
+            const modal = document.getElementById('slaughterModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            }
+        }
+
+        function openDeathModal() {
+            const modal = document.getElementById('deathModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                document.body.classList.add('overflow-hidden');
+                const firstInput = modal.querySelector('input, select, textarea');
+                if (firstInput) {
+                    setTimeout(() => firstInput.focus(), 100);
+                }
+            }
+        }
+
+        function closeDeathModal() {
+            const modal = document.getElementById('deathModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            }
+        }
+
+        // Death Record Functions
+        function handleDeathPigTypeChange() {
+            const pigType = document.getElementById('deathPigTypeSelect').value;
+            const pigSelection = document.getElementById('deathPigSelection');
+            const pigsCount = document.getElementById('deathPigsCount');
+            
+            if (pigType) {
+                pigSelection.classList.remove('hidden');
+                if (pigType === 'litter') {
+                    pigsCount.classList.remove('hidden');
+                } else {
+                    pigsCount.classList.add('hidden');
+                }
+            } else {
+                pigSelection.classList.add('hidden');
+                pigsCount.classList.add('hidden');
+            }
+        }
+
+        function searchDeathPigs() {
+            const query = document.getElementById('deathPigSearch').value;
+            const results = document.getElementById('deathPigSearchResults');
+            const pigType = document.getElementById('deathPigTypeSelect').value;
+            
+            if (query.length < 2) {
+                results.classList.add('hidden');
+                return;
+            }
+            
+            if (!pigType) {
+                alert('Please select a pig type first');
+                return;
+            }
+            
+            // Fetch available pigs/litters based on type
+            const endpoint = pigType === 'grown_pig' ? '/api/pigs/available' : '/api/litters/available';
+            
+            fetch(endpoint)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const items = data[pigType === 'grown_pig' ? 'pigs' : 'litters'];
+                        const filtered = items.filter(item => {
+                            const searchTerm = pigType === 'grown_pig' ? item.tag_id : item.litter_id;
+                            return searchTerm.toLowerCase().includes(query.toLowerCase());
+                        });
+                        
+                        displayDeathSearchResults(filtered, pigType);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error searching pigs:', error);
+                });
+        }
+
+        function displayDeathSearchResults(items, pigType) {
+            const results = document.getElementById('deathPigSearchResults');
+            
+            if (items.length === 0) {
+                results.innerHTML = '<div class="p-3 text-gray-500 dark:text-gray-400">No matching pigs found</div>';
+            } else {
+                results.innerHTML = items.map(item => {
+                    const id = pigType === 'grown_pig' ? item.id : item.id;
+                    const tag = pigType === 'grown_pig' ? item.tag_id : item.litter_id;
+                    const details = pigType === 'grown_pig' 
+                        ? `${item.breed} • ${item.gender} • ${item.status}`
+                        : `${item.total_pigs} pigs • ${item.available_pigs} available • ${item.status}`;
+                    
+                    return `
+                        <div class="p-3 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer border-b border-gray-200 dark:border-gray-600 last:border-b-0" 
+                             onclick="selectDeathPig(${id}, '${tag}', '${details}', '${pigType}')">
+                            <div class="font-medium text-gray-900 dark:text-white">${tag}</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400">${details}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            results.classList.remove('hidden');
+        }
+
+        function selectDeathPig(id, tag, details, pigType) {
+            document.getElementById('selectedDeathPigId').value = id;
+            document.getElementById('selectedDeathPigTag').textContent = tag;
+            document.getElementById('selectedDeathPigDetails').textContent = details;
+            
+            document.getElementById('selectedDeathPig').classList.remove('hidden');
+            document.getElementById('deathPigSearchResults').classList.add('hidden');
+            document.getElementById('deathPigSearch').value = '';
+            
+            // Calculate and set age automatically
+            calculateDeathAge(id, pigType);
+        }
+
+        function clearDeathPigSelection() {
+            document.getElementById('selectedDeathPigId').value = '';
+            document.getElementById('selectedDeathPig').classList.add('hidden');
+        }
+
+        // Enhanced Sale Record Functions
+        function handleSalePigTypeChange() {
+            const pigType = document.querySelector('input[name="salePigType"]:checked')?.value;
+            const pigSelection = document.getElementById('salePigSelection');
+            const pigsCount = document.getElementById('salePigsCount');
+            
+            // Update visual selection
+            document.querySelectorAll('.sale-pig-type-option').forEach(option => {
+                option.classList.remove('border-green-500', 'bg-green-50', 'dark:bg-green-900/20');
+                option.classList.add('border-gray-200', 'dark:border-gray-600');
+            });
+            
+            if (pigType) {
+                const selectedOption = document.querySelector(`input[name="salePigType"][value="${pigType}"]`).closest('label').querySelector('.sale-pig-type-option');
+                selectedOption.classList.add('border-green-500', 'bg-green-50', 'dark:bg-green-900/20');
+                selectedOption.classList.remove('border-gray-200', 'dark:border-gray-600');
+                
+                pigSelection.classList.remove('hidden');
+                if (pigType === 'litter') {
+                    pigsCount.classList.remove('hidden');
+                } else {
+                    pigsCount.classList.add('hidden');
+                }
+            } else {
+                pigSelection.classList.add('hidden');
+                pigsCount.classList.add('hidden');
+            }
+        }
+
+        function increasePigCount() {
+            const input = document.getElementById('salePigsCountInput');
+            const currentValue = parseInt(input.value) || 1;
+            input.value = currentValue + 1;
+            calculateSaleRevenue();
+        }
+
+        function decreasePigCount() {
+            const input = document.getElementById('salePigsCountInput');
+            const currentValue = parseInt(input.value) || 1;
+            if (currentValue > 1) {
+                input.value = currentValue - 1;
+                calculateSaleRevenue();
+            }
+        }
+
+        function searchSalePigs() {
+            const query = document.getElementById('salePigSearch').value;
+            const results = document.getElementById('salePigSearchResults');
+            const pigType = document.querySelector('input[name="salePigType"]:checked')?.value;
+            
+            if (query.length < 2) {
+                results.classList.add('hidden');
+                return;
+            }
+            
+            if (!pigType) {
+                alert('Please select an animal type first');
+                return;
+            }
+            
+            // Fetch available pigs/litters based on type
+            const endpoint = pigType === 'grown_pig' ? '/api/pigs/available' : '/api/litters/available';
+            
+            fetch(endpoint)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const items = data[pigType === 'grown_pig' ? 'pigs' : 'litters'];
+                        const filtered = items.filter(item => {
+                            const searchTerm = pigType === 'grown_pig' ? item.tag_id : item.litter_id;
+                            return searchTerm.toLowerCase().includes(query.toLowerCase());
+                        });
+                        
+                        displaySaleSearchResults(filtered, pigType);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error searching pigs:', error);
+                });
+        }
+
+        function displaySaleSearchResults(items, pigType) {
+            const results = document.getElementById('salePigSearchResults');
+            
+            if (items.length === 0) {
+                results.innerHTML = '<div class="p-3 text-gray-500 dark:text-gray-400">No matching pigs found</div>';
+            } else {
+                results.innerHTML = items.map(item => {
+                    const id = pigType === 'grown_pig' ? item.id : item.id;
+                    const tag = pigType === 'grown_pig' ? item.tag_id : item.litter_id;
+                    const details = pigType === 'grown_pig' 
+                        ? `${item.breed} • ${item.gender} • ${item.status}`
+                        : `${item.total_pigs} pigs • ${item.available_pigs} available • ${item.status}`;
+                    
+                    return `
+                        <div class="p-3 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer border-b border-gray-200 dark:border-gray-600 last:border-b-0" 
+                             onclick="selectSalePig(${id}, '${tag}', '${details}', '${pigType}')">
+                            <div class="font-medium text-gray-900 dark:text-white">${tag}</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400">${details}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            results.classList.remove('hidden');
+        }
+
+        function selectSalePig(id, tag, details, pigType) {
+            document.getElementById('selectedSalePigId').value = id;
+            document.getElementById('selectedSalePigTag').textContent = tag;
+            document.getElementById('selectedSalePigDetails').textContent = details;
+            
+            document.getElementById('selectedSalePig').classList.remove('hidden');
+            document.getElementById('salePigSearchResults').classList.add('hidden');
+            document.getElementById('salePigSearch').value = '';
+            
+            // Calculate total revenue
+            calculateSaleRevenue();
+        }
+
+        function clearSalePigSelection() {
+            document.getElementById('selectedSalePigId').value = '';
+            document.getElementById('selectedSalePig').classList.add('hidden');
+        }
+
+        function calculateSaleRevenue() {
+            const salePrice = parseFloat(document.getElementById('salePrice').value) || 0;
+            const pigType = document.querySelector('input[name="salePigType"]:checked')?.value;
+            let pigsCount = 1;
+            
+            if (pigType === 'litter') {
+                pigsCount = parseInt(document.getElementById('salePigsCountInput').value) || 1;
+            }
+            
+            const totalRevenue = salePrice * pigsCount;
+            document.getElementById('totalSaleRevenue').textContent = `$${totalRevenue.toFixed(2)}`;
+            document.getElementById('revenueBreakdown').textContent = `${pigsCount} pig${pigsCount > 1 ? 's' : ''} × $${salePrice.toFixed(2)}`;
+        }
+
+        function calculateDeathAge(id, pigType) {
+            // Set today's date as default
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('deathDate').value = today;
+            
+            // Fetch pig/litter details to calculate age
+            const endpoint = pigType === 'grown_pig' ? '/api/pigs/death-details' : '/api/litters/death-details';
+            
+            fetch(`${endpoint}/${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        let birthDate;
+                        if (pigType === 'grown_pig') {
+                            birthDate = data.pig.birth_date;
+                        } else {
+                            birthDate = data.litter.farrowing_date;
+                        }
+                        
+                        if (birthDate) {
+                            const birth = new Date(birthDate);
+                            const death = new Date(today);
+                            const ageInDays = Math.floor((death - birth) / (1000 * 60 * 60 * 24));
+                            document.getElementById('deathAge').value = Math.max(0, ageInDays);
+                        } else {
+                            document.getElementById('deathAge').value = 0;
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error calculating age:', error);
+                    document.getElementById('deathAge').value = 0;
+                });
+        }
+
+        function openSaleModal() {
+            const modal = document.getElementById('saleModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                document.body.classList.add('overflow-hidden');
+                const firstInput = modal.querySelector('input, select, textarea');
+                if (firstInput) {
+                    setTimeout(() => firstInput.focus(), 100);
+                }
+            }
+        }
+
+        function closeSaleModal() {
+            const modal = document.getElementById('saleModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            }
+        }
+
         // Theme Toggle
         const themeToggle = document.getElementById('theme-toggle');
         const sunIcon = document.getElementById('sun-icon');
@@ -357,38 +1260,169 @@
         const mobileMenuBtn = document.getElementById('mobile-menu-btn');
         const closeSidebarBtn = document.getElementById('close-sidebar');
         const sidebar = document.getElementById('sidebar');
+        const mobileOverlay = document.getElementById('mobile-overlay');
         
         mobileMenuBtn.addEventListener('click', () => {
             sidebar.classList.remove('-translate-x-full');
+            mobileOverlay.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
         });
         
         closeSidebarBtn.addEventListener('click', () => {
             sidebar.classList.add('-translate-x-full');
+            mobileOverlay.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        });
+        
+        // Close sidebar when clicking overlay
+        mobileOverlay.addEventListener('click', () => {
+            sidebar.classList.add('-translate-x-full');
+            mobileOverlay.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
         });
 
-        // Live Time
-        function updateTime() {
-            const now = new Date();
-            const timeElement = document.getElementById('live-time');
-            const dateElement = document.getElementById('live-date');
+        // Load slaughter data on page load
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadSlaughterRecords();
+        });
+
+
+        // Load slaughter records
+        async function loadSlaughterRecords() {
+            const tbody = document.getElementById('slaughter-records-body');
+            if (!tbody) return;
             
-            timeElement.textContent = now.toLocaleTimeString('en-US', {
-                hour12: true,
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            });
+            // Show loading state
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
+                        <div class="flex flex-col items-center">
+                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-red-500 mx-auto mb-4"></div>
+                            <p class="text-sm font-medium">Loading slaughter records...</p>
+                        </div>
+                    </td>
+                </tr>
+            `;
             
-            dateElement.textContent = now.toLocaleDateString('en-US', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
+            try {
+                const response = await fetch('/api/slaughter/records');
+                const data = await response.json();
+                
+                if (data.success) {
+                    displaySlaughterRecords(data.records);
+                } else {
+                    displaySlaughterRecordsError();
+                }
+            } catch (error) {
+                console.error('Error loading slaughter records:', error);
+                displaySlaughterRecordsError();
+            }
         }
-        
-        updateTime();
-        setInterval(updateTime, 1000);
+
+        // Display slaughter records
+        function displaySlaughterRecords(records) {
+            const tbody = document.getElementById('slaughter-records-body');
+            if (!tbody) return;
+            
+            if (records.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
+                            <div class="flex flex-col items-center">
+                                <div class="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mb-4">
+                                    <span class="text-2xl">📋</span>
+                                </div>
+                                <p class="text-lg font-medium mb-2">No slaughter records found</p>
+                                <p class="text-sm">Start by adding your first slaughter record</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tbody.innerHTML = records.map(record => `
+                <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center mr-3">
+                                <span class="text-sm">${record.pig_type === 'grown_pig' ? '🐷' : '🐷'}</span>
+                            </div>
+                            <div>
+                                <div class="text-sm font-medium text-slate-900 dark:text-white">
+                                    ${record.pig_tag_id || record.litter_id || 'N/A'}
+                                </div>
+                                <div class="text-sm text-slate-500 dark:text-slate-400">
+                                    ${record.pig_breed || record.litter_breed || 'Unknown'} • ${record.pig_gender || 'N/A'}
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-white">
+                        ${new Date(record.slaughter_date).toLocaleDateString()}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-white">
+                        ${parseFloat(record.live_weight || 0).toFixed(1)} kg
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-white">
+                        ${parseFloat(record.carcass_weight || 0).toFixed(1)} kg
+                        <div class="text-xs text-slate-500 dark:text-slate-400">
+                            ${parseFloat(record.dressing_percentage || 0).toFixed(1)}% dressing
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                            record.meat_grade === 'premium' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300' :
+                            record.meat_grade === 'grade_a' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' :
+                            record.meat_grade === 'grade_b' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300' :
+                            record.meat_grade === 'grade_c' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300' :
+                            'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
+                        }">
+                            ${record.meat_grade.replace('_', ' ').toUpperCase()}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-green-600 dark:text-green-400 font-semibold">
+                                $${parseFloat(record.total_revenue || 0).toFixed(2)}
+                            </span>
+                            <button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                            ${record.pigs_count} pig${record.pigs_count > 1 ? 's' : ''} • ${record.buyer_name}
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Display error state
+        function displaySlaughterRecordsError() {
+            const tbody = document.getElementById('slaughter-records-body');
+            if (!tbody) return;
+            
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
+                        <div class="flex flex-col items-center">
+                            <div class="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mb-4">
+                                <span class="text-2xl">⚠️</span>
+                            </div>
+                            <p class="text-lg font-medium mb-2">Error Loading Records</p>
+                            <p class="text-sm mb-4">Failed to load slaughter records</p>
+                            <button onclick="loadSlaughterRecords()" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                                Try Again
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
 
         // Logout
         document.getElementById('logout-btn').addEventListener('click', async function() {
@@ -412,9 +1446,659 @@
         });
 
         // Slaughter Management Functions
+
+        // Close modals when clicking outside
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('fixed') && e.target.classList.contains('inset-0')) {
+                e.target.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            }
+        });
+        
+
+        // Slaughter Modal Functions
+        let availablePigs = [];
+        let searchTimeout;
+
+        // Set today's date as default
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('slaughterDate').value = today;
+        });
+
+        // Pig type selection handler
+        document.getElementById('pigTypeSelect').addEventListener('change', function() {
+            const pigSelectionDiv = document.getElementById('pigSelectionDiv');
+            if (this.value) {
+                pigSelectionDiv.classList.remove('hidden');
+                loadAvailablePigs(this.value);
+            } else {
+                pigSelectionDiv.classList.add('hidden');
+                clearPigSelection();
+            }
+        });
+
+        // Live search functionality
+        document.getElementById('pigSearchInput').addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                searchPigs(this.value);
+            }, 300);
+        });
+
+        // Live calculations
+        document.getElementById('liveWeight').addEventListener('input', calculateDressingPercentage);
+        document.getElementById('carcassWeight').addEventListener('input', calculateDressingPercentage);
+        document.getElementById('carcassWeight').addEventListener('input', calculateTotalRevenue);
+        document.getElementById('pricePerKg').addEventListener('input', calculateTotalRevenue);
+        document.getElementById('pigsToSlaughter').addEventListener('input', calculateTotalRevenue);
+
+        // Input restrictions for numeric fields
+        document.getElementById('liveWeight').addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9.]/g, '');
+            // Prevent multiple decimal points
+            const parts = this.value.split('.');
+            if (parts.length > 2) {
+                this.value = parts[0] + '.' + parts.slice(1).join('');
+            }
+        });
+
+        document.getElementById('carcassWeight').addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9.]/g, '');
+            // Prevent multiple decimal points
+            const parts = this.value.split('.');
+            if (parts.length > 2) {
+                this.value = parts[0] + '.' + parts.slice(1).join('');
+            }
+        });
+
+        document.getElementById('pricePerKg').addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9.]/g, '');
+            // Prevent multiple decimal points
+            const parts = this.value.split('.');
+            if (parts.length > 2) {
+                this.value = parts[0] + '.' + parts.slice(1).join('');
+            }
+        });
+
+        document.getElementById('pigsToSlaughter').addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+
+        function loadAvailablePigs(type) {
+            // Show loading indicator
+            const searchInput = document.getElementById('pigSearchInput');
+            const originalPlaceholder = searchInput.placeholder;
+            searchInput.placeholder = 'Loading...';
+            searchInput.disabled = true;
+            
+            // Fetch from database
+            fetch(`/api/pigs/available?type=${type}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        availablePigs = data.pigs || data.litters || [];
+                        console.log(`Loaded ${availablePigs.length} ${type}s from database`);
+                        
+                        // Update placeholder based on type
+                        searchInput.placeholder = type === 'grown_pig' ? 'Type to search for pig tag ID...' : 'Type to search for litter ID...';
+                    } else {
+                        console.error('Error loading pigs/litters:', data.message);
+                        availablePigs = [];
+                        searchInput.placeholder = 'Error loading data. Please try again.';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching pigs/litters:', error);
+                    availablePigs = [];
+                    searchInput.placeholder = 'Error loading data. Please try again.';
+                })
+                .finally(() => {
+                    searchInput.disabled = false;
+                });
+        }
+
+        function searchPigs(query) {
+            const resultsDiv = document.getElementById('pigSearchResults');
+            const searchInput = document.getElementById('pigSearchInput');
+            const pigType = document.getElementById('pigTypeSelect').value;
+            
+            if (query.length < 2) {
+                resultsDiv.classList.add('hidden');
+                return;
+            }
+
+            let filteredItems = [];
+            if (pigType === 'grown_pig') {
+                filteredItems = availablePigs.filter(pig => 
+                    pig.tag_id.toLowerCase().includes(query.toLowerCase()) ||
+                    pig.breed.toLowerCase().includes(query.toLowerCase())
+                );
+            } else if (pigType === 'litter') {
+                filteredItems = availablePigs.filter(litter => 
+                    litter.litter_id.toLowerCase().includes(query.toLowerCase()) ||
+                    litter.breed.toLowerCase().includes(query.toLowerCase())
+                );
+            }
+
+            if (filteredItems.length === 0) {
+                const itemType = pigType === 'grown_pig' ? 'pigs' : 'litters';
+                resultsDiv.innerHTML = `<div class="p-3 text-gray-500 dark:text-gray-400">No ${itemType} found</div>`;
+            } else {
+                if (pigType === 'grown_pig') {
+                    resultsDiv.innerHTML = filteredItems.map(pig => `
+                        <div class="p-3 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer border-b border-gray-200 dark:border-gray-600 last:border-b-0" 
+                             onclick="selectPig(${pig.id}, '${pig.tag_id}', '${pig.breed}', '${pig.gender}', ${pig.weight || 0})">
+                            <div class="font-medium text-gray-900 dark:text-white">${pig.tag_id}</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">${pig.breed} • ${pig.gender} • ${pig.weight || 0}kg</div>
+                        </div>
+                    `).join('');
+                } else if (pigType === 'litter') {
+                    resultsDiv.innerHTML = filteredItems.map(litter => `
+                        <div class="p-3 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer border-b border-gray-200 dark:border-gray-600 last:border-b-0" 
+                             onclick="selectLitter(${litter.id}, '${litter.litter_id}', '${litter.breed}', ${litter.total_pigs}, ${litter.available_pigs}, ${litter.avg_weight || 0})">
+                            <div class="font-medium text-gray-900 dark:text-white">${litter.litter_id}</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">${litter.breed} • ${litter.available_pigs}/${litter.total_pigs} pigs • Avg: ${litter.avg_weight || 0}kg</div>
+                        </div>
+                    `).join('');
+                }
+            }
+            
+            resultsDiv.classList.remove('hidden');
+        }
+
+        function selectPig(id, tagId, breed, gender, weight) {
+            document.getElementById('selectedPigId').value = id;
+            document.getElementById('selectedPigTag').textContent = tagId;
+            document.getElementById('selectedPigDetails').textContent = `${breed} • ${gender} • ${weight}kg`;
+            document.getElementById('selectedPigInfo').classList.remove('hidden');
+            document.getElementById('pigSearchInput').value = '';
+            document.getElementById('pigSearchResults').classList.add('hidden');
+            
+            // Hide litter-specific fields
+            document.getElementById('litterPigCountDiv').classList.add('hidden');
+            document.getElementById('avgWeightDiv').classList.add('hidden');
+        }
+
+        function selectLitter(id, litterId, breed, totalPigs, availablePigs, avgWeight) {
+            document.getElementById('selectedPigId').value = id;
+            document.getElementById('selectedPigTag').textContent = litterId;
+            document.getElementById('selectedPigDetails').textContent = `${breed} • ${availablePigs}/${totalPigs} pigs • Avg: ${avgWeight}kg`;
+            document.getElementById('selectedPigInfo').classList.remove('hidden');
+            document.getElementById('pigSearchInput').value = '';
+            document.getElementById('pigSearchResults').classList.add('hidden');
+            
+            // Show litter-specific fields
+            document.getElementById('litterPigCountDiv').classList.remove('hidden');
+            document.getElementById('avgWeightDiv').classList.remove('hidden');
+            
+            // Set max value for pig count input
+            document.getElementById('pigsToSlaughter').max = availablePigs;
+            document.getElementById('pigsToSlaughter').placeholder = `Max: ${availablePigs} pigs`;
+            
+            // Update labels to show "Average"
+            document.getElementById('liveWeightLabel').textContent = 'AVG Live Weight (before slaughter) - kg';
+            document.getElementById('carcassWeightLabel').textContent = 'AVG Carcass Weight (after slaughter) - kg';
+            document.getElementById('dressingPercentageLabel').textContent = 'AVG Dressing Percentage';
+        }
+
+        function clearPigSelection() {
+            document.getElementById('selectedPigId').value = '';
+            document.getElementById('selectedPigInfo').classList.add('hidden');
+            document.getElementById('pigSearchInput').value = '';
+            document.getElementById('pigSearchResults').classList.add('hidden');
+            
+            // Hide litter-specific fields
+            document.getElementById('litterPigCountDiv').classList.add('hidden');
+            document.getElementById('avgWeightDiv').classList.add('hidden');
+            
+            // Reset labels to normal
+            document.getElementById('liveWeightLabel').textContent = 'Live Weight (before slaughter) - kg';
+            document.getElementById('carcassWeightLabel').textContent = 'Carcass Weight (after slaughter) - kg';
+            document.getElementById('dressingPercentageLabel').textContent = 'Dressing Percentage';
+        }
+
+        function calculateDressingPercentage() {
+            const liveWeight = parseFloat(document.getElementById('liveWeight').value) || 0;
+            const carcassWeight = parseFloat(document.getElementById('carcassWeight').value) || 0;
+            
+            if (liveWeight > 0 && carcassWeight > 0) {
+                const dressingPercentage = (carcassWeight / liveWeight) * 100;
+                document.getElementById('dressingPercentage').value = parseFloat(dressingPercentage.toFixed(2));
+            } else {
+                document.getElementById('dressingPercentage').value = '';
+            }
+        }
+
+        function calculateTotalRevenue() {
+            const carcassWeight = parseFloat(document.getElementById('carcassWeight').value) || 0;
+            const pricePerKg = parseFloat(document.getElementById('pricePerKg').value) || 0;
+            const pigType = document.getElementById('pigTypeSelect').value;
+            
+            let totalRevenue = carcassWeight * pricePerKg;
+            let calculation = `${carcassWeight}kg × $${pricePerKg}`;
+            
+            // If it's a litter, multiply by number of pigs
+            if (pigType === 'litter') {
+                const pigsToSlaughter = parseInt(document.getElementById('pigsToSlaughter').value) || 1;
+                totalRevenue = totalRevenue * pigsToSlaughter;
+                calculation = `(${carcassWeight}kg × $${pricePerKg}) × ${pigsToSlaughter} pigs = $${parseFloat(totalRevenue).toFixed(2)}`;
+            } else {
+                calculation += ` = $${parseFloat(totalRevenue).toFixed(2)}`;
+            }
+            
+            document.getElementById('totalRevenue').textContent = `$${parseFloat(totalRevenue).toFixed(2)}`;
+            document.getElementById('revenueCalculation').textContent = calculation;
+        }
+
+        // Close search results when clicking outside
+        document.addEventListener('click', function(e) {
+            const searchResults = document.getElementById('pigSearchResults');
+            const searchInput = document.getElementById('pigSearchInput');
+            
+            if (!searchResults.contains(e.target) && !searchInput.contains(e.target)) {
+                searchResults.classList.add('hidden');
+            }
+        });
+
+        // Form submission handlers
+        document.getElementById('slaughterForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Validate required fields
+            const pigType = document.getElementById('pigTypeSelect').value;
+            const selectedPigId = document.getElementById('selectedPigId').value;
+            const slaughterDate = document.getElementById('slaughterDate').value;
+            const liveWeight = document.getElementById('liveWeight').value;
+            const carcassWeight = document.getElementById('carcassWeight').value;
+            const meatGrade = document.getElementById('meatGrade').value;
+            const pricePerKg = document.getElementById('pricePerKg').value;
+            const buyerName = document.getElementById('buyerName').value;
+
+            // Additional validation for litter
+            if (pigType === 'litter') {
+                const pigsToSlaughter = document.getElementById('pigsToSlaughter').value;
+                if (!pigsToSlaughter || parseInt(pigsToSlaughter) < 1) {
+                    alert('Please enter the number of pigs to slaughter');
+                    return;
+                }
+            }
+
+            if (!pigType || !selectedPigId || !slaughterDate || !liveWeight || !carcassWeight || !meatGrade || !pricePerKg || !buyerName) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            // Prepare form data
+            const formData = {
+                pig_type: pigType,
+                pig_id: pigType === 'grown_pig' ? selectedPigId : null,
+                litter_id: pigType === 'litter' ? selectedPigId : null,
+                slaughter_date: slaughterDate,
+                live_weight: liveWeight,
+                carcass_weight: carcassWeight,
+                meat_grade: meatGrade,
+                price_per_kg: pricePerKg,
+                buyer_name: buyerName,
+                notes: document.getElementById('slaughterNotes').value
+            };
+
+            // Add litter-specific data
+            if (pigType === 'litter') {
+                formData.pigs_count = parseInt(document.getElementById('pigsToSlaughter').value);
+            } else {
+                formData.pigs_count = 1;
+            }
+
+            // Submit to API
+            try {
+                const response = await fetch('/api/slaughter/record', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Show success message with status update info
+                    const pigType = document.getElementById('pigTypeSelect').value;
+                    const pigId = document.getElementById('selectedPigId').value;
+                    const pigTag = document.getElementById('selectedPigTag').textContent;
+                    
+                    let successMessage = 'Slaughter record saved successfully!\n';
+                    if (pigType === 'grown_pig') {
+                        successMessage += `✅ Pig status updated to "slaughtered"\n`;
+                    } else {
+                        const pigsCount = document.getElementById('pigsToSlaughter').value || '1';
+                        successMessage += `✅ ${pigsCount} pig(s) slaughtered from litter\n`;
+                        successMessage += `📊 Litter availability updated\n`;
+                    }
+                    successMessage += `📋 Record ID: ${pigTag}\n`;
+                    successMessage += `💰 Revenue: $${document.getElementById('totalRevenue').textContent.replace('$', '')}`;
+                    
+                    alert(successMessage);
+                    closeSlaughterModal();
+                    resetSlaughterForm();
+                    
+                    // Reload data
+                    loadSlaughterRecords();
+                } else {
+                    alert(`Error: ${result.message || 'Failed to save slaughter record'}`);
+                }
+            } catch (error) {
+                console.error('Error saving slaughter record:', error);
+                alert('Error saving slaughter record. Please try again.');
+            }
+        });
+
+        function resetSlaughterForm() {
+            document.getElementById('slaughterForm').reset();
+            document.getElementById('pigSelectionDiv').classList.add('hidden');
+            document.getElementById('selectedPigInfo').classList.add('hidden');
+            document.getElementById('pigSearchResults').classList.add('hidden');
+            document.getElementById('litterPigCountDiv').classList.add('hidden');
+            document.getElementById('avgWeightDiv').classList.add('hidden');
+            document.getElementById('totalRevenue').textContent = '$0.00';
+            document.getElementById('revenueCalculation').textContent = 'Carcass Weight × Price per Kg';
+            
+            // Reset labels to normal
+            document.getElementById('liveWeightLabel').textContent = 'Live Weight (before slaughter) - kg';
+            document.getElementById('carcassWeightLabel').textContent = 'Carcass Weight (after slaughter) - kg';
+            document.getElementById('dressingPercentageLabel').textContent = 'Dressing Percentage';
+            
+            // Reset to today's date
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('slaughterDate').value = today;
+        }
+
+        function resetDeathForm() {
+            document.getElementById('deathForm').reset();
+            document.getElementById('deathPigSelection').classList.add('hidden');
+            document.getElementById('deathPigsCount').classList.add('hidden');
+            document.getElementById('selectedDeathPig').classList.add('hidden');
+            document.getElementById('deathPigSearchResults').classList.add('hidden');
+            
+            // Reset to today's date
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('deathDate').value = today;
+            
+            // Clear age field
+            document.getElementById('deathAge').value = '';
+        }
+
+        function resetSaleForm() {
+            document.getElementById('saleForm').reset();
+            document.getElementById('salePigSelection').classList.add('hidden');
+            document.getElementById('salePigsCount').classList.add('hidden');
+            document.getElementById('selectedSalePig').classList.add('hidden');
+            document.getElementById('salePigSearchResults').classList.add('hidden');
+            
+            // Reset visual selection
+            document.querySelectorAll('.sale-pig-type-option').forEach(option => {
+                option.classList.remove('border-green-500', 'bg-green-50', 'dark:bg-green-900/20');
+                option.classList.add('border-gray-200', 'dark:border-gray-600');
+            });
+            
+            // Reset to today's date
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('saleDate').value = today;
+            
+            // Clear total revenue
+            document.getElementById('totalSaleRevenue').textContent = '$0.00';
+            document.getElementById('revenueBreakdown').textContent = '0 pigs × $0.00';
+        }
+
+        // Set today's date as default when modal opens
+        function openSaleModal() {
+            const modal = document.getElementById('saleModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                document.body.classList.add('overflow-hidden');
+                
+                // Set today's date as default
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('saleDate').value = today;
+                
+                // Add focus trap for accessibility
+                const firstInput = modal.querySelector('input, select, textarea');
+                if (firstInput) {
+                    setTimeout(() => firstInput.focus(), 100);
+                }
+            }
+        }
+
+        document.getElementById('deathForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const pigType = document.getElementById('deathPigTypeSelect').value;
+            const pigId = document.getElementById('selectedDeathPigId').value;
+            const pigsCount = document.getElementById('deathPigsCountInput').value || 1;
+            const deathDate = document.getElementById('deathDate').value;
+            const causeOfDeath = document.getElementById('causeOfDeath').value;
+            const deathWeight = document.getElementById('deathWeight').value;
+            const deathAge = document.getElementById('deathAge').value || 0;
+            const deathDetails = document.getElementById('deathDetails').value;
+            
+            if (!pigType || !pigId || !deathDate || !causeOfDeath || !deathWeight) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            const formData = {
+                pig_type: pigType,
+                pig_id: pigType === 'grown_pig' ? pigId : null,
+                litter_id: pigType === 'litter' ? pigId : null,
+                pigs_count: parseInt(pigsCount),
+                death_date: deathDate,
+                cause_of_death: causeOfDeath,
+                weight_at_death: parseFloat(deathWeight),
+                age_at_death: deathAge ? parseInt(deathAge) : null,
+                additional_details: deathDetails
+            };
+            
+            try {
+                const response = await fetch('/api/death/record', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    let successMessage = 'Death record saved successfully!\n';
+                    if (pigType === 'grown_pig') {
+                        successMessage += `✅ Pig status updated to "dead"\n`;
+                    } else {
+                        successMessage += `✅ ${pigsCount} pig(s) marked as dead from litter\n`;
+                        successMessage += `📊 Litter availability updated\n`;
+                    }
+                    successMessage += `📋 Record ID: ${pigId}\n`;
+                    successMessage += `⚖️ Weight: ${deathWeight}kg`;
+                    
+                    alert(successMessage);
+                    closeDeathModal();
+                    resetDeathForm();
+                    
+                    // Reload data
+                    loadSlaughterRecords();
+                } else {
+                    alert(`Error: ${result.message || 'Failed to save death record'}`);
+                }
+            } catch (error) {
+                console.error('Error saving death record:', error);
+                alert('Error saving death record. Please try again.');
+            }
+        });
+
+        document.getElementById('saleForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const pigType = document.querySelector('input[name="salePigType"]:checked')?.value;
+            const pigId = document.getElementById('selectedSalePigId').value;
+            const pigsCount = document.getElementById('salePigsCountInput').value || 1;
+            const saleDate = document.getElementById('saleDate').value;
+            const buyerNameElement = document.getElementById('buyerName');
+            const buyerName = buyerNameElement ? buyerNameElement.value : '';
+            const buyerContact = document.getElementById('buyerContact').value;
+            
+            if (!buyerNameElement) {
+                console.error('Buyer name field not found!');
+            }
+            const salePrice = document.getElementById('salePrice').value;
+            const saleNotes = document.getElementById('saleNotes').value;
+            
+            // Debug logging
+            console.log('Form values:', {
+                pigType,
+                pigId,
+                pigsCount,
+                saleDate,
+                buyerName,
+                buyerContact,
+                salePrice,
+                saleNotes
+            });
+            
+            // Enhanced validation with visual feedback - only show first error
+            let firstError = null;
+            
+            if (!pigType && !firstError) {
+                firstError = 'Please select an animal type first';
+                highlightIncompleteSection('animalSelectionSection', firstError);
+            }
+            
+            if (!pigId && !firstError) {
+                firstError = 'Please search and select an animal to sell';
+                highlightIncompleteSection('animalSelectionSection', firstError);
+            }
+            
+            if (!saleDate && !firstError) {
+                firstError = 'Please enter the sale date';
+                highlightIncompleteSection('saleInfoSection', firstError);
+            }
+            
+            if (!buyerName || !buyerName.trim() || buyerName.trim() === '') {
+                if (!firstError) {
+                    console.log('Buyer name validation failed. Value:', buyerName);
+                    firstError = 'Please enter the buyer\'s name';
+                    highlightIncompleteSection('saleInfoSection', firstError);
+                }
+            }
+            
+            if ((!salePrice || parseFloat(salePrice) <= 0) && !firstError) {
+                firstError = 'Please enter a valid sale price (greater than $0)';
+                highlightIncompleteSection('saleInfoSection', firstError);
+            }
+            
+            if (firstError) {
+                return;
+            }
+            
+            const formData = {
+                pig_type: pigType,
+                pig_id: pigType === 'grown_pig' ? pigId : null,
+                litter_id: pigType === 'litter' ? pigId : null,
+                pigs_count: parseInt(pigsCount),
+                sale_date: saleDate,
+                buyer_name: buyerName,
+                buyer_contact: buyerContact,
+                sale_price: parseFloat(salePrice),
+                total_revenue: parseFloat(salePrice) * parseInt(pigsCount),
+                notes: saleNotes
+            };
+            
+            try {
+                const response = await fetch('/api/sale/record', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    let successMessage = 'Sale record saved successfully!\n';
+                    if (pigType === 'grown_pig') {
+                        successMessage += `✅ Pig status updated to "sold"\n`;
+                    } else {
+                        successMessage += `✅ ${pigsCount} pig(s) sold from litter\n`;
+                        successMessage += `📊 Litter availability updated\n`;
+                    }
+                    successMessage += `📋 Record ID: ${pigId}\n`;
+                    successMessage += `💰 Total Revenue: $${formData.total_revenue.toFixed(2)}`;
+                    
+                    alert(successMessage);
+                    closeSaleModal();
+                    resetSaleForm();
+                    
+                    // Reload data
+                    loadSlaughterRecords();
+                } else {
+                    alert(`Error: ${result.message || 'Failed to save sale record'}`);
+                }
+            } catch (error) {
+                console.error('Error saving sale record:', error);
+                alert('Error saving sale record. Please try again.');
+            }
+        });
+
+        // Enhanced sale form event listeners
+        document.getElementById('salePrice').addEventListener('input', calculateSaleRevenue);
+        document.getElementById('salePigsCountInput').addEventListener('input', calculateSaleRevenue);
+        
+        // Add event listeners for radio button changes
+        document.querySelectorAll('input[name="salePigType"]').forEach(radio => {
+            radio.addEventListener('change', handleSalePigTypeChange);
+        });
+
+        // Debug: Add event listener to buyer name field
+        const buyerNameField = document.getElementById('buyerName');
+        if (buyerNameField) {
+            buyerNameField.addEventListener('input', function() {
+                console.log('Buyer name field value changed:', this.value);
+            });
+        } else {
+            console.error('Buyer name field not found during initialization!');
+        }
+
+        // Function to highlight incomplete sections
+        function highlightIncompleteSection(sectionId, message) {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                // Clear any existing error messages first
+                const existingErrors = section.querySelectorAll('.error-message');
+                existingErrors.forEach(error => error.remove());
+                
+                section.classList.add('border-red-300', 'bg-red-50', 'dark:bg-red-900/20');
+                section.classList.remove('border-gray-200', 'dark:border-gray-600');
+                
+                // Add error message
+                let errorDiv = document.createElement('div');
+                errorDiv.className = 'error-message text-red-500 text-sm mt-2 font-medium';
+                errorDiv.textContent = message;
+                section.appendChild(errorDiv);
+                
+                // Remove highlight after 4 seconds
+                setTimeout(() => {
+                    section.classList.remove('border-red-300', 'bg-red-50', 'dark:bg-red-900/20');
+                    section.classList.add('border-gray-200', 'dark:border-gray-600');
+                    if (errorDiv && errorDiv.parentNode) {
+                        errorDiv.remove();
+                    }
+                }, 4000);
+            }
+        }
+
         document.getElementById('add-slaughter-btn').addEventListener('click', function() {
-            // TODO: Implement add slaughter record modal
-            alert('Add slaughter record functionality coming soon...');
+            openSlaughterModal();
         });
 
         document.getElementById('search-slaughter').addEventListener('input', function() {

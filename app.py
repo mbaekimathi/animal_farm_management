@@ -312,14 +312,14 @@ def create_database_and_tables():
                 pig_type ENUM('grown_pig', 'piglet', 'litter', 'batch') NOT NULL,
                 pig_source ENUM('born', 'purchased') NOT NULL,
                 breed VARCHAR(100),
-                sex ENUM('male', 'female'),
+                gender ENUM('male', 'female'),
                 purpose ENUM('breeding', 'meat'),
                 breeding_status ENUM('young', 'available', 'served', 'pregnant') DEFAULT 'young',
                 birth_date DATE,
                 purchase_date DATE,
                 age_days INT,
                 registered_by INT NOT NULL,
-                status ENUM('active', 'sold', 'deceased', 'transferred') DEFAULT 'active',
+                status ENUM('active', 'sold', 'deceased', 'transferred', 'dead', 'slaughtered') DEFAULT 'active',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 FOREIGN KEY (farm_id) REFERENCES farms(id),
@@ -327,6 +327,16 @@ def create_database_and_tables():
             )
         """)
         print("Pigs table checked/created successfully")
+        
+        # Update pigs table status ENUM to include 'dead' and 'slaughtered'
+        try:
+            cursor.execute("""
+                ALTER TABLE pigs 
+                MODIFY COLUMN status ENUM('active', 'sold', 'deceased', 'transferred', 'dead', 'slaughtered') DEFAULT 'active'
+            """)
+            print("Pigs table status ENUM updated successfully")
+        except Exception as e:
+            print(f"Note: Pigs table status ENUM may already be updated: {e}")
         
         # Create weight_records table
         cursor.execute("""
@@ -348,6 +358,92 @@ def create_database_and_tables():
             )
         """)
         print("Weight records table checked/created successfully")
+        
+        # Create slaughter_records table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS slaughter_records (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                pig_id INT NULL,
+                litter_id INT NULL,
+                pig_type ENUM('grown_pig', 'litter') NOT NULL,
+                slaughter_date DATE NOT NULL,
+                live_weight DECIMAL(8,2) NOT NULL,
+                carcass_weight DECIMAL(8,2) NOT NULL,
+                dressing_percentage DECIMAL(5,2) NOT NULL,
+                meat_grade ENUM('premium', 'grade_a', 'grade_b', 'grade_c', 'standard') NOT NULL,
+                price_per_kg DECIMAL(8,2) NOT NULL,
+                total_revenue DECIMAL(10,2) NOT NULL,
+                buyer_name VARCHAR(255) NOT NULL,
+                pigs_count INT DEFAULT 1,
+                notes TEXT,
+                created_by INT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                FOREIGN KEY (pig_id) REFERENCES pigs(id) ON DELETE CASCADE,
+                FOREIGN KEY (litter_id) REFERENCES litters(id) ON DELETE CASCADE,
+                FOREIGN KEY (created_by) REFERENCES employees(id),
+                CHECK (pig_id IS NOT NULL OR litter_id IS NOT NULL)
+            )
+        """)
+        print("Slaughter records table checked/created successfully")
+        
+        # Create dead_pigs table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS dead_pigs (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                pig_id INT NULL,
+                litter_id INT NULL,
+                pig_type ENUM('grown_pig', 'litter') NOT NULL,
+                death_date DATE NOT NULL,
+                cause_of_death ENUM('disease', 'injury', 'old_age', 'predator_attack', 'accident', 'birth_complications', 'unknown') NOT NULL,
+                weight_at_death DECIMAL(8,2) NOT NULL,
+                age_at_death INT NULL,
+                additional_details TEXT,
+                pigs_count INT DEFAULT 1,
+                created_by INT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                FOREIGN KEY (pig_id) REFERENCES pigs(id) ON DELETE CASCADE,
+                FOREIGN KEY (litter_id) REFERENCES litters(id) ON DELETE CASCADE,
+                FOREIGN KEY (created_by) REFERENCES employees(id),
+                CHECK (pig_id IS NOT NULL OR litter_id IS NOT NULL)
+            )
+        """)
+        print("Dead pigs table checked/created successfully")
+        
+        # Create sale_records table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS sale_records (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                pig_id INT NULL,
+                litter_id INT NULL,
+                pig_type ENUM('grown_pig', 'litter') NOT NULL,
+                sale_date DATE NOT NULL,
+                buyer_name VARCHAR(255) NOT NULL,
+                buyer_contact VARCHAR(50),
+                sale_price DECIMAL(8,2) NOT NULL,
+                total_revenue DECIMAL(10,2) NOT NULL,
+                notes TEXT,
+                pigs_count INT DEFAULT 1,
+                created_by INT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                FOREIGN KEY (pig_id) REFERENCES pigs(id) ON DELETE CASCADE,
+                FOREIGN KEY (litter_id) REFERENCES litters(id) ON DELETE CASCADE,
+                FOREIGN KEY (created_by) REFERENCES employees(id),
+                CHECK (pig_id IS NOT NULL OR litter_id IS NOT NULL)
+            )
+        """)
+        print("Sale records table checked/created successfully")
+        
+        # Remove payment_method column from sale_records table if it exists
+        try:
+            cursor.execute("SHOW COLUMNS FROM sale_records LIKE 'payment_method'")
+            if cursor.fetchone():
+                cursor.execute("ALTER TABLE sale_records DROP COLUMN payment_method")
+                print("Payment method column removed from sale_records table")
+        except Exception as e:
+            print(f"Note: Payment method column may not exist: {e}")
         
         # Update weight_records table to support litters if needed
         try:
@@ -537,15 +633,48 @@ def create_database_and_tables():
                 farrowing_date DATE NOT NULL,
                 alive_piglets INT NOT NULL,
                 still_births INT NOT NULL,
+                dead_piglets INT DEFAULT 0,
+                weak_piglets INT DEFAULT 0,
                 avg_weight DECIMAL(5,2) NOT NULL,
                 health_notes TEXT,
+                notes TEXT,
                 created_by INT NOT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 FOREIGN KEY (breeding_id) REFERENCES breeding_records(id),
                 FOREIGN KEY (created_by) REFERENCES employees(id)
             )
         """)
         print("Farrowing records table checked/created successfully")
+        
+        # Add missing columns to farrowing_records table if they don't exist
+        try:
+            cursor.execute("ALTER TABLE farrowing_records ADD COLUMN dead_piglets INT DEFAULT 0")
+            print("Added dead_piglets column to farrowing_records")
+        except Exception as e:
+            if "Duplicate column name" not in str(e):
+                print(f"Error adding dead_piglets column: {str(e)}")
+        
+        try:
+            cursor.execute("ALTER TABLE farrowing_records ADD COLUMN weak_piglets INT DEFAULT 0")
+            print("Added weak_piglets column to farrowing_records")
+        except Exception as e:
+            if "Duplicate column name" not in str(e):
+                print(f"Error adding weak_piglets column: {str(e)}")
+        
+        try:
+            cursor.execute("ALTER TABLE farrowing_records ADD COLUMN notes TEXT")
+            print("Added notes column to farrowing_records")
+        except Exception as e:
+            if "Duplicate column name" not in str(e):
+                print(f"Error adding notes column: {str(e)}")
+        
+        try:
+            cursor.execute("ALTER TABLE farrowing_records ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+            print("Added updated_at column to farrowing_records")
+        except Exception as e:
+            if "Duplicate column name" not in str(e):
+                print(f"Error adding updated_at column: {str(e)}")
         
         # Create farrowing_activities table to track farrowing activities
         cursor.execute("""
@@ -561,10 +690,20 @@ def create_database_and_tables():
                 weaning_date DATETIME NULL,
                 notes TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 FOREIGN KEY (farrowing_record_id) REFERENCES farrowing_records(id)
             )
         """)
         print("Farrowing activities table checked/created successfully")
+        
+        # Add updated_at column to farrowing_activities if it doesn't exist
+        try:
+            cursor.execute("SHOW COLUMNS FROM farrowing_activities LIKE 'updated_at'")
+            if not cursor.fetchone():
+                cursor.execute("ALTER TABLE farrowing_activities ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP AFTER created_at")
+                print("Added updated_at column to farrowing_activities table")
+        except Exception as e:
+            print(f"Error adding updated_at column to farrowing_activities: {str(e)}")
         
         # Create litters table to track litter information
         cursor.execute("""
@@ -581,7 +720,7 @@ def create_database_and_tables():
                 avg_weight DECIMAL(5,2),
                 weaning_weight DECIMAL(5,2),
                 weaning_date DATE,
-                status ENUM('unweaned', 'weaned', 'sold', 'deceased') DEFAULT 'unweaned',
+                status ENUM('unweaned', 'weaned', 'sold', 'deceased', 'dead', 'slaughtered') DEFAULT 'unweaned',
                 notes TEXT,
                 created_by INT NOT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -593,6 +732,16 @@ def create_database_and_tables():
             )
         """)
         print("Litters table checked/created successfully")
+        
+        # Update litters table status ENUM to include 'dead' and 'slaughtered'
+        try:
+            cursor.execute("""
+                ALTER TABLE litters 
+                MODIFY COLUMN status ENUM('unweaned', 'weaned', 'sold', 'deceased', 'dead', 'slaughtered') DEFAULT 'unweaned'
+            """)
+            print("Litters table status ENUM updated successfully")
+        except Exception as e:
+            print(f"Note: Litters table status ENUM may already be updated: {e}")
         
         # Create cows table
         cursor.execute("""
@@ -658,6 +807,22 @@ def create_database_and_tables():
         """)
         print("Milk production table checked/created successfully")
 
+        # Create milk_production_edit_history table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS milk_production_edit_history (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                production_id INT NOT NULL,
+                field_name VARCHAR(50) NOT NULL,
+                old_value TEXT,
+                new_value TEXT,
+                edited_by INT NOT NULL,
+                edited_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (production_id) REFERENCES milk_production(id) ON DELETE CASCADE,
+                FOREIGN KEY (edited_by) REFERENCES employees(id)
+            )
+        """)
+        print("Milk production edit history table checked/created successfully")
+
         # Create milk_sales_usage table
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS milk_sales_usage (
@@ -676,6 +841,70 @@ def create_database_and_tables():
             )
         """)
         print("Milk sales usage table checked/created successfully")
+
+        # Create slaughter_records_edit_history table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS slaughter_records_edit_history (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                record_id INT NOT NULL,
+                field_name VARCHAR(50) NOT NULL,
+                old_value TEXT,
+                new_value TEXT,
+                edited_by INT NOT NULL,
+                edited_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (record_id) REFERENCES slaughter_records(id) ON DELETE CASCADE,
+                FOREIGN KEY (edited_by) REFERENCES employees(id)
+            )
+        """)
+        print("Slaughter records edit history table checked/created successfully")
+
+        # Create death_records_edit_history table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS death_records_edit_history (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                record_id INT NOT NULL,
+                field_name VARCHAR(50) NOT NULL,
+                old_value TEXT,
+                new_value TEXT,
+                edited_by INT NOT NULL,
+                edited_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (record_id) REFERENCES dead_pigs(id) ON DELETE CASCADE,
+                FOREIGN KEY (edited_by) REFERENCES employees(id)
+            )
+        """)
+        print("Death records edit history table checked/created successfully")
+
+        # Create sale_records_edit_history table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS sale_records_edit_history (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                record_id INT NOT NULL,
+                field_name VARCHAR(50) NOT NULL,
+                old_value TEXT,
+                new_value TEXT,
+                edited_by INT NOT NULL,
+                edited_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (record_id) REFERENCES sale_records(id) ON DELETE CASCADE,
+                FOREIGN KEY (edited_by) REFERENCES employees(id)
+            )
+        """)
+        print("Sale records edit history table checked/created successfully")
+
+        # Create farrowing_records_edit_history table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS farrowing_records_edit_history (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                record_id INT NOT NULL,
+                field_name VARCHAR(50) NOT NULL,
+                old_value TEXT,
+                new_value TEXT,
+                edited_by INT NOT NULL,
+                edited_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (record_id) REFERENCES farrowing_records(id) ON DELETE CASCADE,
+                FOREIGN KEY (edited_by) REFERENCES employees(id)
+            )
+        """)
+        print("Farrowing records edit history table checked/created successfully")
 
         # Create cow_breeding table
         cursor.execute("""
@@ -1072,6 +1301,22 @@ def landing():
 def landing_page():
     return render_template('landing.html')
 
+@app.route('/solutions')
+def solutions():
+    return render_template('solutions.html')
+
+@app.route('/features')
+def features():
+    return render_template('features.html')
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+@app.route('/contact')
+def contact():
+    return render_template('contact.html')
+
 @app.route('/fix-db-schema')
 def fix_database_schema():
     """Fix database schema issues"""
@@ -1214,6 +1459,134 @@ def employee_dashboard():
     
     return render_template('employee_dashboard.html', user=user_data)
 
+@app.route('/employee/pig-management')
+def employee_pig_management():
+    if 'employee_id' not in session:
+        return redirect(url_for('employee_login'))
+    
+    # Get user data from session
+    user_data = {
+        'id': session['employee_id'],
+        'name': session['employee_name'],
+        'role': session['employee_role'],
+        'status': session['employee_status'],
+        'email': f"{session['employee_name'].lower().replace(' ', '.')}@farm.com"
+    }
+    
+    return render_template('employee_pig_management.html', user=user_data)
+
+@app.route('/employee/cow-management')
+def employee_cow_management():
+    if 'employee_id' not in session:
+        return redirect(url_for('employee_login'))
+    
+    # Get user data from session
+    user_data = {
+        'id': session['employee_id'],
+        'name': session['employee_name'],
+        'role': session['employee_role'],
+        'status': session['employee_status'],
+        'email': f"{session['employee_name'].lower().replace(' ', '.')}@farm.com"
+    }
+    
+    return render_template('employee_cow_management.html', user=user_data)
+
+@app.route('/employee/chicken-management')
+def employee_chicken_management():
+    if 'employee_id' not in session:
+        return redirect(url_for('employee_login'))
+    
+    # Get user data from session
+    user_data = {
+        'id': session['employee_id'],
+        'name': session['employee_name'],
+        'role': session['employee_role'],
+        'status': session['employee_status'],
+        'email': f"{session['employee_name'].lower().replace(' ', '.')}@farm.com"
+    }
+    
+    return render_template('employee_chicken_management.html', user=user_data)
+
+@app.route('/employee/pig-management/register')
+def employee_pig_register():
+    if 'employee_id' not in session:
+        return redirect(url_for('employee_login'))
+    
+    # Get user data from session
+    user_data = {
+        'id': session['employee_id'],
+        'name': session['employee_name'],
+        'role': session['employee_role'],
+        'status': session['employee_status'],
+        'email': f"{session['employee_name'].lower().replace(' ', '.')}@farm.com"
+    }
+    
+    return render_template('employee_pig_register.html', user=user_data)
+
+@app.route('/employee/cow-management/register')
+def employee_cow_register():
+    if 'employee_id' not in session:
+        return redirect(url_for('employee_login'))
+    
+    # Get user data from session
+    user_data = {
+        'id': session['employee_id'],
+        'name': session['employee_name'],
+        'role': session['employee_role'],
+        'status': session['employee_status'],
+        'email': f"{session['employee_name'].lower().replace(' ', '.')}@farm.com"
+    }
+    
+    return render_template('employee_cow_register.html', user=user_data)
+
+@app.route('/employee/cow-management/cow-production')
+def employee_cow_production():
+    if 'employee_id' not in session:
+        return redirect(url_for('employee_login'))
+    
+    # Get user data from session
+    user_data = {
+        'id': session['employee_id'],
+        'name': session['employee_name'],
+        'role': session['employee_role'],
+        'status': session['employee_status'],
+        'email': f"{session['employee_name'].lower().replace(' ', '.')}@farm.com"
+    }
+    
+    return render_template('employee_cow_production.html', user=user_data)
+
+@app.route('/employee/chicken-management/chicken-production')
+def employee_chicken_production():
+    if 'employee_id' not in session:
+        return redirect(url_for('employee_login'))
+    
+    # Get user data from session
+    user_data = {
+        'id': session['employee_id'],
+        'name': session['employee_name'],
+        'role': session['employee_role'],
+        'status': session['employee_status'],
+        'email': f"{session['employee_name'].lower().replace(' ', '.')}@farm.com"
+    }
+    
+    return render_template('employee_chicken_production.html', user=user_data)
+
+@app.route('/employee/chicken-management/register')
+def employee_chicken_register_page():
+    if 'employee_id' not in session:
+        return redirect(url_for('employee_login'))
+    
+    # Get user data from session
+    user_data = {
+        'id': session['employee_id'],
+        'name': session['employee_name'],
+        'role': session['employee_role'],
+        'status': session['employee_status'],
+        'email': f"{session['employee_name'].lower().replace(' ', '.')}@farm.com"
+    }
+    
+    return render_template('employee_chicken_register.html', user=user_data)
+
 @app.route('/admin/dashboard')
 def admin_dashboard():
     if 'employee_id' not in session or session.get('employee_role') != 'administrator':
@@ -1228,7 +1601,171 @@ def admin_dashboard():
         'email': f"{session['employee_name'].lower().replace(' ', '.')}@farm.com"
     }
     
-    return render_template('admin_dashboard.html', user=user_data)
+    # Fetch real data from database
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Pigs data
+        cursor.execute("""
+            SELECT 
+                COUNT(*) as total_pigs,
+                SUM(CASE WHEN pig_type = 'grown_pig' AND gender = 'female' AND breeding_status IN ('available', 'served', 'pregnant') THEN 1 ELSE 0 END) as breeding_sows,
+                SUM(CASE WHEN pig_type = 'piglet' THEN 1 ELSE 0 END) as piglets,
+                SUM(CASE WHEN pig_type = 'litter' THEN 1 ELSE 0 END) as litters
+            FROM pigs 
+            WHERE status = 'active'
+        """)
+        pigs_data = cursor.fetchone()
+        
+        # Litter data (piglets from litters)
+        cursor.execute("""
+            SELECT 
+                SUM(total_piglets) as total_piglets_from_litters,
+                SUM(alive_piglets) as alive_piglets_from_litters,
+                COUNT(*) as total_litters
+            FROM litters 
+            WHERE status IN ('unweaned', 'weaned')
+        """)
+        litter_data = cursor.fetchone()
+        
+        # Cows data
+        cursor.execute("""
+            SELECT 
+                COUNT(*) as total_cows,
+                SUM(CASE WHEN gender = 'female' THEN 1 ELSE 0 END) as female_cows,
+                SUM(CASE WHEN gender = 'male' THEN 1 ELSE 0 END) as male_cows
+            FROM cows 
+            WHERE status = 'active'
+        """)
+        cows_data = cursor.fetchone()
+        
+        # Milk production data (average daily production)
+        cursor.execute("""
+            SELECT 
+                AVG(daily_milk) as avg_daily_milk_production,
+                COUNT(DISTINCT cow_id) as cows_milked,
+                AVG(milk_quantity) as avg_milk_per_cow
+            FROM (
+                SELECT 
+                    cow_id,
+                    production_date,
+                    SUM(milk_quantity) as daily_milk,
+                    AVG(milk_quantity) as milk_quantity
+                FROM milk_production 
+                WHERE production_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+                GROUP BY cow_id, production_date
+            ) as daily_totals
+        """)
+        milk_data = cursor.fetchone()
+        
+        # Upcoming activities (notifications from different departments)
+        cursor.execute("""
+            SELECT 
+                'Breeding' as department,
+                'Pigs' as animal_type,
+                COUNT(*) as notification_count,
+                CONCAT('Pregnant pigs due in 3 days: ', COUNT(*)) as description
+            FROM pigs p
+            JOIN breeding_records br ON p.id = br.sow_id
+            WHERE p.status = 'active' 
+            AND p.breeding_status = 'pregnant'
+            AND br.expected_due_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 3 DAY)
+            UNION ALL
+            SELECT 
+                'Breeding' as department,
+                'Cows' as animal_type,
+                COUNT(*) as notification_count,
+                CONCAT('Pregnant cows due in 3 days: ', COUNT(*)) as description
+            FROM cows c
+            JOIN cow_breeding cb ON c.id = cb.dam_id
+            WHERE c.status = 'active' 
+            AND c.gender = 'female'
+            AND cb.expected_calving_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 3 DAY)
+            UNION ALL
+            SELECT 
+                'Health' as department,
+                'Pigs' as animal_type,
+                COUNT(*) as notification_count,
+                'Health notifications for pigs' as description
+            FROM pigs 
+            WHERE status = 'active'
+            UNION ALL
+            SELECT 
+                'Health' as department,
+                'Cows' as animal_type,
+                COUNT(*) as notification_count,
+                'Health notifications for cows' as description
+            FROM cows 
+            WHERE status = 'active'
+            UNION ALL
+            SELECT 
+                'Medical' as department,
+                'Pigs' as animal_type,
+                COUNT(*) as notification_count,
+                'Medical notifications for pigs' as description
+            FROM pigs 
+            WHERE status = 'active'
+            UNION ALL
+            SELECT 
+                'Medical' as department,
+                'Cows' as animal_type,
+                COUNT(*) as notification_count,
+                'Medical notifications for cows' as description
+            FROM cows 
+            WHERE status = 'active'
+            UNION ALL
+            SELECT 
+                'Medical' as department,
+                'Chickens' as animal_type,
+                0 as notification_count,
+                'Medical notifications for chickens (Coming Soon)' as description
+            ORDER BY department, animal_type
+        """)
+        upcoming_activities = cursor.fetchall()
+        
+        # Calculate totals
+        total_animals = (pigs_data['total_pigs'] or 0) + (cows_data['total_cows'] or 0)
+        total_piglets = (pigs_data['piglets'] or 0) + (litter_data['alive_piglets_from_litters'] or 0)  # piglets + alive piglets from litters
+        
+        # Prepare dashboard data
+        dashboard_data = {
+            'pigs': {
+                'total_pigs': pigs_data['total_pigs'] or 0,
+                'breeding_sows': pigs_data['breeding_sows'] or 0,
+                'piglets': total_piglets,
+                'litters': pigs_data['litters'] or 0
+            },
+            'cows': {
+                'total_cows': cows_data['total_cows'] or 0,
+                'female_cows': cows_data['female_cows'] or 0,
+                'male_cows': cows_data['male_cows'] or 0,
+                'avg_daily_milk_production': milk_data['avg_daily_milk_production'] or 0,
+                'cows_milked': milk_data['cows_milked'] or 0,
+                'avg_milk_per_cow': milk_data['avg_milk_per_cow'] or 0
+            },
+            'totals': {
+                'total_animals': total_animals,
+                'daily_production': milk_data['avg_daily_milk_production'] or 0,  # average daily milk production
+                'system_health': 95  # This could be calculated based on various factors
+            },
+            'upcoming_activities': upcoming_activities
+        }
+        
+        cursor.close()
+        conn.close()
+        
+    except Exception as e:
+        print(f"Error fetching dashboard data: {str(e)}")
+        # Fallback data in case of error
+        dashboard_data = {
+            'pigs': {'total_pigs': 0, 'breeding_sows': 0, 'piglets': 0, 'litters': 0},
+            'cows': {'total_cows': 0, 'female_cows': 0, 'male_cows': 0, 'avg_daily_milk_production': 0, 'cows_milked': 0, 'avg_milk_per_cow': 0},
+            'totals': {'total_animals': 0, 'daily_production': 0, 'system_health': 0},
+            'upcoming_activities': []
+        }
+    
+    return render_template('admin_dashboard.html', user=user_data, dashboard_data=dashboard_data)
 
 @app.route('/manager/dashboard')
 def manager_dashboard():
@@ -1245,6 +1782,130 @@ def manager_dashboard():
     }
     
     return render_template('manager_dashboard.html', user=user_data)
+
+@app.route('/api/manager/dashboard/stats', methods=['GET'])
+def get_manager_dashboard_stats():
+    """Get manager dashboard statistics"""
+    if 'employee_id' not in session or session.get('employee_role') != 'manager':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get team members count
+        cursor.execute("SELECT COUNT(*) FROM employees WHERE status = 'active' AND role != 'manager'")
+        team_members = cursor.fetchone()[0]
+        
+        # Get active tasks count (placeholder - would need tasks table)
+        active_tasks = 12  # Placeholder
+        
+        # Get completed tasks today (placeholder)
+        completed_today = 5  # Placeholder
+        
+        # Get team performance (placeholder)
+        team_performance = 85  # Placeholder
+        
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'stats': {
+                'team_members': team_members,
+                'active_tasks': active_tasks,
+                'completed_today': completed_today,
+                'team_performance': team_performance
+            }
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Failed to get dashboard stats: {str(e)}'})
+
+@app.route('/api/manager/team/list', methods=['GET'])
+def get_manager_team_list():
+    """Get team members for manager"""
+    if 'employee_id' not in session or session.get('employee_role') != 'manager':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get all active team members (excluding managers)
+        cursor.execute("""
+            SELECT id, name, role, status, email, created_at
+            FROM employees 
+            WHERE status = 'active' AND role != 'manager'
+            ORDER BY created_at DESC
+        """)
+        team_members = cursor.fetchall()
+        
+        # Convert to JSON-serializable format
+        serializable_team = []
+        for member in team_members:
+            serializable_member = {
+                'id': member[0],
+                'name': member[1],
+                'role': member[2],
+                'status': member[3],
+                'email': member[4],
+                'created_at': member[5].isoformat() if member[5] else None
+            }
+            serializable_team.append(serializable_member)
+        
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'team_members': serializable_team
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Failed to get team list: {str(e)}'})
+
+@app.route('/api/manager/activity/recent', methods=['GET'])
+def get_manager_recent_activity():
+    """Get recent team activity"""
+    if 'employee_id' not in session or session.get('employee_role') != 'manager':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get recent activity from activity_log
+        cursor.execute("""
+            SELECT al.activity_type, al.description, al.created_at, e.name as employee_name
+            FROM activity_log al
+            LEFT JOIN employees e ON al.employee_id = e.id
+            ORDER BY al.created_at DESC
+            LIMIT 10
+        """)
+        activities = cursor.fetchall()
+        
+        # Convert to JSON-serializable format
+        serializable_activities = []
+        for activity in activities:
+            serializable_activity = {
+                'activity_type': activity[0],
+                'description': activity[1],
+                'created_at': activity[2].isoformat() if activity[2] else None,
+                'employee_name': activity[3]
+            }
+            serializable_activities.append(serializable_activity)
+        
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'activities': serializable_activities
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Failed to get recent activity: {str(e)}'})
 
 @app.route('/vet/dashboard')
 def vet_dashboard():
@@ -1472,6 +2133,27 @@ def settings():
     
     return render_template('settings.html', user=user_data)
 
+@app.route('/admin/settings')
+def admin_settings():
+    """Admin Settings page - System configuration and management"""
+    if 'employee_id' not in session:
+        return redirect(url_for('employee_login'))
+    
+    if session.get('employee_role') != 'administrator':
+        flash('Access denied. Administrator privileges required.', 'error')
+        return redirect(url_for('admin_dashboard'))
+    
+    # Get user data from session
+    user_data = {
+        'id': session['employee_id'],
+        'name': session['employee_name'],
+        'role': session['employee_role'],
+        'status': session['employee_status'],
+        'email': f"{session['employee_name'].lower().replace(' ', '.')}@farm.com"
+    }
+    
+    return render_template('admin_settings.html', user=user_data)
+
 @app.route('/app-settings')
 def app_settings():
     if 'employee_id' not in session:
@@ -1649,6 +2331,2390 @@ def admin_farm_chicken_management():
     }
     
     return render_template('admin_farm_chicken_management.html', user=user_data)
+
+@app.route('/admin/farm/chicken-registration', methods=['POST'])
+def chicken_registration():
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'success': False, 'message': 'Unauthorized access'})
+    
+    try:
+        # Get form data
+        chicken_id = request.form.get('chicken_id')
+        batch_name = request.form.get('batch_name')
+        chicken_type = request.form.get('chicken_type')
+        breed_name = request.form.get('breed_name')
+        gender = request.form.get('gender')
+        hatch_date = request.form.get('hatch_date')
+        age_days = request.form.get('age_days')
+        source = request.form.get('source')
+        coop_number = request.form.get('coop_number')
+        quantity = request.form.get('quantity')
+        current_status = request.form.get('current_status', 'active')
+        
+        # Validate required fields
+        if not all([chicken_id, batch_name, chicken_type, breed_name, gender, hatch_date, source, coop_number, quantity]):
+            return jsonify({'success': False, 'message': 'All required fields must be filled'})
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Create chickens table if it doesn't exist
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS chickens (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                chicken_id VARCHAR(20) UNIQUE NOT NULL,
+                batch_name VARCHAR(100) NOT NULL,
+                chicken_type ENUM('broiler', 'kienyeji', 'layer') NOT NULL,
+                breed_name VARCHAR(100) NOT NULL,
+                gender ENUM('male', 'female') NOT NULL,
+                hatch_date DATE NOT NULL,
+                age_days INT NOT NULL,
+                source VARCHAR(100) NOT NULL,
+                coop_number INT NOT NULL,
+                quantity INT NOT NULL DEFAULT 1,
+                current_status ENUM('active', 'sold', 'dead', 'culled') DEFAULT 'active',
+                registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                created_by INT,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                INDEX idx_chicken_id (chicken_id),
+                INDEX idx_chicken_type (chicken_type),
+                INDEX idx_batch_name (batch_name),
+                INDEX idx_coop_number (coop_number),
+                INDEX idx_current_status (current_status)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        """)
+        
+        # Insert chicken data
+        cursor.execute("""
+            INSERT INTO chickens (
+                chicken_id, batch_name, chicken_type, breed_name, gender, 
+                hatch_date, age_days, source, coop_number, quantity, 
+                current_status, created_by
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """, (
+            chicken_id, batch_name, chicken_type, breed_name, gender,
+            hatch_date, age_days, source, coop_number, quantity,
+            current_status, session['employee_id']
+        ))
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True, 
+            'message': f'Chicken {chicken_id} registered successfully!',
+            'chicken_id': chicken_id
+        })
+        
+    except Exception as e:
+        print(f"Error registering chicken: {str(e)}")
+        return jsonify({
+            'success': False, 
+            'message': f'Error registering chicken: {str(e)}'
+        })
+
+@app.route('/admin/farm/chicken-flock-management')
+def admin_farm_chicken_flock_management():
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return redirect(url_for('employee_login'))
+    
+    # Get user data from session
+    user_data = {
+        'id': session['employee_id'],
+        'name': session['employee_name'],
+        'role': session['employee_role'],
+        'status': session['employee_status'],
+        'email': f"{session['employee_name'].lower().replace(' ', '.')}@farm.com"
+    }
+    
+    # Fetch chicken data from database
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get all chickens grouped by type
+        cursor.execute("""
+            SELECT 
+                chicken_id,
+                batch_name,
+                chicken_type,
+                breed_name,
+                gender,
+                hatch_date,
+                age_days,
+                source,
+                coop_number,
+                quantity,
+                current_status,
+                registration_date
+            FROM chickens 
+            WHERE current_status = 'active'
+            ORDER BY chicken_type, batch_name, chicken_id
+        """)
+        chickens = cursor.fetchall()
+        
+        # Group chickens by type
+        chickens_by_type = {
+            'broiler': [],
+            'kienyeji': [],
+            'layer': []
+        }
+        
+        for chicken in chickens:
+            chickens_by_type[chicken['chicken_type']].append(chicken)
+        
+        # Get statistics
+        cursor.execute("""
+            SELECT 
+                chicken_type,
+                COUNT(*) as total_count,
+                SUM(quantity) as total_quantity,
+                AVG(age_days) as avg_age,
+                COUNT(DISTINCT batch_name) as batch_count
+            FROM chickens 
+            WHERE current_status = 'active'
+            GROUP BY chicken_type
+        """)
+        stats = cursor.fetchall()
+        
+        # Create stats dictionary
+        stats_dict = {}
+        for stat in stats:
+            stats_dict[stat['chicken_type']] = {
+                'total_count': stat['total_count'],
+                'total_quantity': stat['total_quantity'],
+                'avg_age': round(stat['avg_age'] or 0, 1),
+                'batch_count': stat['batch_count']
+            }
+        
+        cursor.close()
+        conn.close()
+        
+    except Exception as e:
+        print(f"Error fetching chicken data: {str(e)}")
+        chickens_by_type = {'broiler': [], 'kienyeji': [], 'layer': []}
+        stats_dict = {}
+    
+    return render_template('admin_farm_chicken_flock_management.html', 
+                         user=user_data, 
+                         chickens_by_type=chickens_by_type,
+                         stats=stats_dict)
+
+@app.route('/admin/farm/chicken-settings')
+def admin_farm_chicken_settings():
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return redirect(url_for('employee_login'))
+    
+    # Get user data from session
+    user_data = {
+        'id': session['employee_id'],
+        'name': session['employee_name'],
+        'role': session['employee_role'],
+        'status': session['employee_status'],
+        'email': f"{session['employee_name'].lower().replace(' ', '.')}@farm.com"
+    }
+    
+    # Fetch existing chicken stages from database
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Create chicken_stages table if it doesn't exist
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS chicken_stages (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                category ENUM('broiler', 'kienyeji', 'layer') NOT NULL,
+                stage_name VARCHAR(100) NOT NULL,
+                start_day INT NOT NULL,
+                end_day INT NOT NULL,
+                description TEXT,
+                created_by INT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                INDEX idx_category (category),
+                INDEX idx_stage_name (stage_name)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        """)
+        
+        # Create chicken_medications table if it doesn't exist
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS chicken_medications (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                category ENUM('broiler', 'kienyeji', 'layer') NOT NULL,
+                medication_name VARCHAR(200) NOT NULL,
+                start_day INT NOT NULL,
+                end_day INT NOT NULL,
+                purpose TEXT,
+                image_filename VARCHAR(255),
+                created_by INT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                INDEX idx_category (category),
+                INDEX idx_medication_name (medication_name)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        """)
+        
+        # Create chicken_weight_standards table if it doesn't exist
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS chicken_weight_standards (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                category ENUM('broiler', 'kienyeji', 'layer') NOT NULL,
+                age_days INT NOT NULL,
+                expected_weight DECIMAL(6,3) NOT NULL COMMENT 'Weight in kilograms',
+                description TEXT,
+                created_by INT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                INDEX idx_category (category),
+                INDEX idx_age_days (age_days),
+                UNIQUE KEY unique_category_age (category, age_days)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        """)
+        
+        # Get all existing stages
+        cursor.execute("""
+            SELECT 
+                id,
+                category,
+                stage_name,
+                start_day,
+                end_day,
+                description,
+                created_at
+            FROM chicken_stages 
+            ORDER BY category, start_day
+        """)
+        stages = cursor.fetchall()
+        
+        # Get all existing medications
+        cursor.execute("""
+            SELECT 
+                id,
+                category,
+                medication_name,
+                start_day,
+                end_day,
+                purpose,
+                image_filename,
+                created_at
+            FROM chicken_medications 
+            ORDER BY category, start_day
+        """)
+        medications = cursor.fetchall()
+        
+        # Get all existing weight standards
+        cursor.execute("""
+            SELECT 
+                id,
+                category,
+                age_days,
+                expected_weight,
+                description,
+                created_at
+            FROM chicken_weight_standards 
+            ORDER BY category, age_days
+        """)
+        weight_standards = cursor.fetchall()
+        
+        # Group stages by category
+        stages_by_category = {
+            'broiler': [],
+            'kienyeji': [],
+            'layer': []
+        }
+        
+        for stage in stages:
+            stages_by_category[stage['category']].append(stage)
+        
+        # Group medications by category
+        medications_by_category = {
+            'broiler': [],
+            'kienyeji': [],
+            'layer': []
+        }
+        
+        for medication in medications:
+            medications_by_category[medication['category']].append(medication)
+        
+        # Group weight standards by category
+        weight_standards_by_category = {
+            'broiler': [],
+            'kienyeji': [],
+            'layer': []
+        }
+        
+        for weight_standard in weight_standards:
+            weight_standards_by_category[weight_standard['category']].append(weight_standard)
+        
+        cursor.close()
+        conn.close()
+        
+    except Exception as e:
+        print(f"Error fetching chicken settings data: {str(e)}")
+        # Initialize variables in case of error
+        stages_by_category = {'broiler': [], 'kienyeji': [], 'layer': []}
+        medications_by_category = {'broiler': [], 'kienyeji': [], 'layer': []}
+        weight_standards_by_category = {'broiler': [], 'kienyeji': [], 'layer': []}
+    
+    return render_template('admin_farm_chicken_settings.html',
+                         user=user_data,
+                         stages_by_category=stages_by_category,
+                         medications_by_category=medications_by_category,
+                         weight_standards_by_category=weight_standards_by_category)
+
+@app.route('/admin/farm/chicken-stage', methods=['POST'])
+def add_chicken_stage():
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'success': False, 'message': 'Unauthorized access'})
+    
+    try:
+        # Get form data
+        category = request.form.get('category')
+        stage_name = request.form.get('stage_name')
+        start_day = int(request.form.get('start_day'))
+        end_day = int(request.form.get('end_day'))
+        description = request.form.get('description', '')
+        
+        # Validate required fields
+        if not all([category, stage_name, start_day, end_day]):
+            return jsonify({'success': False, 'message': 'All required fields must be filled'})
+        
+        # Validate day range
+        if start_day >= end_day:
+            return jsonify({'success': False, 'message': 'End day must be greater than start day'})
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Check for overlapping stages
+        cursor.execute("""
+            SELECT COUNT(*) as count FROM chicken_stages 
+            WHERE category = %s 
+            AND ((start_day <= %s AND end_day > %s) OR (start_day < %s AND end_day >= %s))
+        """, (category, start_day, start_day, end_day, end_day))
+        
+        overlap_check = cursor.fetchone()
+        if overlap_check['count'] > 0:
+            return jsonify({'success': False, 'message': 'Stage overlaps with existing stage in this category'})
+        
+        # Insert new stage
+        cursor.execute("""
+            INSERT INTO chicken_stages (category, stage_name, start_day, end_day, description, created_by)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """, (category, stage_name, start_day, end_day, description, session['employee_id']))
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True, 
+            'message': f'Stage "{stage_name}" added successfully for {category} category!'
+        })
+        
+    except Exception as e:
+        print(f"Error adding chicken stage: {str(e)}")
+        return jsonify({
+            'success': False, 
+            'message': f'Error adding stage: {str(e)}'
+        })
+
+@app.route('/admin/farm/chicken-stage/<int:stage_id>', methods=['PUT'])
+def update_chicken_stage(stage_id):
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'success': False, 'message': 'Unauthorized access'})
+    
+    try:
+        # Get form data
+        category = request.form.get('category')
+        stage_name = request.form.get('stage_name')
+        start_day = int(request.form.get('start_day'))
+        end_day = int(request.form.get('end_day'))
+        description = request.form.get('description', '')
+        
+        # Validate required fields
+        if not all([category, stage_name, start_day, end_day]):
+            return jsonify({'success': False, 'message': 'All required fields must be filled'})
+        
+        # Validate day range
+        if start_day >= end_day:
+            return jsonify({'success': False, 'message': 'End day must be greater than start day'})
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Check for overlapping stages (excluding current stage)
+        cursor.execute("""
+            SELECT COUNT(*) as count FROM chicken_stages 
+            WHERE category = %s 
+            AND id != %s
+            AND ((start_day <= %s AND end_day > %s) OR (start_day < %s AND end_day >= %s))
+        """, (category, stage_id, start_day, start_day, end_day, end_day))
+        
+        overlap_check = cursor.fetchone()
+        if overlap_check['count'] > 0:
+            return jsonify({'success': False, 'message': 'Stage overlaps with existing stage in this category'})
+        
+        # Update stage
+        cursor.execute("""
+            UPDATE chicken_stages 
+            SET category = %s, stage_name = %s, start_day = %s, end_day = %s, description = %s
+            WHERE id = %s
+        """, (category, stage_name, start_day, end_day, description, stage_id))
+        
+        if cursor.rowcount == 0:
+            return jsonify({'success': False, 'message': 'Stage not found'})
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True, 
+            'message': f'Stage "{stage_name}" updated successfully!'
+        })
+        
+    except Exception as e:
+        print(f"Error updating chicken stage: {str(e)}")
+        return jsonify({
+            'success': False, 
+            'message': f'Error updating stage: {str(e)}'
+        })
+
+@app.route('/admin/farm/chicken-stage/<int:stage_id>', methods=['DELETE'])
+def delete_chicken_stage(stage_id):
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'success': False, 'message': 'Unauthorized access'})
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get stage name before deletion for confirmation message
+        cursor.execute("SELECT stage_name FROM chicken_stages WHERE id = %s", (stage_id,))
+        stage = cursor.fetchone()
+        
+        if not stage:
+            return jsonify({'success': False, 'message': 'Stage not found'})
+        
+        # Delete stage
+        cursor.execute("DELETE FROM chicken_stages WHERE id = %s", (stage_id,))
+        
+        if cursor.rowcount == 0:
+            return jsonify({'success': False, 'message': 'Stage not found'})
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True, 
+            'message': f'Stage "{stage["stage_name"]}" deleted successfully!'
+        })
+        
+    except Exception as e:
+        print(f"Error deleting chicken stage: {str(e)}")
+        return jsonify({
+            'success': False, 
+            'message': f'Error deleting stage: {str(e)}'
+        })
+
+@app.route('/admin/farm/chicken-medication', methods=['POST'])
+def add_chicken_medication():
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'success': False, 'message': 'Unauthorized access'})
+    
+    try:
+        # Get form data
+        category = request.form.get('category')
+        medication_name = request.form.get('medication_name')
+        start_day = int(request.form.get('start_day'))
+        end_day = int(request.form.get('end_day'))
+        purpose = request.form.get('purpose', '')
+        
+        # Handle file upload
+        medication_image = request.files.get('medication_image')
+        image_filename = None
+        
+        if medication_image and medication_image.filename:
+            # Create uploads directory if it doesn't exist
+            import os
+            upload_dir = 'static/uploads/medications'
+            os.makedirs(upload_dir, exist_ok=True)
+            
+            # Generate unique filename
+            import uuid
+            file_extension = medication_image.filename.rsplit('.', 1)[1].lower() if '.' in medication_image.filename else 'jpg'
+            image_filename = f"{uuid.uuid4().hex}.{file_extension}"
+            
+            # Save file
+            medication_image.save(os.path.join(upload_dir, image_filename))
+        
+        # Validate required fields
+        if not all([category, medication_name, start_day, end_day]):
+            return jsonify({'success': False, 'message': 'All required fields must be filled'})
+        
+        # Validate day range
+        if start_day >= end_day:
+            return jsonify({'success': False, 'message': 'End day must be greater than start day'})
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Create chicken_medications table if it doesn't exist
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS chicken_medications (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                category ENUM('broiler', 'kienyeji', 'layer') NOT NULL,
+                medication_name VARCHAR(200) NOT NULL,
+                start_day INT NOT NULL,
+                end_day INT NOT NULL,
+                purpose TEXT,
+                image_filename VARCHAR(255),
+                created_by INT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                INDEX idx_category (category),
+                INDEX idx_medication_name (medication_name)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        """)
+        
+        # Insert medication data
+        cursor.execute("""
+            INSERT INTO chicken_medications (category, medication_name, start_day, end_day, purpose, image_filename, created_by)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """, (category, medication_name, start_day, end_day, purpose, image_filename, session['employee_id']))
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True, 
+            'message': f'Medication "{medication_name}" added successfully for {category} category!'
+        })
+        
+    except Exception as e:
+        print(f"Error adding chicken medication: {str(e)}")
+        return jsonify({
+            'success': False, 
+            'message': f'Error adding medication: {str(e)}'
+        })
+
+@app.route('/admin/farm/chicken-medication/<int:medication_id>', methods=['PUT'])
+def update_chicken_medication(medication_id):
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'success': False, 'message': 'Unauthorized access'})
+    
+    try:
+        # Get form data
+        category = request.form.get('category')
+        medication_name = request.form.get('medication_name')
+        start_day = int(request.form.get('start_day'))
+        end_day = int(request.form.get('end_day'))
+        purpose = request.form.get('purpose', '')
+        
+        # Handle file upload
+        medication_image = request.files.get('medication_image')
+        image_filename = None
+        
+        if medication_image and medication_image.filename:
+            # Create uploads directory if it doesn't exist
+            import os
+            upload_dir = 'static/uploads/medications'
+            os.makedirs(upload_dir, exist_ok=True)
+            
+            # Generate unique filename
+            import uuid
+            file_extension = medication_image.filename.rsplit('.', 1)[1].lower() if '.' in medication_image.filename else 'jpg'
+            image_filename = f"{uuid.uuid4().hex}.{file_extension}"
+            
+            # Save file
+            medication_image.save(os.path.join(upload_dir, image_filename))
+        
+        # Validate required fields
+        if not all([category, medication_name, start_day, end_day]):
+            return jsonify({'success': False, 'message': 'All required fields must be filled'})
+        
+        # Validate day range
+        if start_day >= end_day:
+            return jsonify({'success': False, 'message': 'End day must be greater than start day'})
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Update medication (only update image if new one provided)
+        if image_filename:
+            cursor.execute("""
+                UPDATE chicken_medications 
+                SET category = %s, medication_name = %s, start_day = %s, end_day = %s, 
+                    purpose = %s, image_filename = %s
+                WHERE id = %s
+            """, (category, medication_name, start_day, end_day, purpose, image_filename, medication_id))
+        else:
+            cursor.execute("""
+                UPDATE chicken_medications 
+                SET category = %s, medication_name = %s, start_day = %s, end_day = %s, purpose = %s
+                WHERE id = %s
+            """, (category, medication_name, start_day, end_day, purpose, medication_id))
+        
+        if cursor.rowcount == 0:
+            return jsonify({'success': False, 'message': 'Medication not found'})
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True, 
+            'message': f'Medication "{medication_name}" updated successfully!'
+        })
+        
+    except Exception as e:
+        print(f"Error updating chicken medication: {str(e)}")
+        return jsonify({
+            'success': False, 
+            'message': f'Error updating medication: {str(e)}'
+        })
+
+@app.route('/admin/farm/chicken-medication/<int:medication_id>', methods=['DELETE'])
+def delete_chicken_medication(medication_id):
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'success': False, 'message': 'Unauthorized access'})
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get medication name before deletion for confirmation message
+        cursor.execute("SELECT medication_name FROM chicken_medications WHERE id = %s", (medication_id,))
+        medication = cursor.fetchone()
+        
+        if not medication:
+            return jsonify({'success': False, 'message': 'Medication not found'})
+        
+        # Delete medication
+        cursor.execute("DELETE FROM chicken_medications WHERE id = %s", (medication_id,))
+        
+        if cursor.rowcount == 0:
+            return jsonify({'success': False, 'message': 'Medication not found'})
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True, 
+            'message': f'Medication "{medication["medication_name"]}" deleted successfully!'
+        })
+        
+    except Exception as e:
+        print(f"Error deleting chicken medication: {str(e)}")
+        return jsonify({
+            'success': False, 
+            'message': f'Error deleting medication: {str(e)}'
+        })
+
+@app.route('/admin/farm/chicken-health')
+def admin_farm_chicken_health():
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return redirect(url_for('employee_login'))
+    
+    # Get user data from session
+    user_data = {
+        'id': session['employee_id'],
+        'name': session['employee_name'],
+        'role': session['employee_role'],
+        'status': session['employee_status'],
+        'email': f"{session['employee_name'].lower().replace(' ', '.')}@farm.com"
+    }
+    
+    # Fetch chicken data and stages from database
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get all active chickens
+        cursor.execute("""
+            SELECT 
+                chicken_id,
+                batch_name,
+                chicken_type,
+                breed_name,
+                gender,
+                hatch_date,
+                age_days,
+                source,
+                coop_number,
+                quantity,
+                current_status,
+                registration_date
+            FROM chickens 
+            WHERE current_status = 'active'
+            ORDER BY chicken_type, age_days
+        """)
+        chickens = cursor.fetchall()
+        
+        # Get all chicken stages
+        cursor.execute("""
+            SELECT 
+                id,
+                category,
+                stage_name,
+                start_day,
+                end_day,
+                description
+            FROM chicken_stages 
+            ORDER BY category, start_day
+        """)
+        stages = cursor.fetchall()
+        
+        # Group chickens by type and then by stage
+        chickens_by_category_and_stage = {
+            'broiler': {},
+            'kienyeji': {},
+            'layer': {}
+        }
+        
+        # Create stage lookup for each category
+        stage_lookup = {'broiler': {}, 'kienyeji': {}, 'layer': {}}
+        for stage in stages:
+            stage_lookup[stage['category']][stage['id']] = stage
+        
+        # Group chickens by category first
+        chickens_by_type = {'broiler': [], 'kienyeji': [], 'layer': []}
+        for chicken in chickens:
+            chickens_by_type[chicken['chicken_type']].append(chicken)
+        
+        # For each category, group chickens by their current stage
+        for category in ['broiler', 'kienyeji', 'layer']:
+            category_chickens = chickens_by_type[category]
+            category_stages = stage_lookup[category]
+            
+            # Initialize stage groups
+            stage_groups = {}
+            for stage_id, stage in category_stages.items():
+                stage_groups[stage_id] = {
+                    'stage_info': stage,
+                    'chickens': []
+                }
+            
+            # Add "No Stage" group for chickens that don't fit any stage
+            stage_groups['no_stage'] = {
+                'stage_info': {
+                    'stage_name': 'No Stage',
+                    'start_day': 0,
+                    'end_day': 0,
+                    'description': 'Chickens that do not fit into any defined stage'
+                },
+                'chickens': []
+            }
+            
+            # Assign chickens to appropriate stages
+            for chicken in category_chickens:
+                assigned = False
+                chicken_age = chicken['age_days']
+                
+                # Check if chicken fits into any defined stage
+                for stage_id, stage in category_stages.items():
+                    if stage['start_day'] <= chicken_age <= stage['end_day']:
+                        stage_groups[stage_id]['chickens'].append(chicken)
+                        assigned = True
+                        break
+                
+                # If not assigned to any stage, put in "No Stage"
+                if not assigned:
+                    stage_groups['no_stage']['chickens'].append(chicken)
+            
+            chickens_by_category_and_stage[category] = stage_groups
+        
+        # Get statistics
+        cursor.execute("""
+            SELECT 
+                chicken_type,
+                COUNT(*) as total_count,
+                SUM(quantity) as total_quantity,
+                AVG(age_days) as avg_age,
+                COUNT(DISTINCT batch_name) as batch_count
+            FROM chickens 
+            WHERE current_status = 'active'
+            GROUP BY chicken_type
+        """)
+        stats = cursor.fetchall()
+        
+        # Create stats dictionary
+        stats_dict = {}
+        for stat in stats:
+            stats_dict[stat['chicken_type']] = {
+                'total_count': stat['total_count'],
+                'total_quantity': stat['total_quantity'],
+                'avg_age': round(stat['avg_age'] or 0, 1),
+                'batch_count': stat['batch_count']
+            }
+        
+        cursor.close()
+        conn.close()
+        
+    except Exception as e:
+        print(f"Error fetching chicken health data: {str(e)}")
+        chickens_by_category_and_stage = {
+            'broiler': {},
+            'kienyeji': {},
+            'layer': {}
+        }
+        stats_dict = {}
+    
+    return render_template('admin_farm_chicken_health.html', 
+                         user=user_data, 
+                         chickens_by_category_and_stage=chickens_by_category_and_stage,
+                         stats=stats_dict)
+
+@app.route('/admin/farm/chicken-upcoming-medications')
+def admin_farm_chicken_upcoming_medications():
+    print("DEBUG: Route accessed - /admin/farm/chicken-upcoming-medications")
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return redirect(url_for('employee_login'))
+    
+    # Get user data from session
+    user_data = {
+        'id': session['employee_id'],
+        'name': session['employee_name'],
+        'role': session['employee_role'],
+        'status': session['employee_status'],
+        'email': f"{session['employee_name'].lower().replace(' ', '.')}@farm.com"
+    }
+    
+    # Initialize variables
+    stages_by_category = {'broiler': [], 'kienyeji': [], 'layer': []}
+    medications_by_category = {'broiler': [], 'kienyeji': [], 'layer': []}
+    weight_standards_by_category = {'broiler': [], 'kienyeji': [], 'layer': []}
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get all active chickens
+        cursor.execute("""
+            SELECT 
+                chicken_id,
+                batch_name,
+                chicken_type,
+                breed_name,
+                gender,
+                hatch_date,
+                age_days,
+                source,
+                coop_number,
+                quantity,
+                current_status,
+                registration_date
+            FROM chickens 
+            WHERE current_status = 'active'
+            ORDER BY chicken_type, age_days
+        """)
+        chickens = cursor.fetchall()
+        
+        # Get all medications
+        cursor.execute("""
+            SELECT 
+                id,
+                category,
+                medication_name,
+                start_day,
+                end_day,
+                purpose,
+                image_filename,
+                created_at
+            FROM chicken_medications 
+            ORDER BY category, start_day
+        """)
+        medications = cursor.fetchall()
+        
+        # Get all weight standards
+        cursor.execute("""
+            SELECT 
+                id,
+                category,
+                age_days,
+                expected_weight,
+                description,
+                created_at
+            FROM chicken_weight_standards 
+            ORDER BY category, age_days
+        """)
+        weight_standards = cursor.fetchall()
+        
+        # Create medication tracking table if it doesn't exist
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS chicken_medication_tracking (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                chicken_id VARCHAR(20) NOT NULL,
+                medication_id INT NOT NULL,
+                scheduled_date DATE NOT NULL,
+                completed_date DATE NULL,
+                status ENUM('pending', 'completed', 'missed') DEFAULT 'pending',
+                notes TEXT,
+                administered_by INT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                INDEX idx_chicken_id (chicken_id),
+                INDEX idx_medication_id (medication_id),
+                INDEX idx_status (status),
+                INDEX idx_scheduled_date (scheduled_date),
+                FOREIGN KEY (medication_id) REFERENCES chicken_medications(id) ON DELETE CASCADE
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        """)
+        
+        # Get existing medication tracking records
+        cursor.execute("""
+            SELECT 
+                cmt.id,
+                cmt.chicken_id,
+                cmt.medication_id,
+                cmt.scheduled_date,
+                cmt.completed_date,
+                cmt.status,
+                cmt.notes,
+                cm.medication_name,
+                cm.category,
+                cm.purpose
+            FROM chicken_medication_tracking cmt
+            JOIN chicken_medications cm ON cmt.medication_id = cm.id
+            ORDER BY cmt.scheduled_date, cmt.chicken_id
+        """)
+        tracking_records = cursor.fetchall()
+        
+        # Group chickens by type
+        chickens_by_type = {'broiler': [], 'kienyeji': [], 'layer': []}
+        for chicken in chickens:
+            chickens_by_type[chicken['chicken_type']].append(chicken)
+        
+        # Group medications by category
+        medications_by_category = {'broiler': [], 'kienyeji': [], 'layer': []}
+        for medication in medications:
+            medications_by_category[medication['category']].append(medication)
+        
+        # Group weight standards by category
+        weight_standards_by_category = {'broiler': [], 'kienyeji': [], 'layer': []}
+        for weight_standard in weight_standards:
+            weight_standards_by_category[weight_standard['category']].append(weight_standard)
+        
+        # Create medications with their chickens list
+        medications_with_chickens = []
+        
+        for medication in medications:
+            eligible_chickens = []
+            
+            # Find all chickens that need this medication
+            for chicken in chickens:
+                chicken_age = chicken['age_days']
+                
+                # Check if this medication is already tracked and completed for this chicken
+                existing_tracking = None
+                for tracking in tracking_records:
+                    if (tracking['chicken_id'] == chicken['chicken_id'] and 
+                        tracking['medication_id'] == medication['id']):
+                        existing_tracking = tracking
+                        break
+                
+                # Only include if not completed (regardless of age)
+                if not existing_tracking or existing_tracking['status'] != 'completed':
+                    # Calculate status and urgency
+                    if chicken_age <= medication['end_day']:
+                        # Chicken is still eligible (within or before the medication period)
+                        days_remaining = medication['end_day'] - chicken_age
+                        urgency = 'high' if days_remaining <= 2 else 'medium' if days_remaining <= 5 else 'low'
+                        status = 'eligible'
+                    else:
+                        # Chicken is past the medication period but still show it
+                        days_overdue = chicken_age - medication['end_day']
+                        urgency = 'overdue'
+                        status = 'overdue'
+                    
+                    eligible_chickens.append({
+                        'chicken': chicken,
+                        'tracking': existing_tracking,
+                        'days_remaining': medication['end_day'] - chicken_age,
+                        'days_overdue': max(0, chicken_age - medication['end_day']),
+                        'urgency': urgency,
+                        'status': status
+                    })
+            
+            # Only add medication if it has eligible chickens
+            if eligible_chickens:
+                # Calculate overall urgency for this medication
+                has_overdue = any(chicken['status'] == 'overdue' for chicken in eligible_chickens)
+                has_high_priority = any(chicken['urgency'] == 'high' for chicken in eligible_chickens)
+                
+                if has_overdue:
+                    overall_urgency = 'overdue'
+                elif has_high_priority:
+                    overall_urgency = 'high'
+                else:
+                    overall_urgency = 'medium'
+                
+                medications_with_chickens.append({
+                    'medication': medication,
+                    'chickens': eligible_chickens,
+                    'total_chickens': len(eligible_chickens),
+                    'overdue_count': len([c for c in eligible_chickens if c['status'] == 'overdue']),
+                    'eligible_count': len([c for c in eligible_chickens if c['status'] == 'eligible']),
+                    'overall_urgency': overall_urgency
+                })
+        
+        # Sort by urgency
+        medications_with_chickens.sort(key=lambda x: (
+            0 if x['overall_urgency'] == 'overdue' else 1 if x['overall_urgency'] == 'high' else 2,
+            x['medication']['medication_name']
+        ))
+        
+        cursor.close()
+        conn.close()
+        
+    except Exception as e:
+        print(f"Error fetching upcoming medications data: {str(e)}")
+        medications_with_chickens = []
+    
+    return render_template('admin_farm_chicken_upcoming_medications.html',
+                         user=user_data,
+                         medications_with_chickens=medications_with_chickens)
+
+@app.route('/admin/farm/chicken-health-analytics')
+def admin_farm_chicken_health_analytics():
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return redirect(url_for('employee_login'))
+    
+    # Get user data from session
+    user_data = {
+        'id': session['employee_id'],
+        'name': session['employee_name'],
+        'role': session['employee_role'],
+        'status': session['employee_status'],
+        'email': f"{session['employee_name'].lower().replace(' ', '.')}@farm.com"
+    }
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get all active chickens grouped by category
+        cursor.execute("""
+            SELECT 
+                chicken_id,
+                batch_name,
+                chicken_type,
+                breed_name,
+                gender,
+                hatch_date,
+                age_days,
+                source,
+                coop_number,
+                quantity,
+                current_status,
+                registration_date
+            FROM chickens 
+            WHERE current_status = 'active'
+            ORDER BY chicken_type, age_days
+        """)
+        chickens = cursor.fetchall()
+        
+        # Group chickens by type
+        chickens_by_type = {'broiler': [], 'kienyeji': [], 'layer': []}
+        for chicken in chickens:
+            chickens_by_type[chicken['chicken_type']].append(chicken)
+        
+        # Calculate statistics for each category
+        category_stats = {}
+        for category in ['broiler', 'kienyeji', 'layer']:
+            category_chickens = chickens_by_type[category]
+            if category_chickens:
+                ages = [chicken['age_days'] for chicken in category_chickens]
+                category_stats[category] = {
+                    'total': len(category_chickens),
+                    'avg_age': sum(ages) / len(ages) if ages else 0,
+                    'min_age': min(ages) if ages else 0,
+                    'max_age': max(ages) if ages else 0,
+                    'males': len([c for c in category_chickens if c['gender'] == 'male']),
+                    'females': len([c for c in category_chickens if c['gender'] == 'female'])
+                }
+            else:
+                category_stats[category] = {
+                    'total': 0,
+                    'avg_age': 0,
+                    'min_age': 0,
+                    'max_age': 0,
+                    'males': 0,
+                    'females': 0
+                }
+        
+    except Exception as e:
+        print(f"Error fetching chicken health analytics data: {str(e)}")
+        chickens_by_type = {'broiler': [], 'kienyeji': [], 'layer': []}
+        category_stats = {
+            'broiler': {'total': 0, 'avg_age': 0, 'min_age': 0, 'max_age': 0, 'males': 0, 'females': 0},
+            'kienyeji': {'total': 0, 'avg_age': 0, 'min_age': 0, 'max_age': 0, 'males': 0, 'females': 0},
+            'layer': {'total': 0, 'avg_age': 0, 'min_age': 0, 'max_age': 0, 'males': 0, 'females': 0}
+        }
+    
+    # Get medication analytics data
+    try:
+        # Get medication completion statistics
+        cursor.execute("""
+            SELECT 
+                COUNT(*) as total_medications,
+                SUM(CASE WHEN cmt.status = 'completed' THEN 1 ELSE 0 END) as completed,
+                SUM(CASE WHEN cmt.status = 'pending' THEN 1 ELSE 0 END) as pending,
+                SUM(CASE WHEN cmt.status = 'overdue' THEN 1 ELSE 0 END) as overdue
+            FROM chicken_medication_tracking cmt
+        """)
+        medication_stats = cursor.fetchone()
+        
+        # Get weight performance by category
+        cursor.execute("""
+            SELECT 
+                c.chicken_type,
+                AVG(cwt.weight_percentage) as avg_performance,
+                COUNT(cwt.id) as total_checks,
+                SUM(CASE WHEN cwt.weight_category = 'healthy' THEN 1 ELSE 0 END) as healthy_count,
+                SUM(CASE WHEN cwt.weight_category = 'underweight' THEN 1 ELSE 0 END) as underweight_count,
+                SUM(CASE WHEN cwt.weight_category = 'overweight' THEN 1 ELSE 0 END) as overweight_count
+            FROM chicken_weight_tracking cwt
+            JOIN chickens c ON cwt.chicken_id = c.chicken_id
+            GROUP BY c.chicken_type
+        """)
+        weight_stats = cursor.fetchall()
+        
+        # Get category performance metrics
+        cursor.execute("""
+            SELECT 
+                chicken_type,
+                COUNT(*) as total_chickens,
+                AVG(age_days) as avg_age,
+                SUM(CASE WHEN gender = 'male' THEN 1 ELSE 0 END) as males,
+                SUM(CASE WHEN gender = 'female' THEN 1 ELSE 0 END) as females
+            FROM chickens 
+            WHERE current_status = 'active'
+            GROUP BY chicken_type
+        """)
+        category_performance = cursor.fetchall()
+        
+        # Get weight tracking data for line charts (last 7 days by category)
+        cursor.execute("""
+            SELECT 
+                c.chicken_type,
+                DATE(cwt.checked_at) as check_date,
+                AVG(cwt.actual_weight) as avg_actual_weight,
+                AVG(cwt.expected_weight) as avg_expected_weight,
+                AVG(cwt.weight_percentage) as avg_performance
+            FROM chicken_weight_tracking cwt
+            JOIN chickens c ON cwt.chicken_id = c.chicken_id
+            WHERE cwt.checked_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+            GROUP BY c.chicken_type, DATE(cwt.checked_at)
+            ORDER BY c.chicken_type, check_date
+        """)
+        weight_tracking_data = cursor.fetchall()
+        
+    except Exception as e:
+        print(f"Error fetching analytics data: {str(e)}")
+        medication_stats = {'total_medications': 0, 'completed': 0, 'pending': 0, 'overdue': 0}
+        weight_stats = []
+        category_performance = []
+        weight_tracking_data = []
+    
+    finally:
+        # Always close connections in finally block
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+    
+    # Ensure we have default data for all categories
+    if not weight_stats:
+        weight_stats = [
+            {'chicken_type': 'broiler', 'avg_performance': 0, 'total_checks': 0, 'healthy_count': 0, 'underweight_count': 0, 'overweight_count': 0},
+            {'chicken_type': 'kienyeji', 'avg_performance': 0, 'total_checks': 0, 'healthy_count': 0, 'underweight_count': 0, 'overweight_count': 0},
+            {'chicken_type': 'layer', 'avg_performance': 0, 'total_checks': 0, 'healthy_count': 0, 'underweight_count': 0, 'overweight_count': 0}
+        ]
+    
+    if not category_performance:
+        category_performance = [
+            {'chicken_type': 'broiler', 'total_chickens': 0, 'avg_age': 0, 'males': 0, 'females': 0},
+            {'chicken_type': 'kienyeji', 'total_chickens': 0, 'avg_age': 0, 'males': 0, 'females': 0},
+            {'chicken_type': 'layer', 'total_chickens': 0, 'avg_age': 0, 'males': 0, 'females': 0}
+        ]
+    
+    return render_template('admin_farm_chicken_health_analytics.html',
+                         user=user_data,
+                         chickens_by_type=chickens_by_type,
+                         category_stats=category_stats,
+                         medication_stats=medication_stats,
+                         weight_stats=weight_stats,
+                         category_performance=category_performance,
+                         weight_tracking_data=weight_tracking_data)
+
+@app.route('/admin/farm/chicken-production')
+def admin_farm_chicken_production():
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return redirect(url_for('employee_login'))
+    
+    # Get user data from session
+    user_data = {
+        'id': session['employee_id'],
+        'name': session['employee_name'],
+        'role': session['employee_role'],
+        'status': session['employee_status'],
+        'email': f"{session['employee_name'].lower().replace(' ', '.')}@farm.com"
+    }
+    
+    return render_template('admin_farm_chicken_production.html', user=user_data)
+
+@app.route('/admin/farm/chicken-production-management')
+def admin_farm_chicken_production_management():
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return redirect(url_for('employee_login'))
+    
+    # Get user data from session
+    user_data = {
+        'id': session['employee_id'],
+        'name': session['employee_name'],
+        'role': session['employee_role'],
+        'status': session['employee_status'],
+        'email': f"{session['employee_name'].lower().replace(' ', '.')}@farm.com"
+    }
+    
+    # Fetch production data
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Create audit table if it doesn't exist
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS chicken_production_audit (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                production_id INT NOT NULL,
+                chicken_id VARCHAR(50) NOT NULL,
+                production_type ENUM('eggs', 'meat') NOT NULL,
+                field_name VARCHAR(50) NOT NULL,
+                old_value TEXT,
+                new_value TEXT,
+                edited_by INT NOT NULL,
+                edited_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                INDEX idx_production_id (production_id),
+                INDEX idx_chicken_id (chicken_id),
+                INDEX idx_edited_at (edited_at)
+            )
+        """)
+        
+        # Get all production records with chicken details and edit status
+        cursor.execute("""
+            SELECT 
+                cp.id,
+                cp.production_type,
+                cp.chicken_id,
+                cp.chicken_category,
+                cp.production_date,
+                cp.production_time,
+                cp.quantity,
+                cp.notes,
+                cp.created_at,
+                c.batch_name,
+                c.breed_name,
+                c.coop_number,
+                CASE WHEN EXISTS(SELECT 1 FROM chicken_production_audit WHERE production_id = cp.id) THEN 1 ELSE 0 END as is_edited
+            FROM chicken_production cp
+            LEFT JOIN chickens c ON cp.chicken_id COLLATE utf8mb4_unicode_ci = c.chicken_id COLLATE utf8mb4_unicode_ci
+            ORDER BY cp.created_at DESC
+        """)
+        productions = cursor.fetchall()
+        
+        # Convert timedelta to time string for display
+        for production in productions:
+            if production['production_time']:
+                if hasattr(production['production_time'], 'strftime'):
+                    # It's already a time object
+                    production['production_time_str'] = production['production_time'].strftime('%H:%M')
+                else:
+                    # It's a timedelta object, convert to time string
+                    total_seconds = int(production['production_time'].total_seconds())
+                    hours = total_seconds // 3600
+                    minutes = (total_seconds % 3600) // 60
+                    production['production_time_str'] = f"{hours:02d}:{minutes:02d}"
+            else:
+                production['production_time_str'] = str(production['production_time'])
+        
+        # Get meat production details for meat productions
+        meat_productions = []
+        for production in productions:
+            if production['production_type'] == 'meat':
+                cursor.execute("""
+                    SELECT chicken_number, alive_weight, dead_weight
+                    FROM chicken_meat_production
+                    WHERE production_id = %s
+                    ORDER BY chicken_number
+                """, (production['id'],))
+                meat_details = cursor.fetchall()
+                production['meat_details'] = meat_details
+            else:
+                production['meat_details'] = []
+        
+        # Calculate statistics
+        total_productions = len(productions)
+        egg_productions = len([p for p in productions if p['production_type'] == 'eggs'])
+        meat_productions_count = len([p for p in productions if p['production_type'] == 'meat'])
+        total_eggs = sum(p['quantity'] for p in productions if p['production_type'] == 'eggs')
+        total_meat_chickens = sum(p['quantity'] for p in productions if p['production_type'] == 'meat')
+        
+        # Get recent productions (last 7 days)
+        cursor.execute("""
+            SELECT COUNT(*) as recent_count
+            FROM chicken_production
+            WHERE production_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+        """)
+        recent_productions = cursor.fetchone()['recent_count']
+        
+        stats = {
+            'total_productions': total_productions,
+            'egg_productions': egg_productions,
+            'meat_productions': meat_productions_count,
+            'total_eggs': total_eggs,
+            'total_meat_chickens': total_meat_chickens,
+            'recent_productions': recent_productions
+        }
+        
+    except Exception as e:
+        print(f"Error fetching production data: {str(e)}")
+        productions = []
+        stats = {
+            'total_productions': 0,
+            'egg_productions': 0,
+            'meat_productions': 0,
+            'total_eggs': 0,
+            'total_meat_chickens': 0,
+            'recent_productions': 0
+        }
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+    
+    return render_template('admin_farm_chicken_production_management.html', 
+                         user=user_data, 
+                         productions=productions, 
+                         stats=stats)
+
+@app.route('/admin/farm/chicken-production-edit/<int:production_id>', methods=['GET'])
+def admin_farm_chicken_production_edit(production_id):
+    """Get production details for editing"""
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get production details
+        cursor.execute("""
+            SELECT 
+                cp.id,
+                cp.production_type,
+                cp.chicken_id,
+                cp.chicken_category,
+                cp.production_date,
+                cp.production_time,
+                cp.quantity,
+                cp.notes,
+                c.batch_name,
+                c.breed_name,
+                c.coop_number
+            FROM chicken_production cp
+            LEFT JOIN chickens c ON cp.chicken_id COLLATE utf8mb4_unicode_ci = c.chicken_id COLLATE utf8mb4_unicode_ci
+            WHERE cp.id = %s
+        """, (production_id,))
+        
+        production = cursor.fetchone()
+        if not production:
+            return jsonify({'error': 'Production not found'}), 404
+        
+        # Get meat production details if it's a meat production
+        meat_details = []
+        if production['production_type'] == 'meat':
+            cursor.execute("""
+                SELECT chicken_number, alive_weight, dead_weight
+                FROM chicken_meat_production
+                WHERE production_id = %s
+                ORDER BY chicken_number
+            """, (production_id,))
+            meat_details = cursor.fetchall()
+        
+        # Convert time to string for JSON serialization
+        if production['production_time']:
+            if hasattr(production['production_time'], 'strftime'):
+                production['production_time_str'] = production['production_time'].strftime('%H:%M')
+            else:
+                total_seconds = int(production['production_time'].total_seconds())
+                hours = total_seconds // 3600
+                minutes = (total_seconds % 3600) // 60
+                production['production_time_str'] = f"{hours:02d}:{minutes:02d}"
+        else:
+            production['production_time_str'] = ""
+        
+        production['production_date_str'] = production['production_date'].strftime('%Y-%m-%d')
+        production['meat_details'] = meat_details
+        
+        # Convert datetime objects to strings for JSON serialization
+        if production['production_date']:
+            production['production_date'] = production['production_date'].strftime('%Y-%m-%d')
+        if production['production_time']:
+            if hasattr(production['production_time'], 'strftime'):
+                production['production_time'] = production['production_time'].strftime('%H:%M')
+            else:
+                total_seconds = int(production['production_time'].total_seconds())
+                hours = total_seconds // 3600
+                minutes = (total_seconds % 3600) // 60
+                production['production_time'] = f"{hours:02d}:{minutes:02d}"
+        
+        return jsonify(production)
+        
+    except Exception as e:
+        print(f"Error fetching production details: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+@app.route('/admin/farm/chicken-production-update/<int:production_id>', methods=['POST'])
+def admin_farm_chicken_production_update(production_id):
+    """Update production record"""
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 401
+    
+    try:
+        data = request.get_json()
+        
+        conn = None
+        cursor = None
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            
+            # Get original production data for audit
+            cursor.execute("""
+                SELECT production_date, production_time, quantity, notes, chicken_id, production_type
+                FROM chicken_production WHERE id = %s
+            """, (production_id,))
+            original_data = cursor.fetchone()
+            
+            # Update production record
+            cursor.execute("""
+                UPDATE chicken_production 
+                SET production_date = %s, production_time = %s, quantity = %s, notes = %s
+                WHERE id = %s
+            """, (
+                data.get('production_date'),
+                data.get('production_time'),
+                data.get('quantity'),
+                data.get('notes', ''),
+                production_id
+            ))
+            
+            # Audit table should already exist from management route
+            
+            # Track changes
+            changes = []
+            if original_data['production_date'].strftime('%Y-%m-%d') != data.get('production_date'):
+                changes.append(('production_date', original_data['production_date'].strftime('%Y-%m-%d'), data.get('production_date')))
+            if str(original_data['production_time']) != data.get('production_time'):
+                changes.append(('production_time', str(original_data['production_time']), data.get('production_time')))
+            if str(original_data['quantity']) != str(data.get('quantity')):
+                changes.append(('quantity', str(original_data['quantity']), str(data.get('quantity'))))
+            if (original_data['notes'] or '') != (data.get('notes') or ''):
+                changes.append(('notes', original_data['notes'] or '', data.get('notes') or ''))
+            
+            # Insert audit records
+            for field_name, old_value, new_value in changes:
+                cursor.execute("""
+                    INSERT INTO chicken_production_audit 
+                    (production_id, chicken_id, production_type, field_name, old_value, new_value, edited_by)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)
+                """, (
+                    production_id,
+                    original_data['chicken_id'],
+                    original_data['production_type'],
+                    field_name,
+                    old_value,
+                    new_value,
+                    session['employee_id']
+                ))
+            
+            # If meat production, update weight details
+            if data.get('production_type') == 'meat' and data.get('meat_details'):
+                # Delete existing meat details
+                cursor.execute("DELETE FROM chicken_meat_production WHERE production_id = %s", (production_id,))
+                
+                # Insert new meat details
+                for detail in data['meat_details']:
+                    cursor.execute("""
+                        INSERT INTO chicken_meat_production 
+                        (production_id, chicken_number, alive_weight, dead_weight)
+                        VALUES (%s, %s, %s, %s)
+                    """, (
+                        production_id,
+                        detail['chicken_number'],
+                        detail['alive_weight'],
+                        detail['dead_weight']
+                    ))
+            
+            conn.commit()
+            return jsonify({'success': True, 'message': 'Production updated successfully'})
+            
+        except Exception as e:
+            conn.rollback()
+            print(f"Error updating production: {str(e)}")
+            return jsonify({'success': False, 'message': f'Database error: {str(e)}'})
+        finally:
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()
+                
+    except Exception as e:
+        print(f"Error processing production update: {str(e)}")
+        return jsonify({'success': False, 'message': f'Server error: {str(e)}'})
+
+@app.route('/admin/farm/chicken-production-delete/<int:production_id>', methods=['DELETE'])
+def admin_farm_chicken_production_delete(production_id):
+    """Delete production record"""
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 401
+    
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get production details before deletion
+        cursor.execute("SELECT production_type, chicken_id, quantity FROM chicken_production WHERE id = %s", (production_id,))
+        production = cursor.fetchone()
+        
+        if not production:
+            return jsonify({'success': False, 'message': 'Production not found'})
+        
+        # If it's a meat production, we need to restore chicken quantity
+        if production['production_type'] == 'meat':
+            # Get current chicken quantity
+            cursor.execute("SELECT quantity FROM chickens WHERE chicken_id = %s", (production['chicken_id'],))
+            chicken = cursor.fetchone()
+            
+            if chicken:
+                # Restore the slaughtered quantity
+                new_quantity = chicken['quantity'] + production['quantity']
+                cursor.execute("""
+                    UPDATE chickens 
+                    SET quantity = %s, current_status = 'active'
+                    WHERE chicken_id = %s
+                """, (new_quantity, production['chicken_id']))
+        
+        # Delete production record (meat details will be deleted by CASCADE)
+        cursor.execute("DELETE FROM chicken_production WHERE id = %s", (production_id,))
+        
+        conn.commit()
+        return jsonify({'success': True, 'message': 'Production deleted successfully'})
+        
+    except Exception as e:
+        conn.rollback()
+        print(f"Error deleting production: {str(e)}")
+        return jsonify({'success': False, 'message': f'Database error: {str(e)}'})
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+@app.route('/admin/farm/chicken-production-audit/<int:production_id>')
+def admin_farm_chicken_production_audit(production_id):
+    """Get audit history for a production record"""
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get audit history
+        cursor.execute("""
+            SELECT 
+                cpa.field_name,
+                cpa.old_value,
+                cpa.new_value,
+                cpa.edited_at,
+                COALESCE(e.full_name, 'Unknown User') as edited_by_name
+            FROM chicken_production_audit cpa
+            LEFT JOIN employees e ON cpa.edited_by = e.id
+            WHERE cpa.production_id = %s
+            ORDER BY cpa.edited_at DESC
+        """, (production_id,))
+        
+        audit_records = cursor.fetchall()
+        
+        # Convert datetime to string for JSON serialization
+        for record in audit_records:
+            if record['edited_at']:
+                record['edited_at'] = record['edited_at'].strftime('%Y-%m-%d %H:%M:%S')
+        
+        return jsonify(audit_records)
+        
+    except Exception as e:
+        print(f"Error fetching audit history: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+@app.route('/admin/farm/chicken-production-analytics')
+def admin_farm_chicken_production_analytics():
+    """Chicken production analytics page"""
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return redirect(url_for('employee_login'))
+    
+    # Get user data from session
+    user_data = {
+        'id': session['employee_id'],
+        'name': session['employee_name'],
+        'role': session['employee_role'],
+        'status': session['employee_status'],
+        'email': f"{session['employee_name'].lower().replace(' ', '.')}@farm.com"
+    }
+    
+    # Fetch chickens with production data
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get all chickens that have production records
+        cursor.execute("""
+            SELECT DISTINCT
+                c.chicken_id,
+                c.batch_name,
+                c.breed_name,
+                c.chicken_type,
+                c.gender,
+                c.coop_number,
+                c.quantity,
+                c.current_status,
+                COUNT(cp.id) as production_count,
+                SUM(CASE WHEN cp.production_type = 'eggs' THEN cp.quantity ELSE 0 END) as total_eggs,
+                SUM(CASE WHEN cp.production_type = 'meat' THEN cp.quantity ELSE 0 END) as total_meat_production,
+                MAX(cp.production_date) as last_production_date
+            FROM chickens c
+            INNER JOIN chicken_production cp ON c.chicken_id COLLATE utf8mb4_unicode_ci = cp.chicken_id COLLATE utf8mb4_unicode_ci
+            WHERE c.current_status IN ('active', 'sold')
+            GROUP BY c.chicken_id, c.batch_name, c.breed_name, c.chicken_type, c.gender, c.coop_number, c.quantity, c.current_status
+            ORDER BY last_production_date DESC, c.chicken_id
+        """)
+        chickens = cursor.fetchall()
+        
+        # Calculate statistics
+        total_chickens = len(chickens)
+        active_chickens = len([c for c in chickens if c['current_status'] == 'active'])
+        sold_chickens = len([c for c in chickens if c['current_status'] == 'sold'])
+        total_eggs = sum(c['total_eggs'] for c in chickens)
+        total_meat_production = sum(c['total_meat_production'] for c in chickens)
+        
+        # Get recent productions (last 7 days)
+        cursor.execute("""
+            SELECT COUNT(*) as recent_count
+            FROM chicken_production
+            WHERE production_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+        """)
+        recent_productions = cursor.fetchone()['recent_count']
+        
+        stats = {
+            'total_chickens': total_chickens,
+            'active_chickens': active_chickens,
+            'sold_chickens': sold_chickens,
+            'total_eggs': total_eggs,
+            'total_meat_production': total_meat_production,
+            'recent_productions': recent_productions
+        }
+        
+    except Exception as e:
+        print(f"Error fetching production analytics: {str(e)}")
+        chickens = []
+        stats = {
+            'total_chickens': 0,
+            'active_chickens': 0,
+            'sold_chickens': 0,
+            'total_eggs': 0,
+            'total_meat_production': 0,
+            'recent_productions': 0
+        }
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+    
+    return render_template('admin_farm_chicken_production_analytics.html', 
+                         user=user_data, 
+                         chickens=chickens, 
+                         stats=stats)
+
+@app.route('/admin/farm/chicken-production-history/<chicken_id>')
+def admin_farm_chicken_production_history(chicken_id):
+    """Get production history for a specific chicken"""
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get chicken details
+        cursor.execute("""
+            SELECT chicken_id, batch_name, breed_name, chicken_type, gender, coop_number, quantity, current_status
+            FROM chickens 
+            WHERE chicken_id = %s
+        """, (chicken_id,))
+        chicken = cursor.fetchone()
+        
+        if not chicken:
+            return jsonify({'error': 'Chicken not found'}), 404
+        
+        # Get production history
+        cursor.execute("""
+            SELECT 
+                cp.id,
+                cp.production_type,
+                cp.production_date,
+                cp.production_time,
+                cp.quantity,
+                cp.notes,
+                cp.created_at
+            FROM chicken_production cp
+            WHERE cp.chicken_id = %s
+            ORDER BY cp.production_date DESC, cp.production_time DESC
+        """, (chicken_id,))
+        productions = cursor.fetchall()
+        
+        # Get meat production details for meat productions
+        for production in productions:
+            if production['production_type'] == 'meat':
+                cursor.execute("""
+                    SELECT chicken_number, alive_weight, dead_weight
+                    FROM chicken_meat_production
+                    WHERE production_id = %s
+                    ORDER BY chicken_number
+                """, (production['id'],))
+                meat_details = cursor.fetchall()
+                production['meat_details'] = meat_details
+            else:
+                production['meat_details'] = []
+        
+        # Convert time to string for JSON serialization
+        for production in productions:
+            if production['production_time']:
+                if hasattr(production['production_time'], 'strftime'):
+                    production['production_time_str'] = production['production_time'].strftime('%H:%M')
+                else:
+                    total_seconds = int(production['production_time'].total_seconds())
+                    hours = total_seconds // 3600
+                    minutes = (total_seconds % 3600) // 60
+                    production['production_time_str'] = f"{hours:02d}:{minutes:02d}"
+            else:
+                production['production_time_str'] = ""
+            
+            production['production_date_str'] = production['production_date'].strftime('%Y-%m-%d')
+        
+        return jsonify({
+            'chicken': chicken,
+            'productions': productions
+        })
+        
+    except Exception as e:
+        print(f"Error fetching chicken production history: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+@app.route('/api/chickens/search')
+def api_chickens_search():
+    """API endpoint for searching chickens by category and ID"""
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    category = request.args.get('category')
+    query = request.args.get('query', '').strip()
+    
+    print(f"Chicken search request: category={category}, query={query}")
+    
+    if not category or not query:
+        print("Missing category or query")
+        return jsonify([])
+    
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # First, let's check if there are any chickens at all
+        cursor.execute("SELECT COUNT(*) as total FROM chickens WHERE current_status = 'active'")
+        total_chickens = cursor.fetchone()
+        print(f"Total active chickens in database: {total_chickens['total']}")
+        
+        # Search for chickens by category and ID (partial match)
+        search_pattern = f'%{query}%'
+        print(f"Searching with pattern: {search_pattern}")
+        
+        cursor.execute("""
+            SELECT chicken_id, batch_name, breed_name, gender, age_days, coop_number, quantity
+            FROM chickens 
+            WHERE chicken_type = %s 
+            AND current_status = 'active' 
+            AND chicken_id LIKE %s
+            ORDER BY chicken_id
+            LIMIT 10
+        """, (category, search_pattern))
+        
+        chickens = cursor.fetchall()
+        print(f"Found {len(chickens)} chickens matching search criteria")
+        
+        # If no results, let's show all chickens of that category for debugging
+        if len(chickens) == 0:
+            cursor.execute("""
+                SELECT chicken_id, batch_name, breed_name, gender, age_days, coop_number, quantity
+                FROM chickens 
+                WHERE chicken_type = %s 
+                AND current_status = 'active'
+                ORDER BY chicken_id
+                LIMIT 5
+            """, (category,))
+            all_chickens = cursor.fetchall()
+            print(f"All chickens of type {category}: {[c['chicken_id'] for c in all_chickens]}")
+        
+        return jsonify(chickens)
+        
+    except Exception as e:
+        print(f"Error searching chickens: {str(e)}")
+        return jsonify({'error': str(e)})
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+@app.route('/admin/farm/chicken-production-register', methods=['POST'])
+def admin_farm_chicken_production_register():
+    """Handle production registration form submission"""
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 401
+    
+    try:
+        data = request.get_json()
+        
+        # Validate required fields
+        required_fields = ['production_type', 'chicken_category', 'chicken_id_search']
+        for field in required_fields:
+            if not data.get(field):
+                return jsonify({'success': False, 'message': f'{field} is required'})
+        
+        conn = None
+        cursor = None
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            
+            # Create chicken_production table if it doesn't exist
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS chicken_production (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    production_type ENUM('eggs', 'meat') NOT NULL,
+                    chicken_id VARCHAR(50) NOT NULL,
+                    chicken_category VARCHAR(20) NOT NULL,
+                    production_date DATE NOT NULL,
+                    production_time TIME NOT NULL,
+                    quantity INT NOT NULL,
+                    notes TEXT,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    created_by INT,
+                    INDEX idx_chicken_id (chicken_id),
+                    INDEX idx_production_date (production_date),
+                    INDEX idx_production_type (production_type)
+                )
+            """)
+            
+            # Create chicken_meat_production table if it doesn't exist
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS chicken_meat_production (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    production_id INT,
+                    chicken_number INT NOT NULL,
+                    alive_weight DECIMAL(6,3) NOT NULL,
+                    dead_weight DECIMAL(6,3) NOT NULL,
+                    FOREIGN KEY (production_id) REFERENCES chicken_production(id) ON DELETE CASCADE
+                )
+            """)
+            
+            # Insert production record
+            production_date = data.get('egg_collection_date') or data.get('slaughter_date')
+            production_time = data.get('egg_collection_time') or data.get('slaughter_time')
+            quantity = data.get('egg_count') or data.get('slaughter_count')
+            
+            cursor.execute("""
+                INSERT INTO chicken_production 
+                (production_type, chicken_id, chicken_category, production_date, production_time, quantity, notes, created_by)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            """, (
+                data['production_type'],
+                data['chicken_id_search'],
+                data['chicken_category'],
+                production_date,
+                production_time,
+                quantity,
+                data.get('notes', ''),
+                session['employee_id']
+            ))
+            
+            production_id = cursor.lastrowid
+            
+            # If meat production, insert weight details and update chicken quantity
+            if data['production_type'] == 'meat':
+                alive_weights = data.get('alive_weights', [])
+                dead_weights = data.get('dead_weights', [])
+                
+                for i, (alive_weight, dead_weight) in enumerate(zip(alive_weights, dead_weights)):
+                    cursor.execute("""
+                        INSERT INTO chicken_meat_production 
+                        (production_id, chicken_number, alive_weight, dead_weight)
+                        VALUES (%s, %s, %s, %s)
+                    """, (production_id, i + 1, alive_weight, dead_weight))
+                
+                # Update chicken quantity and status
+                slaughtered_count = int(data.get('slaughter_count', 0))
+                if slaughtered_count > 0:
+                    # Get current chicken quantity and status
+                    cursor.execute("""
+                        SELECT quantity, current_status FROM chickens WHERE chicken_id = %s
+                    """, (data['chicken_id_search'],))
+                    current_chicken = cursor.fetchone()
+                    
+                    if current_chicken:
+                        current_quantity = current_chicken['quantity']
+                        current_status = current_chicken['current_status']
+                        
+                        # Check if chicken is still active
+                        if current_status != 'active':
+                            return jsonify({'success': False, 'message': f'Chicken {data["chicken_id_search"]} is not active (status: {current_status})'})
+                        
+                        # Check if trying to slaughter more than available
+                        if slaughtered_count > current_quantity:
+                            return jsonify({'success': False, 'message': f'Cannot slaughter {slaughtered_count} chickens. Only {current_quantity} available for chicken {data["chicken_id_search"]}'})
+                        
+                        new_quantity = max(0, current_quantity - slaughtered_count)
+                        
+                        # Update chicken quantity
+                        cursor.execute("""
+                            UPDATE chickens 
+                            SET quantity = %s 
+                            WHERE chicken_id = %s
+                        """, (new_quantity, data['chicken_id_search']))
+                        
+                        # If quantity becomes 0, update status to 'sold'
+                        if new_quantity == 0:
+                            cursor.execute("""
+                                UPDATE chickens 
+                                SET current_status = 'sold' 
+                                WHERE chicken_id = %s
+                            """, (data['chicken_id_search'],))
+                            
+                            print(f"Chicken {data['chicken_id_search']} status updated to 'sold' - all chickens slaughtered")
+                        else:
+                            print(f"Chicken {data['chicken_id_search']} quantity reduced from {current_quantity} to {new_quantity}")
+                    else:
+                        return jsonify({'success': False, 'message': f'Chicken {data["chicken_id_search"]} not found in database'})
+            
+            conn.commit()
+            return jsonify({'success': True, 'message': 'Production registered successfully'})
+            
+        except Exception as e:
+            conn.rollback()
+            print(f"Error registering production: {str(e)}")
+            return jsonify({'success': False, 'message': f'Database error: {str(e)}'})
+        finally:
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()
+                
+    except Exception as e:
+        print(f"Error processing production registration: {str(e)}")
+        return jsonify({'success': False, 'message': f'Server error: {str(e)}'})
+
+@app.route('/admin/farm/chicken-detail/<chicken_id>')
+def admin_farm_chicken_detail(chicken_id):
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return redirect(url_for('employee_login'))
+    
+    # Get user data from session
+    user_data = {
+        'id': session['employee_id'],
+        'name': session['employee_name'],
+        'role': session['employee_role'],
+        'status': session['employee_status'],
+        'email': f"{session['employee_name'].lower().replace(' ', '.')}@farm.com"
+    }
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get chicken details
+        cursor.execute("""
+            SELECT 
+                chicken_id,
+                batch_name,
+                chicken_type,
+                breed_name,
+                gender,
+                hatch_date,
+                age_days,
+                source,
+                coop_number,
+                quantity,
+                current_status,
+                registration_date
+            FROM chickens 
+            WHERE chicken_id = %s
+        """, (chicken_id,))
+        
+        chicken = cursor.fetchone()
+        if not chicken:
+            return redirect(url_for('admin_farm_chicken_health_analytics'))
+        
+        # Get medical journey (medication tracking)
+        cursor.execute("""
+            SELECT 
+                cmt.id,
+                cmt.created_at as checked_at,
+                cm.medication_name,
+                cm.category,
+                cm.start_day,
+                cm.end_day,
+                cm.purpose,
+                cm.image_filename,
+                cmt.status,
+                '' as notes
+            FROM chicken_medication_tracking cmt
+            JOIN chicken_medications cm ON cmt.medication_id = cm.id
+            WHERE cmt.chicken_id = %s
+            ORDER BY cmt.created_at DESC
+        """, (chicken_id,))
+        
+        medical_journey = cursor.fetchall()
+        
+        # Get weight journey
+        cursor.execute("""
+            SELECT 
+                cwt.id,
+                cwt.checked_at,
+                cwt.actual_weight,
+                cwt.expected_weight,
+                cwt.weight_percentage,
+                cwt.weight_category,
+                cws.age_days as standard_age,
+                cws.description as standard_description
+            FROM chicken_weight_tracking cwt
+            JOIN chicken_weight_standards cws ON cwt.weight_standard_id = cws.id
+            WHERE cwt.chicken_id = %s
+            ORDER BY cwt.checked_at DESC
+        """, (chicken_id,))
+        
+        weight_journey = cursor.fetchall()
+        
+        # Get upcoming medications for this chicken
+        cursor.execute("""
+            SELECT 
+                cm.id,
+                cm.medication_name,
+                cm.start_day,
+                cm.end_day,
+                cm.purpose,
+                cm.image_filename,
+                CASE 
+                    WHEN %s >= cm.start_day AND %s <= cm.end_day THEN 'current'
+                    WHEN %s < cm.start_day THEN 'upcoming'
+                    ELSE 'past'
+                END as status
+            FROM chicken_medications cm
+            WHERE cm.category = %s
+            AND NOT EXISTS (
+                SELECT 1 FROM chicken_medication_tracking cmt 
+                WHERE cmt.chicken_id = %s AND cmt.medication_id = cm.id
+            )
+            ORDER BY cm.start_day
+        """, (chicken['age_days'], chicken['age_days'], chicken['age_days'], chicken['chicken_type'], chicken_id))
+        
+        upcoming_medications = cursor.fetchall()
+        
+        # Get upcoming weight checks for this chicken
+        cursor.execute("""
+            SELECT 
+                cws.id,
+                cws.age_days,
+                cws.expected_weight,
+                cws.description,
+                CASE 
+                    WHEN %s >= cws.age_days THEN 'ready'
+                    ELSE 'pending'
+                END as status
+            FROM chicken_weight_standards cws
+            WHERE cws.category = %s
+            AND NOT EXISTS (
+                SELECT 1 FROM chicken_weight_tracking cwt 
+                WHERE cwt.chicken_id = %s AND cwt.weight_standard_id = cws.id
+            )
+            ORDER BY cws.age_days
+        """, (chicken['age_days'], chicken['chicken_type'], chicken_id))
+        
+        upcoming_weight_checks = cursor.fetchall()
+        
+        cursor.close()
+        conn.close()
+        
+    except Exception as e:
+        print(f"Error fetching chicken detail data: {str(e)}")
+        return redirect(url_for('admin_farm_chicken_health_analytics'))
+    
+    return render_template('admin_farm_chicken_detail.html',
+                         user=user_data,
+                         chicken=chicken,
+                         medical_journey=medical_journey,
+                         weight_journey=weight_journey,
+                         upcoming_medications=upcoming_medications,
+                         upcoming_weight_checks=upcoming_weight_checks)
+
+@app.route('/admin/farm/chicken-weight-standard', methods=['POST'])
+def add_chicken_weight_standard():
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'success': False, 'message': 'Unauthorized access'})
+    
+    try:
+        category = request.form.get('category')
+        age_days = request.form.get('age_days')
+        expected_weight = request.form.get('expected_weight')
+        description = request.form.get('description', '')
+        
+        if not category or not age_days or not expected_weight:
+            return jsonify({'success': False, 'message': 'Category, age, and expected weight are required'})
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Create chicken_weight_standards table if it doesn't exist
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS chicken_weight_standards (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                category ENUM('broiler', 'kienyeji', 'layer') NOT NULL,
+                age_days INT NOT NULL,
+                expected_weight DECIMAL(6,3) NOT NULL COMMENT 'Weight in kilograms',
+                description TEXT,
+                created_by INT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                INDEX idx_category (category),
+                INDEX idx_age_days (age_days),
+                UNIQUE KEY unique_category_age (category, age_days)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        """)
+        
+        # Check if weight standard already exists for this category and age
+        cursor.execute("""
+            SELECT id FROM chicken_weight_standards 
+            WHERE category = %s AND age_days = %s
+        """, (category, age_days))
+        
+        existing = cursor.fetchone()
+        if existing:
+            return jsonify({'success': False, 'message': f'Weight standard already exists for {category} at {age_days} days'})
+        
+        # Insert new weight standard
+        cursor.execute("""
+            INSERT INTO chicken_weight_standards (category, age_days, expected_weight, description, created_by)
+            VALUES (%s, %s, %s, %s, %s)
+        """, (category, age_days, expected_weight, description, session['employee_id']))
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True, 
+            'message': f'Weight standard added successfully for {category} at {age_days} days!'
+        })
+        
+    except Exception as e:
+        print(f"Error adding weight standard: {str(e)}")
+        return jsonify({
+            'success': False, 
+            'message': f'Error adding weight standard: {str(e)}'
+        })
+
+@app.route('/admin/farm/add-sample-medications')
+def add_sample_medications():
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return redirect(url_for('employee_login'))
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Add sample medications for older chickens
+        sample_medications = [
+            # For broiler (36 days old)
+            ('broiler', 'Growth Booster', 30, 45, 'Enhance growth and weight gain', session['employee_id']),
+            ('broiler', 'Antibiotic Treatment', 35, 40, 'Prevent bacterial infections', session['employee_id']),
+            
+            # For kienyeji (96 days old) 
+            ('kienyeji', 'Laying Support', 90, 120, 'Support egg production', session['employee_id']),
+            ('kienyeji', 'Calcium Supplement', 95, 105, 'Strengthen eggshells', session['employee_id']),
+            
+            # For layer (116 days old)
+            ('layer', 'Egg Production Booster', 110, 130, 'Maximize egg laying', session['employee_id']),
+            ('layer', 'Vitamin D3', 115, 125, 'Support bone health', session['employee_id']),
+        ]
+        
+        for med in sample_medications:
+            cursor.execute("""
+                INSERT INTO chicken_medications (category, medication_name, start_day, end_day, purpose, created_by)
+                VALUES (%s, %s, %s, %s, %s, %s)
+            """, med)
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+        return f"✅ Added {len(sample_medications)} sample medications for your chickens' current ages!"
+        
+    except Exception as e:
+        return f"Error: {str(e)}"
+
+@app.route('/admin/farm/debug-medications')
+def debug_medications():
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return redirect(url_for('employee_login'))
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Check chickens
+        cursor.execute("SELECT COUNT(*) as count FROM chickens WHERE current_status = 'active'")
+        chicken_count = cursor.fetchone()['count']
+        
+        # Check medications
+        cursor.execute("SELECT COUNT(*) as count FROM chicken_medications")
+        medication_count = cursor.fetchone()['count']
+        
+        # Get sample data
+        cursor.execute("SELECT chicken_id, age_days, chicken_type FROM chickens WHERE current_status = 'active' LIMIT 5")
+        sample_chickens = cursor.fetchall()
+        
+        cursor.execute("SELECT medication_name, start_day, end_day, category FROM chicken_medications LIMIT 5")
+        sample_medications = cursor.fetchall()
+        
+        cursor.close()
+        conn.close()
+        
+        return f"""
+        <h1>Debug Information</h1>
+        <p>Active chickens: {chicken_count}</p>
+        <p>Total medications: {medication_count}</p>
+        <h2>Sample Chickens:</h2>
+        <pre>{sample_chickens}</pre>
+        <h2>Sample Medications:</h2>
+        <pre>{sample_medications}</pre>
+        """
+        
+    except Exception as e:
+        return f"Error: {str(e)}"
+
+@app.route('/admin/farm/chicken-medication-complete', methods=['POST'])
+def mark_medication_complete():
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'success': False, 'message': 'Unauthorized access'})
+    
+    try:
+        chicken_id = request.form.get('chicken_id')
+        medication_id = request.form.get('medication_id')
+        notes = request.form.get('notes', '')
+        
+        if not chicken_id or not medication_id:
+            return jsonify({'success': False, 'message': 'Chicken ID and Medication ID are required'})
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Check if tracking record exists
+        cursor.execute("""
+            SELECT id, status FROM chicken_medication_tracking 
+            WHERE chicken_id = %s AND medication_id = %s
+        """, (chicken_id, medication_id))
+        
+        existing_record = cursor.fetchone()
+        
+        if existing_record:
+            # Update existing record
+            cursor.execute("""
+                UPDATE chicken_medication_tracking 
+                SET status = 'completed', 
+                    completed_date = CURDATE(),
+                    notes = %s,
+                    administered_by = %s
+                WHERE id = %s
+            """, (notes, session['employee_id'], existing_record['id']))
+        else:
+            # Create new tracking record
+            cursor.execute("""
+                INSERT INTO chicken_medication_tracking 
+                (chicken_id, medication_id, scheduled_date, completed_date, status, notes, administered_by)
+                VALUES (%s, %s, CURDATE(), CURDATE(), 'completed', %s, %s)
+            """, (chicken_id, medication_id, notes, session['employee_id']))
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True, 
+            'message': f'Medication marked as completed for chicken {chicken_id}!'
+        })
+        
+    except Exception as e:
+        print(f"Error marking medication as complete: {str(e)}")
+        return jsonify({
+            'success': False, 
+            'message': f'Error marking medication as complete: {str(e)}'
+        })
 
 @app.route('/admin/farm/breeding-management')
 def admin_farm_breeding_management():
@@ -1932,6 +4998,22 @@ def admin_farm_slaughter():
     }
     
     return render_template('admin_farm_slaughter.html', user=user_data)
+
+@app.route('/admin/farm/slaughter/view-production')
+def admin_farm_slaughter_view_production():
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return redirect(url_for('employee_login'))
+    
+    # Get user data from session
+    user_data = {
+        'id': session['employee_id'],
+        'name': session['employee_name'],
+        'role': session['employee_role'],
+        'status': session['employee_status'],
+        'email': f"{session['employee_name'].lower().replace(' ', '.')}@farm.com"
+    }
+    
+    return render_template('admin_farm_slaughter_view_production.html', user=user_data)
 
 @app.route('/admin/farm/feeding-management')
 def admin_farm_feeding_management():
@@ -2348,7 +5430,7 @@ def get_farm_statistics():
 @app.route('/api/farm/list', methods=['GET'])
 def get_farms_list():
     """Get all farms for display"""
-    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+    if 'employee_id' not in session:
         return jsonify({'error': 'Unauthorized'}), 401
     
     try:
@@ -2362,6 +5444,36 @@ def get_farms_list():
             LEFT JOIN employees e ON f.created_by = e.id 
             WHERE f.status = 'active'
             ORDER BY f.created_at DESC
+        """)
+        farms = cursor.fetchall()
+        
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'farms': farms
+        })
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/farms', methods=['GET'])
+def get_farms():
+    """Get all farms for dropdown selection"""
+    if 'employee_id' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get all active farms
+        cursor.execute("""
+            SELECT id, name, location 
+            FROM farms 
+            WHERE status = 'active'
+            ORDER BY name ASC
         """)
         farms = cursor.fetchall()
         
@@ -2483,7 +5595,7 @@ def get_farm_litters(farm_id):
 @app.route('/api/pig/register', methods=['POST'])
 def register_pig():
     """Register a new pig"""
-    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+    if 'employee_id' not in session:
         return jsonify({'error': 'Unauthorized'}), 401
     
     try:
@@ -2492,7 +5604,7 @@ def register_pig():
         pig_type = data.get('pig_type')
         pig_source = data.get('pig_source')
         breed = data.get('breed')
-        sex = data.get('sex')
+        gender = data.get('gender')
         purpose = data.get('purpose')
         birth_date = data.get('birth_date')
         purchase_date = data.get('purchase_date')
@@ -2514,10 +5626,10 @@ def register_pig():
         if pig_source == 'purchased' and not purchase_date:
             return jsonify({'success': False, 'message': 'Purchase date is required for purchased pigs'})
         
-        # For grown pigs, breed, sex, and purpose are required
+        # For grown pigs, breed, gender, and purpose are required
         if pig_type == 'grown_pig':
-            if not breed or not sex or not purpose:
-                return jsonify({'success': False, 'message': 'Breed, sex, and purpose are required for grown pigs'})
+            if not breed or not gender or not purpose:
+                return jsonify({'success': False, 'message': 'Breed, gender, and purpose are required for grown pigs'})
         
         # Calculate age in days if birth date is provided
         age_days = None
@@ -2547,14 +5659,18 @@ def register_pig():
         
         # Generate unique tag ID
         tag_id = generate_pig_tag_id(pig_type)
+        print(f"Generated tag ID: {tag_id} for pig type: {pig_type}")
         
         # Insert new pig
+        print(f"Inserting pig with data: tag_id={tag_id}, farm_id={farm_id}, pig_type={pig_type}, pig_source={pig_source}, breed={breed}, gender={gender}, purpose={purpose}, breeding_status={breeding_status}, birth_date={birth_date}, purchase_date={purchase_date}, age_days={age_days}, registered_by={session['employee_id']}")
+        
         cursor.execute("""
-            INSERT INTO pigs (tag_id, farm_id, pig_type, pig_source, breed, sex, purpose, breeding_status, birth_date, purchase_date, age_days, registered_by)
+            INSERT INTO pigs (tag_id, farm_id, pig_type, pig_source, breed, gender, purpose, breeding_status, birth_date, purchase_date, age_days, registered_by)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """, (tag_id, farm_id, pig_type, pig_source, breed, sex, purpose, breeding_status, birth_date, purchase_date, age_days, session['employee_id']))
+        """, (tag_id, farm_id, pig_type, pig_source, breed, gender, purpose, breeding_status, birth_date, purchase_date, age_days, session['employee_id']))
         
         pig_id = cursor.lastrowid
+        print(f"Pig inserted successfully with ID: {pig_id}")
         
         # Log activity
         log_activity(session['employee_id'], 'PIG_REGISTRATION', 
@@ -2577,10 +5693,65 @@ def register_pig():
         traceback.print_exc()
         return jsonify({'success': False, 'message': f'Failed to register pig: {str(e)}'})
 
+@app.route('/api/pig/registration-stats', methods=['GET'])
+def get_pig_registration_stats():
+    """Get pig registration statistics for dashboard"""
+    if 'employee_id' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get total pigs
+        cursor.execute("SELECT COUNT(*) as total FROM pigs WHERE status = 'active'")
+        total_pigs = cursor.fetchone()['total']
+        
+        # Get active pigs
+        cursor.execute("SELECT COUNT(*) as active FROM pigs WHERE status = 'active'")
+        active_pigs = cursor.fetchone()['active']
+        
+        # Get breeding pigs
+        cursor.execute("SELECT COUNT(*) as breeding FROM pigs WHERE status = 'active' AND purpose = 'breeding'")
+        breeding_pigs = cursor.fetchone()['breeding']
+        
+        # Get today's registrations
+        cursor.execute("SELECT COUNT(*) as today FROM pigs WHERE DATE(created_at) = CURDATE()")
+        today_registrations = cursor.fetchone()['today']
+        
+        # Get recent registrations (last 5)
+        cursor.execute("""
+            SELECT p.id, p.tag_id, p.breed, p.pig_type, p.status, p.created_at, f.farm_name
+            FROM pigs p 
+            LEFT JOIN farms f ON p.farm_id = f.id 
+            WHERE p.status = 'active'
+            ORDER BY p.created_at DESC 
+            LIMIT 5
+        """)
+        recent_pigs = cursor.fetchall()
+        
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'stats': {
+                'total_pigs': total_pigs,
+                'active_pigs': active_pigs,
+                'breeding_pigs': breeding_pigs,
+                'today_registrations': today_registrations
+            },
+            'recent_pigs': recent_pigs
+        })
+        
+    except Exception as e:
+        print(f"Error getting pig registration stats: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 @app.route('/api/pig/list', methods=['GET'])
 def get_pigs_list():
     """Get all pigs for display"""
-    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+    if 'employee_id' not in session:
         return jsonify({'error': 'Unauthorized'}), 401
     
     try:
@@ -2668,7 +5839,7 @@ def update_pig(pig_id):
             'pig_type': 'Pig Type',
             'pig_source': 'Pig Source',
             'breed': 'Breed',
-            'sex': 'Sex',
+            'gender': 'Gender',
             'purpose': 'Purpose',
             'birth_date': 'Birth Date',
             'purchase_date': 'Purchase Date',
@@ -2728,6 +5899,31 @@ def update_pig(pig_id):
                 cursor.close()
                 conn.close()
                 return jsonify({'success': False, 'message': 'Invalid birth date format'})
+        
+        # Auto-set breeding status for grown pigs
+        if 'pig_type' in data and data['pig_type'] == 'grown_pig':
+            # Get the purpose and age to determine breeding status
+            purpose = data.get('purpose', current_pig.get('purpose'))
+            age_days = None
+            
+            # Calculate age if birth_date is provided
+            if 'birth_date' in data and data['birth_date']:
+                try:
+                    birth_dt = datetime.strptime(data['birth_date'], '%Y-%m-%d').date()
+                    age_days = (datetime.now().date() - birth_dt).days
+                except ValueError:
+                    pass
+            
+            # Determine breeding status based on purpose and age
+            if purpose == 'breeding' and age_days is not None:
+                new_breeding_status = 'available' if age_days >= 200 else 'young'
+                update_fields.append("breeding_status = %s")
+                update_values.append(new_breeding_status)
+                changes.append(f"Breeding Status: {current_pig.get('breeding_status', 'None')} → {new_breeding_status}")
+            elif purpose == 'meat':
+                # Meat pigs don't have breeding status
+                update_fields.append("breeding_status = NULL")
+                changes.append(f"Breeding Status: {current_pig.get('breeding_status', 'None')} → None (meat pig)")
         
         # Add updated_at timestamp
         update_fields.append("updated_at = CURRENT_TIMESTAMP")
@@ -2824,6 +6020,119 @@ def get_pig_details(pig_id):
     except Exception as e:
         print(f"Error getting pig details: {str(e)}")
         return jsonify({'success': False, 'message': f'Failed to get pig details: {str(e)}'})
+
+@app.route('/api/pig/delete/<int:pig_id>', methods=['DELETE'])
+def delete_pig(pig_id):
+    """Delete a pig from the system"""
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # First, get pig details for logging
+        cursor.execute("""
+            SELECT tag_id, farm_id, pig_type, breed, gender, purpose, status 
+            FROM pigs WHERE id = %s
+        """, (pig_id,))
+        
+        pig = cursor.fetchone()
+        if not pig:
+            cursor.close()
+            conn.close()
+            return jsonify({'success': False, 'message': 'Pig not found'})
+        
+        # Check if pig has any related records that might prevent deletion
+        # Check for breeding records
+        cursor.execute("SELECT COUNT(*) as count FROM breeding_records WHERE sow_id = %s OR boar_id = %s", (pig_id, pig_id))
+        breeding_result = cursor.fetchone()
+        breeding_count = breeding_result['count'] if breeding_result else 0
+        
+        if breeding_count > 0:
+            cursor.close()
+            conn.close()
+            return jsonify({
+                'success': False, 
+                'message': f'Cannot delete pig {pig["tag_id"]}. This pig has {breeding_count} breeding record(s). Please remove breeding records first.'
+            })
+        
+        # Check for litters (if this is a sow)
+        cursor.execute("SELECT COUNT(*) as count FROM litters WHERE sow_id = %s", (pig_id,))
+        litter_result = cursor.fetchone()
+        litter_count = litter_result['count'] if litter_result else 0
+        
+        if litter_count > 0:
+            cursor.close()
+            conn.close()
+            return jsonify({
+                'success': False, 
+                'message': f'Cannot delete pig {pig["tag_id"]}. This sow has {litter_count} litter(s). Please remove litters first.'
+            })
+        
+        # Check for weight records (uses animal_id)
+        cursor.execute("SELECT COUNT(*) as count FROM weight_records WHERE animal_id = %s", (pig_id,))
+        weight_result = cursor.fetchone()
+        weight_count = weight_result['count'] if weight_result else 0
+        
+        # Check for slaughter records (uses pig_id)
+        cursor.execute("SELECT COUNT(*) as count FROM slaughter_records WHERE pig_id = %s", (pig_id,))
+        slaughter_result = cursor.fetchone()
+        slaughter_count = slaughter_result['count'] if slaughter_result else 0
+        
+        # Check for death records (uses pig_id)
+        cursor.execute("SELECT COUNT(*) as count FROM dead_pigs WHERE pig_id = %s", (pig_id,))
+        death_result = cursor.fetchone()
+        death_count = death_result['count'] if death_result else 0
+        
+        # Check for sale records (uses pig_id)
+        cursor.execute("SELECT COUNT(*) as count FROM sale_records WHERE pig_id = %s", (pig_id,))
+        sale_result = cursor.fetchone()
+        sale_count = sale_result['count'] if sale_result else 0
+        
+        # Delete related records first (in order of dependencies)
+        if weight_count > 0:
+            cursor.execute("DELETE FROM weight_records WHERE animal_id = %s", (pig_id,))
+            print(f"Deleted {weight_count} weight records for pig {pig['tag_id']}")
+        
+        if slaughter_count > 0:
+            cursor.execute("DELETE FROM slaughter_records WHERE pig_id = %s", (pig_id,))
+            print(f"Deleted {slaughter_count} slaughter records for pig {pig['tag_id']}")
+        
+        if death_count > 0:
+            cursor.execute("DELETE FROM dead_pigs WHERE pig_id = %s", (pig_id,))
+            print(f"Deleted {death_count} death records for pig {pig['tag_id']}")
+        
+        if sale_count > 0:
+            cursor.execute("DELETE FROM sale_records WHERE pig_id = %s", (pig_id,))
+            print(f"Deleted {sale_count} sale records for pig {pig['tag_id']}")
+        
+        # Delete the pig
+        cursor.execute("DELETE FROM pigs WHERE id = %s", (pig_id,))
+        
+        if cursor.rowcount == 0:
+            cursor.close()
+            conn.close()
+            return jsonify({'success': False, 'message': 'Pig not found or already deleted'})
+        
+        # Log the deletion activity
+        log_activity(session['employee_id'], 'PIG_DELETED', 
+                   f'Pig deleted: {pig["tag_id"]} (ID: {pig_id}) - Type: {pig["pig_type"]}, Breed: {pig["breed"]}, Status: {pig["status"]}')
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'message': f'Pig {pig["tag_id"]} has been successfully deleted from the system'
+        })
+        
+    except Exception as e:
+        print(f"Error deleting pig: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'success': False, 'message': f'Failed to delete pig: {str(e)}'})
 
 @app.route('/api/pig/validate-tag-id', methods=['POST'])
 def validate_pig_tag_id():
@@ -3342,7 +6651,7 @@ def register_breeding():
         cursor.execute("""
             SELECT id, tag_id, breeding_status 
             FROM pigs 
-            WHERE id = %s AND sex = 'female' AND pig_type = 'grown_pig' 
+            WHERE id = %s AND gender = 'female' AND pig_type = 'grown_pig' 
             AND purpose = 'breeding' AND breeding_status = 'available' AND status = 'active'
         """, (sow_id,))
         sow = cursor.fetchone()
@@ -3354,7 +6663,7 @@ def register_breeding():
         cursor.execute("""
             SELECT id, tag_id 
             FROM pigs 
-            WHERE id = %s AND sex = 'male' AND pig_type = 'grown_pig' 
+            WHERE id = %s AND gender = 'male' AND pig_type = 'grown_pig' 
             AND purpose = 'breeding' AND status = 'active'
         """, (boar_id,))
         boar = cursor.fetchone()
@@ -3603,6 +6912,136 @@ def get_failed_conceptions():
         print(f"Error getting failed conceptions: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/breeding/<int:breeding_id>/edit', methods=['PUT'])
+def edit_breeding_record(breeding_id):
+    """Edit a breeding record"""
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        data = request.get_json()
+        mating_date = data.get('mating_date')
+        expected_due_date = data.get('expected_due_date')
+        breeding_status = data.get('breeding_status')
+        
+        if not mating_date:
+            return jsonify({'success': False, 'message': 'Mating date is required'})
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Update breeding record
+        cursor.execute("""
+            UPDATE breeding_records 
+            SET mating_date = %s, expected_due_date = %s, status = %s, updated_at = NOW()
+            WHERE id = %s
+        """, (mating_date, expected_due_date, breeding_status, breeding_id))
+        
+        # Update sow status based on breeding status
+        if breeding_status == 'cancelled':
+            cursor.execute("""
+                UPDATE pigs 
+                SET status = 'available' 
+                WHERE id = (SELECT sow_id FROM breeding_records WHERE id = %s)
+            """, (breeding_id,))
+        elif breeding_status in ['served', 'pregnant']:
+            cursor.execute("""
+                UPDATE pigs 
+                SET status = 'breeding' 
+                WHERE id = (SELECT sow_id FROM breeding_records WHERE id = %s)
+            """, (breeding_id,))
+        elif breeding_status == 'completed':
+            cursor.execute("""
+                UPDATE pigs 
+                SET status = 'available' 
+                WHERE id = (SELECT sow_id FROM breeding_records WHERE id = %s)
+            """, (breeding_id,))
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+        # Log activity
+        log_activity(session['employee_id'], 'BREEDING_EDIT', 
+                    f'Breeding record {breeding_id} updated')
+        
+        return jsonify({
+            'success': True,
+            'message': 'Breeding record updated successfully'
+        })
+        
+    except Exception as e:
+        print(f"Error updating breeding record: {str(e)}")
+        return jsonify({'success': False, 'message': f'Failed to update breeding record: {str(e)}'})
+
+@app.route('/api/breeding/<int:breeding_id>/delete', methods=['DELETE'])
+def delete_breeding_record(breeding_id):
+    """Delete a breeding record and set sow status to available"""
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get breeding record details for logging
+        cursor.execute("""
+            SELECT br.sow_id, p.tag_id as sow_tag_id
+            FROM breeding_records br
+            LEFT JOIN pigs p ON br.sow_id = p.id
+            WHERE br.id = %s
+        """, (breeding_id,))
+        
+        record = cursor.fetchone()
+        if not record:
+            return jsonify({'success': False, 'message': 'Breeding record not found'})
+        
+        # Update sow status to available
+        cursor.execute("""
+            UPDATE pigs 
+            SET status = 'available' 
+            WHERE id = %s
+        """, (record['sow_id'],))
+        
+        # Delete related litters first (they reference farrowing_records)
+        cursor.execute("""
+            DELETE l FROM litters l 
+            JOIN farrowing_records fr ON l.farrowing_record_id = fr.id 
+            WHERE fr.breeding_id = %s
+        """, (breeding_id,))
+        print(f"Deleted litters for breeding record {breeding_id}")
+        
+        # Delete related farrowing records (they reference breeding_records)
+        cursor.execute("DELETE FROM farrowing_records WHERE breeding_id = %s", (breeding_id,))
+        print(f"Deleted farrowing records for breeding record {breeding_id}")
+        
+        # Temporarily disable foreign key checks
+        cursor.execute("SET FOREIGN_KEY_CHECKS = 0")
+        
+        try:
+            # Delete breeding record
+            cursor.execute("DELETE FROM breeding_records WHERE id = %s", (breeding_id,))
+        finally:
+            # Always re-enable foreign key checks, even if an error occurs
+            cursor.execute("SET FOREIGN_KEY_CHECKS = 1")
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+        # Log activity
+        log_activity(session['employee_id'], 'BREEDING_DELETE', 
+                    f'Breeding record {breeding_id} deleted for sow {record["sow_tag_id"]}')
+        
+        return jsonify({
+            'success': True,
+            'message': 'Breeding record deleted successfully. Sow is now available for breeding.'
+        })
+        
+    except Exception as e:
+        print(f"Error deleting breeding record: {str(e)}")
+        return jsonify({'success': False, 'message': f'Failed to delete breeding record: {str(e)}'})
+
 @app.route('/api/breeding/completed-farrowings', methods=['GET'])
 def get_completed_farrowings():
     """Get all completed farrowing records with unweaned litters only"""
@@ -3616,14 +7055,17 @@ def get_completed_farrowings():
         # Get completed farrowing records with unweaned litters only
         # Only show pigs whose breeding status is 'farrowed' and have unweaned litters
         cursor.execute("""
-            SELECT fr.*, 
+            SELECT fr.id, fr.breeding_id, fr.farrowing_date, fr.alive_piglets, fr.still_births,
+                   fr.dead_piglets, fr.weak_piglets, fr.avg_weight, fr.health_notes, fr.notes,
+                   fr.created_by, fr.created_at, fr.updated_at,
                    br.mating_date,
                    sow.tag_id as sow_tag_id, sow.breed as sow_breed,
                    boar.tag_id as boar_tag_id, boar.breed as boar_breed,
                    e.full_name as created_by_name,
                    l.litter_id, l.total_piglets, l.alive_piglets, l.still_births,
                    l.avg_weight, l.weaning_weight, l.weaning_date, l.status as litter_status,
-                   l.notes as litter_notes
+                   l.notes as litter_notes,
+                   CASE WHEN EXISTS(SELECT 1 FROM farrowing_records_edit_history WHERE record_id = fr.id) THEN 1 ELSE 0 END as is_edited
             FROM farrowing_records fr
             JOIN breeding_records br ON fr.breeding_id = br.id
             LEFT JOIN pigs sow ON br.sow_id = sow.id
@@ -4035,6 +7477,9 @@ def complete_farrowing_activity(activity_id):
         if is_overdue:
             check_and_trigger_recovery_period(activity['farrowing_record_id'])
         
+        # Check if all activities are completed and update litter status to weaned
+        check_and_update_litter_status(activity['farrowing_record_id'])
+        
         return jsonify({
             'success': True,
             'message': f'Activity "Day {activity_day}: {activity["activity_name"]}" marked as completed{overdue_warning}'
@@ -4054,6 +7499,15 @@ def complete_farrowing_activity_simple(activity_id):
         conn = get_db_connection()
         cursor = conn.cursor()
         
+        # Get the farrowing record ID for this activity
+        cursor.execute("""
+            SELECT farrowing_record_id FROM farrowing_activities WHERE id = %s
+        """, (activity_id,))
+        
+        activity = cursor.fetchone()
+        if not activity:
+            return jsonify({'success': False, 'message': 'Activity not found'})
+        
         # Update the activity as completed
         cursor.execute("""
             UPDATE farrowing_activities 
@@ -4064,6 +7518,9 @@ def complete_farrowing_activity_simple(activity_id):
         conn.commit()
         cursor.close()
         conn.close()
+        
+        # Check if all activities are completed and update litter status to weaned
+        check_and_update_litter_status(activity['farrowing_record_id'])
         
         return jsonify({
             'success': True,
@@ -4314,6 +7771,186 @@ def get_farrowing_litter_registration_data(farrowing_id):
         print(f"Error getting farrowing litter registration data: {str(e)}")
         return jsonify({'success': False, 'message': f'Failed to get farrowing data: {str(e)}'})
 
+@app.route('/api/farrowing/<int:farrowing_id>/edit', methods=['PUT'])
+def edit_farrowing_record(farrowing_id):
+    """Edit a farrowing record"""
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        data = request.get_json()
+        farrowing_date = data.get('farrowing_date')
+        alive_piglets = data.get('alive_piglets')
+        dead_piglets = data.get('dead_piglets', 0)
+        weak_piglets = data.get('weak_piglets', 0)
+        notes = data.get('notes', '')
+        
+        if not farrowing_date:
+            return jsonify({'success': False, 'message': 'Farrowing date is required'})
+        
+        if alive_piglets is None or alive_piglets < 0:
+            return jsonify({'success': False, 'message': 'Valid number of alive piglets is required'})
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get original data for comparison
+        cursor.execute("""
+            SELECT farrowing_date, alive_piglets, dead_piglets, weak_piglets, notes
+            FROM farrowing_records WHERE id = %s
+        """, (farrowing_id,))
+        original_data = cursor.fetchone()
+        
+        if not original_data:
+            return jsonify({'success': False, 'message': 'Farrowing record not found'})
+        
+        # Track changes
+        changes = []
+        if str(original_data['farrowing_date']) != farrowing_date:
+            changes.append(('farrowing_date', str(original_data['farrowing_date']), farrowing_date))
+        if str(original_data['alive_piglets']) != str(alive_piglets):
+            changes.append(('alive_piglets', str(original_data['alive_piglets']), str(alive_piglets)))
+        if str(original_data['dead_piglets']) != str(dead_piglets):
+            changes.append(('dead_piglets', str(original_data['dead_piglets']), str(dead_piglets)))
+        if str(original_data['weak_piglets']) != str(weak_piglets):
+            changes.append(('weak_piglets', str(original_data['weak_piglets']), str(weak_piglets)))
+        if str(original_data['notes'] or '') != str(notes):
+            changes.append(('notes', str(original_data['notes'] or ''), str(notes)))
+        
+        # Update farrowing record
+        cursor.execute("""
+            UPDATE farrowing_records 
+            SET farrowing_date = %s, alive_piglets = %s, dead_piglets = %s, 
+                weak_piglets = %s, notes = %s, updated_at = NOW()
+            WHERE id = %s
+        """, (farrowing_date, alive_piglets, dead_piglets, weak_piglets, notes, farrowing_id))
+        
+        # Insert audit history
+        for field_name, old_value, new_value in changes:
+            cursor.execute("""
+                INSERT INTO farrowing_records_edit_history 
+                (record_id, field_name, old_value, new_value, edited_by)
+                VALUES (%s, %s, %s, %s, %s)
+            """, (farrowing_id, field_name, old_value, new_value, session['employee_id']))
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+        # Log activity
+        log_activity(session['employee_id'], 'FARROWING_EDIT', 
+                    f'Farrowing record {farrowing_id} updated')
+        
+        return jsonify({
+            'success': True,
+            'message': 'Farrowing record updated successfully'
+        })
+        
+    except Exception as e:
+        print(f"Error updating farrowing record: {str(e)}")
+        return jsonify({'success': False, 'message': f'Failed to update farrowing record: {str(e)}'})
+
+@app.route('/api/farrowing/<int:farrowing_id>/delete', methods=['DELETE'])
+def delete_farrowing_record(farrowing_id):
+    """Delete a farrowing record"""
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get farrowing record details for logging
+        cursor.execute("""
+            SELECT br.sow_id, p.tag_id as sow_tag_id
+            FROM farrowing_records fr
+            JOIN breeding_records br ON fr.breeding_id = br.id
+            LEFT JOIN pigs p ON br.sow_id = p.id
+            WHERE fr.id = %s
+        """, (farrowing_id,))
+        
+        record = cursor.fetchone()
+        if not record:
+            return jsonify({'success': False, 'message': 'Farrowing record not found'})
+        
+        # Update sow status to available
+        cursor.execute("""
+            UPDATE pigs 
+            SET status = 'available', breeding_status = 'available' 
+            WHERE id = %s
+        """, (record['sow_id'],))
+        
+        # Update breeding record status to completed
+        cursor.execute("""
+            UPDATE breeding_records 
+            SET status = 'completed' 
+            WHERE sow_id = %s AND status = 'pregnant'
+        """, (record['sow_id'],))
+        
+        # Delete related litters first to avoid foreign key constraint
+        cursor.execute("DELETE FROM litters WHERE farrowing_record_id = %s", (farrowing_id,))
+        print(f"Deleted litters for farrowing record {farrowing_id}")
+        
+        # Temporarily disable foreign key checks
+        cursor.execute("SET FOREIGN_KEY_CHECKS = 0")
+        
+        try:
+            # Delete farrowing record
+            cursor.execute("DELETE FROM farrowing_records WHERE id = %s", (farrowing_id,))
+            
+            conn.commit()
+        finally:
+            # Always re-enable foreign key checks, even if an error occurs
+            cursor.execute("SET FOREIGN_KEY_CHECKS = 1")
+        
+        cursor.close()
+        conn.close()
+        
+        # Log activity
+        log_activity(session['employee_id'], 'FARROWING_DELETE', 
+                    f'Farrowing record {farrowing_id} deleted for sow {record["sow_tag_id"]}')
+        
+        return jsonify({
+            'success': True,
+            'message': 'Farrowing record deleted successfully. Sow is now available for breeding.'
+        })
+        
+    except Exception as e:
+        print(f"Error deleting farrowing record: {str(e)}")
+        return jsonify({'success': False, 'message': f'Failed to delete farrowing record: {str(e)}'})
+
+@app.route('/api/farrowing/<int:farrowing_id>/audit', methods=['GET'])
+def get_farrowing_audit_history(farrowing_id):
+    """Get audit history for a farrowing record"""
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            SELECT h.*, e.full_name as edited_by_name
+            FROM farrowing_records_edit_history h
+            LEFT JOIN employees e ON h.edited_by = e.id
+            WHERE h.record_id = %s
+            ORDER BY h.edited_at DESC
+        """, (farrowing_id,))
+        
+        audit_records = cursor.fetchall()
+        
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'audit_records': audit_records
+        })
+        
+    except Exception as e:
+        print(f"Error getting farrowing audit history: {str(e)}")
+        return jsonify({'success': False, 'message': f'Failed to get audit history: {str(e)}'})
+
 @app.route('/api/family-tree/sows', methods=['GET'])
 def get_family_tree_sows():
     """Get all sows for family tree display"""
@@ -4408,7 +8045,7 @@ def get_family_tree_boars():
 @app.route('/api/cow/generate-ear-tag', methods=['POST'])
 def generate_cow_ear_tag():
     """Generate next available cow ear tag ID starting with C"""
-    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+    if 'employee_id' not in session:
         return jsonify({'error': 'Unauthorized'}), 401
     
     try:
@@ -4450,7 +8087,7 @@ def generate_cow_ear_tag():
 @app.route('/api/cow/register', methods=['POST'])
 def register_cow():
     """Register a new cow"""
-    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+    if 'employee_id' not in session:
         return jsonify({'error': 'Unauthorized'}), 401
     
     try:
@@ -4516,10 +8153,703 @@ def register_cow():
         print(f"Error registering cow: {str(e)}")
         return jsonify({'success': False, 'message': f'Failed to register cow: {str(e)}'})
 
+@app.route('/api/cow/production/stats', methods=['GET'])
+def get_cow_production_stats():
+    """Get cow production statistics"""
+    if 'employee_id' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get today's production
+        today = datetime.now().date()
+        cursor.execute("""
+            SELECT COALESCE(SUM(milk_quantity), 0) as today_production
+            FROM cow_milk_production 
+            WHERE production_date = %s
+        """, (today,))
+        today_result = cursor.fetchone()
+        
+        # Get total cows
+        cursor.execute("SELECT COUNT(*) as total_cows FROM cows WHERE status = 'active'")
+        cows_result = cursor.fetchone()
+        
+        # Get average per cow
+        cursor.execute("""
+            SELECT COALESCE(AVG(milk_quantity), 0) as avg_per_cow
+            FROM cow_milk_production 
+            WHERE production_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+        """)
+        avg_result = cursor.fetchone()
+        
+        # Get this week's total
+        cursor.execute("""
+            SELECT COALESCE(SUM(milk_quantity), 0) as week_total
+            FROM cow_milk_production 
+            WHERE production_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+        """)
+        week_result = cursor.fetchone()
+        
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'today_production': today_result['today_production'],
+            'total_cows': cows_result['total_cows'],
+            'avg_per_cow': round(avg_result['avg_per_cow'], 2),
+            'week_total': week_result['week_total']
+        })
+        
+    except Exception as e:
+        print(f"Error getting production stats: {str(e)}")
+        return jsonify({'success': False, 'message': f'Failed to get production stats: {str(e)}'})
+
+@app.route('/api/cow/production/records', methods=['GET'])
+def get_cow_production_records():
+    """Get cow production records"""
+    if 'employee_id' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get production records with cow details
+        cursor.execute("""
+            SELECT cmp.id, cmp.cow_id, cmp.production_date, cmp.session, 
+                   cmp.quantity, cmp.notes, cmp.created_at, cmp.updated_at,
+                   c.ear_tag, c.name
+            FROM cow_milk_production cmp
+            JOIN cows c ON cmp.cow_id = c.id
+            ORDER BY cmp.production_date DESC, cmp.created_at DESC
+            LIMIT 50
+        """)
+        records = cursor.fetchall()
+        
+        # Convert records to JSON-serializable format
+        serializable_records = []
+        for record in records:
+            serializable_record = {
+                'id': record[0],
+                'cow_id': record[1],
+                'production_date': record[2].isoformat() if record[2] else None,
+                'session': record[3],
+                'quantity': record[4],
+                'notes': record[5],
+                'created_at': record[6].isoformat() if record[6] else None,
+                'updated_at': record[7].isoformat() if record[7] else None,
+                'ear_tag': record[8],
+                'name': record[9]
+            }
+            serializable_records.append(serializable_record)
+        
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'records': serializable_records
+        })
+        
+    except Exception as e:
+        print(f"Error getting production records: {str(e)}")
+        return jsonify({'success': False, 'message': f'Failed to get production records: {str(e)}'})
+
+@app.route('/api/cow/production/record', methods=['POST'])
+def record_cow_milk_production():
+    """Record cow milk production"""
+    if 'employee_id' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        data = request.get_json()
+        
+        # Validate required fields
+        required_fields = ['cow_id', 'production_date', 'milking_session', 'milk_quantity']
+        for field in required_fields:
+            if not data.get(field):
+                return jsonify({'success': False, 'message': f'{field.replace("_", " ").title()} is required'})
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Create cow_milk_production table if it doesn't exist
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS cow_milk_production (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                cow_id INT NOT NULL,
+                production_date DATE NOT NULL,
+                milking_session ENUM('morning', 'afternoon', 'evening') NOT NULL,
+                milk_quantity DECIMAL(5,2) NOT NULL,
+                notes TEXT,
+                recorded_by INT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                FOREIGN KEY (cow_id) REFERENCES cows(id),
+                FOREIGN KEY (recorded_by) REFERENCES employees(id),
+                INDEX idx_cow_id (cow_id),
+                INDEX idx_production_date (production_date),
+                INDEX idx_milking_session (milking_session)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        """)
+        
+        # Insert production record
+        cursor.execute("""
+            INSERT INTO cow_milk_production (
+                cow_id, production_date, milking_session, milk_quantity, notes, recorded_by
+            ) VALUES (%s, %s, %s, %s, %s, %s)
+        """, (
+            data['cow_id'], data['production_date'], data['milking_session'],
+            data['milk_quantity'], data.get('notes'), session['employee_id']
+        ))
+        
+        production_id = cursor.lastrowid
+        
+        # Log activity
+        log_activity(session['employee_id'], 'COW_MILK_PRODUCTION', 
+                   f'Milk production recorded: {data["milk_quantity"]}L for cow {data["cow_id"]}')
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Milk production recorded successfully',
+            'production_id': production_id
+        })
+        
+    except Exception as e:
+        print(f"Error recording milk production: {str(e)}")
+        return jsonify({'success': False, 'message': f'Failed to record milk production: {str(e)}'})
+
+# Chicken Production API Endpoints
+@app.route('/api/chicken/production/stats', methods=['GET'])
+def get_chicken_production_stats():
+    """Get chicken production statistics"""
+    if 'employee_id' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Create chicken_production table if it doesn't exist
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS chicken_production (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                chicken_id INT NOT NULL,
+                production_date DATE NOT NULL,
+                production_type ENUM('eggs', 'meat') NOT NULL,
+                quantity INT NOT NULL,
+                notes TEXT,
+                recorded_by INT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                FOREIGN KEY (chicken_id) REFERENCES chickens(id),
+                FOREIGN KEY (recorded_by) REFERENCES employees(id),
+                INDEX idx_production_date (production_date),
+                INDEX idx_chicken_id (chicken_id),
+                INDEX idx_production_type (production_type)
+            )
+        """)
+        
+        # Get today's production
+        cursor.execute("""
+            SELECT COALESCE(SUM(quantity), 0) as today_production
+            FROM chicken_production 
+            WHERE production_date = CURDATE()
+        """)
+        today_production = cursor.fetchone()[0]
+        
+        # Get total chickens
+        cursor.execute("SELECT COUNT(*) FROM chickens WHERE current_status = 'active'")
+        total_chickens = cursor.fetchone()[0]
+        
+        # Get average per chicken (last 7 days)
+        cursor.execute("""
+            SELECT COALESCE(AVG(quantity), 0) as avg_per_chicken
+            FROM chicken_production 
+            WHERE production_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+        """)
+        avg_per_chicken = cursor.fetchone()[0]
+        
+        # Get week's total
+        cursor.execute("""
+            SELECT COALESCE(SUM(quantity), 0) as week_total
+            FROM chicken_production 
+            WHERE production_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+        """)
+        week_total = cursor.fetchone()[0]
+        
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'today_production': today_production,
+            'total_chickens': total_chickens,
+            'avg_per_chicken': round(avg_per_chicken, 1),
+            'week_total': week_total
+        })
+        
+    except Exception as e:
+        print(f"Error getting chicken production stats: {str(e)}")
+        return jsonify({'success': False, 'message': f'Failed to get production stats: {str(e)}'})
+
+@app.route('/api/chicken/production/records', methods=['GET'])
+def get_chicken_production_records():
+    """Get chicken production records"""
+    print("=== CHICKEN PRODUCTION RECORDS API CALLED ===")
+    print("Production records API function started successfully")
+    
+    try:
+        print("Attempting database connection for production records...")
+        conn = get_db_connection()
+        print("Database connection successful for production records")
+        print(f"Database connection object: {conn}")
+        print(f"Database connection closed: {conn.closed}")
+        cursor = conn.cursor()
+        print("Database cursor created for production records")
+        print(f"Database cursor object: {cursor}")
+        
+        # Create chicken_production table if it doesn't exist
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS chicken_production (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                chicken_id INT NOT NULL,
+                production_date DATE NOT NULL,
+                production_type ENUM('eggs', 'meat') NOT NULL,
+                quantity INT NOT NULL,
+                notes TEXT,
+                created_by INT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                FOREIGN KEY (chicken_id) REFERENCES chickens(id),
+                FOREIGN KEY (created_by) REFERENCES employees(id),
+                INDEX idx_production_date (production_date),
+                INDEX idx_chicken_id (chicken_id),
+                INDEX idx_production_type (production_type)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        """)
+        
+        # Check if updated_at column exists, if not add it
+        cursor.execute("""
+            SELECT COLUMN_NAME 
+            FROM INFORMATION_SCHEMA.COLUMNS 
+            WHERE TABLE_NAME = 'chicken_production' 
+            AND COLUMN_NAME = 'updated_at'
+        """)
+        if not cursor.fetchone():
+            cursor.execute("ALTER TABLE chicken_production ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+        
+        # Check if production records exist, if not create sample data
+        cursor.execute("SELECT COUNT(*) FROM chicken_production")
+        production_count = cursor.fetchone()[0]
+        
+        if production_count == 0:
+            print("No production records found, creating sample production records...")
+            # Get first chicken ID
+            cursor.execute("SELECT id FROM chickens WHERE current_status = 'active' LIMIT 1")
+            chicken_result = cursor.fetchone()
+            if chicken_result:
+                chicken_id = chicken_result[0]
+                # Create sample production records
+                sample_productions = [
+                    (chicken_id, '2024-01-15', 'eggs', 25, 'Daily egg collection from Batch A', 1),
+                    (chicken_id, '2024-01-16', 'eggs', 22, 'Continued egg production', 1),
+                    (chicken_id, '2024-01-17', 'meat', 3, 'Meat production from slaughtered chickens', 1),
+                    (chicken_id, '2024-01-18', 'eggs', 28, 'High egg production day', 1),
+                    (chicken_id, '2024-01-19', 'meat', 2, 'Additional meat production', 1)
+                ]
+                
+                for production_data in sample_productions:
+                    cursor.execute("""
+                        INSERT INTO chicken_production (
+                            chicken_id, production_date, production_type, quantity, notes, created_by
+                        ) VALUES (%s, %s, %s, %s, %s, %s)
+                    """, production_data)
+                
+                conn.commit()
+                print("Sample production records created")
+        
+        # Get production records with chicken details
+        cursor.execute("""
+            SELECT cp.id, cp.chicken_id, cp.production_date, cp.production_type, 
+                   cp.quantity, cp.notes, cp.created_at, cp.updated_at,
+                   c.chicken_id as ear_tag, c.batch_name as name
+            FROM chicken_production cp
+            LEFT JOIN chickens c ON cp.chicken_id = c.id
+            ORDER BY cp.production_date DESC, cp.created_at DESC
+            LIMIT 50
+        """)
+        records = cursor.fetchall()
+        
+        print(f"Found {len(records)} production records in database")
+        
+        # Convert records to JSON-serializable format
+        serializable_records = []
+        for record in records:
+            serializable_record = {
+                'id': record[0],
+                'chicken_id': record[1],
+                'production_date': record[2].isoformat() if record[2] else None,
+                'production_type': record[3],
+                'quantity': record[4],
+                'notes': record[5],
+                'created_at': record[6].isoformat() if record[6] else None,
+                'updated_at': record[7].isoformat() if record[7] else None,
+                'ear_tag': record[8],
+                'name': record[9]
+            }
+            serializable_records.append(serializable_record)
+        
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'records': serializable_records,
+            'count': len(serializable_records)
+        })
+        
+    except Exception as e:
+        print(f"Error getting chicken production records: {str(e)}")
+        print(f"Exception type: {type(e)}")
+        print(f"Exception args: {e.args}")
+        import traceback
+        traceback.print_exc()
+        error_message = f"Database error: {str(e)}" if str(e) else "Unknown database error"
+        return jsonify({'success': False, 'message': f'Failed to get production records: {error_message}', 'error': str(e)})
+
+@app.route('/api/chicken/production/record', methods=['POST'])
+def record_chicken_production():
+    """Record chicken production"""
+    if 'employee_id' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        data = request.get_json()
+        
+        # Validate required fields
+        required_fields = ['chicken_id', 'production_date', 'production_type', 'quantity']
+        for field in required_fields:
+            if not data.get(field):
+                return jsonify({'success': False, 'message': f'{field.replace("_", " ").title()} is required'})
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Create chicken_production table if it doesn't exist
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS chicken_production (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                chicken_id INT NOT NULL,
+                production_date DATE NOT NULL,
+                production_type ENUM('eggs', 'meat') NOT NULL,
+                quantity INT NOT NULL,
+                notes TEXT,
+                recorded_by INT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                FOREIGN KEY (chicken_id) REFERENCES chickens(id),
+                FOREIGN KEY (recorded_by) REFERENCES employees(id),
+                INDEX idx_production_date (production_date),
+                INDEX idx_chicken_id (chicken_id),
+                INDEX idx_production_type (production_type)
+            )
+        """)
+        
+        # Check if created_by column exists, if not add it
+        cursor.execute("""
+            SELECT COLUMN_NAME 
+            FROM INFORMATION_SCHEMA.COLUMNS 
+            WHERE TABLE_NAME = 'chicken_production' 
+            AND COLUMN_NAME = 'created_by'
+        """)
+        if not cursor.fetchone():
+            cursor.execute("ALTER TABLE chicken_production ADD COLUMN created_by INT")
+            cursor.execute("ALTER TABLE chicken_production ADD FOREIGN KEY (created_by) REFERENCES employees(id)")
+        
+        # Check if updated_at column exists, if not add it
+        cursor.execute("""
+            SELECT COLUMN_NAME 
+            FROM INFORMATION_SCHEMA.COLUMNS 
+            WHERE TABLE_NAME = 'chicken_production' 
+            AND COLUMN_NAME = 'updated_at'
+        """)
+        if not cursor.fetchone():
+            cursor.execute("ALTER TABLE chicken_production ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+        
+        # Insert production record
+        cursor.execute("""
+            INSERT INTO chicken_production (
+                chicken_id, production_date, production_type, quantity, notes, created_by
+            ) VALUES (%s, %s, %s, %s, %s, %s)
+        """, (
+            data['chicken_id'], data['production_date'], data['production_type'],
+            data['quantity'], data.get('notes'), session['employee_id']
+        ))
+        
+        production_id = cursor.lastrowid
+        
+        # If meat production, insert weight details and create chicken_meat_production table
+        if data['production_type'] == 'meat' and data.get('alive_weights') and data.get('dead_weights'):
+            # Create chicken_meat_production table if it doesn't exist
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS chicken_meat_production (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    production_id INT NOT NULL,
+                    chicken_number INT NOT NULL,
+                    alive_weight DECIMAL(10,3) NOT NULL,
+                    dead_weight DECIMAL(10,3) NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (production_id) REFERENCES chicken_production(id),
+                    INDEX idx_production_id (production_id)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+            """)
+            
+            alive_weights = data.get('alive_weights', [])
+            dead_weights = data.get('dead_weights', [])
+            
+            for i, (alive_weight, dead_weight) in enumerate(zip(alive_weights, dead_weights)):
+                cursor.execute("""
+                    INSERT INTO chicken_meat_production 
+                    (production_id, chicken_number, alive_weight, dead_weight)
+                    VALUES (%s, %s, %s, %s)
+                """, (production_id, i + 1, alive_weight, dead_weight))
+        
+        # Log activity
+        log_activity(session['employee_id'], 'CHICKEN_PRODUCTION', 
+                   f'Chicken production recorded: {data["quantity"]} {data["production_type"]} for chicken {data["chicken_id"]}')
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Chicken production recorded successfully',
+            'production_id': production_id
+        })
+        
+    except Exception as e:
+        print(f"Error recording chicken production: {str(e)}")
+        return jsonify({'success': False, 'message': f'Failed to record chicken production: {str(e)}'})
+
+@app.route('/api/chicken/list', methods=['GET'])
+def get_chickens_list():
+    """Get all chickens for display"""
+    print("=== CHICKEN LIST API CALLED ===")
+    print("API function started successfully")
+    
+    try:
+        print("Attempting database connection...")
+        conn = get_db_connection()
+        print("Database connection successful")
+        print(f"Database connection object: {conn}")
+        print(f"Database connection closed: {conn.closed}")
+        cursor = conn.cursor()
+        print("Database cursor created")
+        print(f"Database cursor object: {cursor}")
+        
+        # Create chickens table if it doesn't exist
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS chickens (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                chicken_id VARCHAR(20) UNIQUE NOT NULL,
+                batch_name VARCHAR(100) NOT NULL,
+                chicken_type ENUM('broiler', 'kienyeji', 'layer') NOT NULL,
+                breed_name VARCHAR(100) NOT NULL,
+                gender ENUM('male', 'female') NOT NULL,
+                hatch_date DATE NOT NULL,
+                age_days INT NOT NULL,
+                source VARCHAR(100) NOT NULL,
+                coop_number INT NOT NULL,
+                quantity INT NOT NULL DEFAULT 1,
+                current_status ENUM('active', 'sold', 'dead', 'culled') DEFAULT 'active',
+                registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                created_by INT,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                INDEX idx_chicken_id (chicken_id),
+                INDEX idx_chicken_type (chicken_type),
+                INDEX idx_batch_name (batch_name),
+                INDEX idx_coop_number (coop_number),
+                INDEX idx_current_status (current_status)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        """)
+        
+        # Check if chickens exist, if not create sample data
+        cursor.execute("SELECT COUNT(*) FROM chickens WHERE current_status = 'active'")
+        chicken_count = cursor.fetchone()[0]
+        
+        if chicken_count == 0:
+            print("No chickens found, creating sample chickens...")
+            # Create sample chickens
+            sample_chickens = [
+                ('CHK001', 'Batch A', 'broiler', 'Cobb 500', 'female', '2024-01-01', 30, 'Hatchery', 1, 10, 'active', 1),
+                ('CHK002', 'Batch B', 'layer', 'Lohmann Brown', 'female', '2024-01-15', 15, 'Hatchery', 2, 8, 'active', 1),
+                ('CHK003', 'Batch C', 'kienyeji', 'Indigenous', 'male', '2024-02-01', 45, 'Local', 3, 5, 'active', 1)
+            ]
+            
+            for chicken_data in sample_chickens:
+                cursor.execute("""
+                    INSERT INTO chickens (
+                        chicken_id, batch_name, chicken_type, breed_name, gender, 
+                        hatch_date, age_days, source, coop_number, quantity, 
+                        current_status, created_by
+                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                """, chicken_data)
+            
+            conn.commit()
+            print("Sample chickens created")
+        
+        # Get all active chickens
+        cursor.execute("""
+            SELECT c.id, c.chicken_id, c.batch_name, c.chicken_type, c.breed_name, 
+                   c.gender, c.hatch_date, c.age_days, c.source, c.coop_number, 
+                   c.quantity, c.current_status, c.registration_date, c.created_by
+            FROM chickens c 
+            WHERE c.current_status = 'active'
+            ORDER BY c.registration_date DESC
+        """)
+        chickens = cursor.fetchall()
+        
+        print(f"Found {len(chickens)} active chickens in database")
+        
+        # Convert chickens to JSON-serializable format
+        serializable_chickens = []
+        for chicken in chickens:
+            serializable_chicken = {
+                'id': chicken[0],
+                'chicken_id': chicken[1],
+                'batch_name': chicken[2],
+                'chicken_type': chicken[3],
+                'breed_name': chicken[4],
+                'gender': chicken[5],
+                'hatch_date': chicken[6].isoformat() if chicken[6] else None,
+                'age_days': chicken[7],
+                'source': chicken[8],
+                'coop_number': chicken[9],
+                'quantity': chicken[10],
+                'current_status': chicken[11],
+                'registration_date': chicken[12].isoformat() if chicken[12] else None,
+                'created_by': chicken[13],
+                'created_by_name': 'Employee'
+            }
+            serializable_chickens.append(serializable_chicken)
+        
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'chickens': serializable_chickens
+        })
+        
+    except Exception as e:
+        print(f"Error getting chickens: {str(e)}")
+        print(f"Exception type: {type(e)}")
+        print(f"Exception args: {e.args}")
+        import traceback
+        traceback.print_exc()
+        error_message = f"Database error: {str(e)}" if str(e) else "Unknown database error"
+        return jsonify({'success': False, 'message': f'Failed to get chickens: {error_message}', 'error': str(e)})
+
+# Employee Chicken Registration API
+@app.route('/api/chicken/register', methods=['POST'])
+def register_employee_chicken():
+    """Register a new chicken (for employees)"""
+    if 'employee_id' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        # Get form data (like admin version)
+        chicken_id = request.form.get('chicken_id')
+        batch_name = request.form.get('batch_name')
+        chicken_type = request.form.get('chicken_type')
+        breed_name = request.form.get('breed_name')
+        gender = request.form.get('gender')
+        hatch_date = request.form.get('hatch_date')
+        age_days = request.form.get('age_days')
+        source = request.form.get('source')
+        coop_number = request.form.get('coop_number')
+        quantity = request.form.get('quantity')
+        current_status = request.form.get('current_status', 'active')
+        
+        # Validate required fields
+        if not all([chicken_id, batch_name, chicken_type, breed_name, gender, hatch_date, source, coop_number, quantity]):
+            return jsonify({'success': False, 'message': 'All required fields must be filled'})
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Create chickens table if it doesn't exist
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS chickens (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                chicken_id VARCHAR(20) UNIQUE NOT NULL,
+                batch_name VARCHAR(100) NOT NULL,
+                chicken_type ENUM('broiler', 'kienyeji', 'layer') NOT NULL,
+                breed_name VARCHAR(100) NOT NULL,
+                gender ENUM('male', 'female') NOT NULL,
+                hatch_date DATE NOT NULL,
+                age_days INT NOT NULL,
+                source VARCHAR(100) NOT NULL,
+                coop_number INT NOT NULL,
+                quantity INT NOT NULL DEFAULT 1,
+                current_status ENUM('active', 'sold', 'dead', 'culled') DEFAULT 'active',
+                registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                created_by INT,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                INDEX idx_chicken_id (chicken_id),
+                INDEX idx_chicken_type (chicken_type),
+                INDEX idx_batch_name (batch_name),
+                INDEX idx_coop_number (coop_number),
+                INDEX idx_current_status (current_status)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        """)
+        
+        # Insert chicken data (like admin version)
+        cursor.execute("""
+            INSERT INTO chickens (
+                chicken_id, batch_name, chicken_type, breed_name, gender, 
+                hatch_date, age_days, source, coop_number, quantity, 
+                current_status, created_by
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """, (
+            chicken_id, batch_name, chicken_type, breed_name, gender,
+            hatch_date, age_days, source, coop_number, quantity,
+            current_status, session['employee_id']
+        ))
+        
+        chicken_id = cursor.lastrowid
+        
+        # Log activity
+        log_activity(session['employee_id'], 'CHICKEN_REGISTRATION', 
+                   f'Chicken registered: {chicken_id} - {batch_name}')
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Chicken registered successfully',
+            'chicken_id': chicken_id
+        })
+        
+    except Exception as e:
+        print(f"Error registering chicken: {str(e)}")
+        return jsonify({'success': False, 'message': f'Failed to register chicken: {str(e)}'})
+
 @app.route('/api/cow/list', methods=['GET'])
 def get_cows_list():
     """Get all cows for display"""
-    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+    if 'employee_id' not in session:
         return jsonify({'error': 'Unauthorized'}), 401
     
     try:
@@ -4908,6 +9238,269 @@ def record_milk_production():
         print(f"Error recording milk production: {str(e)}")
         return jsonify({'success': False, 'message': f'Failed to record milk production: {str(e)}'})
 
+@app.route('/api/milk-production/<int:production_id>', methods=['GET'])
+def get_milk_production_record(production_id):
+    """Get a specific milk production record"""
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get production record
+        cursor.execute("""
+            SELECT * FROM milk_production WHERE id = %s
+        """, (production_id,))
+        record = cursor.fetchone()
+        
+        if not record:
+            return jsonify({'success': False, 'message': 'Production record not found'}), 404
+        
+        cursor.close()
+        conn.close()
+        
+        # Convert to dictionary
+        record_dict = {
+            'id': record['id'],
+            'cow_id': record['cow_id'],
+            'production_date': record['production_date'].isoformat() if record['production_date'] else None,
+            'milking_session': record['milking_session'],
+            'milk_quantity': float(record['milk_quantity']) if record['milk_quantity'] is not None else None,
+            'fat_percentage': float(record['fat_percentage']) if record['fat_percentage'] is not None else None,
+            'protein_percentage': float(record['protein_percentage']) if record['protein_percentage'] is not None else None,
+            'milk_grade': record['milk_grade'],
+            'milk_quality_assessment': record['milk_quality_assessment'],
+            'additional_notes': record['additional_notes'],
+            'recorded_by': record['recorded_by'],
+            'created_at': record['created_at'].isoformat() if record['created_at'] else None
+        }
+        
+        return jsonify({
+            'success': True,
+            'record': record_dict
+        })
+        
+    except Exception as e:
+        print(f"Error getting milk production record: {str(e)}")
+        return jsonify({'success': False, 'message': f'Failed to get production record: {str(e)}'})
+
+@app.route('/api/milk-production/<int:production_id>/edit', methods=['PUT'])
+def edit_milk_production_record(production_id):
+    """Edit a milk production record"""
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        data = request.get_json()
+        
+        # Validate required fields
+        required_fields = ['production_date', 'milking_session', 'milk_quantity']
+        for field in required_fields:
+            if not data.get(field):
+                return jsonify({'success': False, 'message': f'{field.replace("_", " ").title()} is required'})
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get original data for comparison
+        cursor.execute("""
+            SELECT production_date, milking_session, milk_quantity, fat_percentage, 
+                   protein_percentage, milk_grade, milk_quality_assessment, additional_notes
+            FROM milk_production WHERE id = %s
+        """, (production_id,))
+        original_data = cursor.fetchone()
+        
+        if not original_data:
+            return jsonify({'success': False, 'message': 'Production record not found'}), 404
+        
+        # Track changes for audit trail
+        changes = []
+        
+        # Compare each field and track changes
+        if str(original_data['production_date']) != str(data.get('production_date')):
+            changes.append(('production_date', str(original_data['production_date']), str(data.get('production_date'))))
+        if str(original_data['milking_session']) != str(data.get('milking_session')):
+            changes.append(('milking_session', str(original_data['milking_session']), str(data.get('milking_session'))))
+        if str(original_data['milk_quantity']) != str(data.get('milk_quantity')):
+            changes.append(('milk_quantity', str(original_data['milk_quantity']), str(data.get('milk_quantity'))))
+        if str(original_data['fat_percentage'] or '') != str(data.get('fat_percentage') or ''):
+            changes.append(('fat_percentage', str(original_data['fat_percentage'] or ''), str(data.get('fat_percentage') or '')))
+        if str(original_data['protein_percentage'] or '') != str(data.get('protein_percentage') or ''):
+            changes.append(('protein_percentage', str(original_data['protein_percentage'] or ''), str(data.get('protein_percentage') or '')))
+        if str(original_data['milk_grade'] or '') != str(data.get('milk_grade') or ''):
+            changes.append(('milk_grade', str(original_data['milk_grade'] or ''), str(data.get('milk_grade') or '')))
+        if str(original_data['milk_quality_assessment'] or '') != str(data.get('milk_quality_assessment') or ''):
+            changes.append(('milk_quality_assessment', str(original_data['milk_quality_assessment'] or ''), str(data.get('milk_quality_assessment') or '')))
+        if str(original_data['additional_notes'] or '') != str(data.get('additional_notes') or ''):
+            changes.append(('additional_notes', str(original_data['additional_notes'] or ''), str(data.get('additional_notes') or '')))
+        
+        # Update milk production record
+        cursor.execute("""
+            UPDATE milk_production SET 
+                production_date = %s, milking_session = %s, milk_quantity = %s,
+                fat_percentage = %s, protein_percentage = %s, milk_grade = %s,
+                milk_quality_assessment = %s, additional_notes = %s
+            WHERE id = %s
+        """, (
+            data['production_date'], data['milking_session'], data['milk_quantity'],
+            data.get('fat_percentage'), data.get('protein_percentage'),
+            data.get('milk_grade'), data.get('milk_quality_assessment'),
+            data.get('additional_notes'), production_id
+        ))
+        
+        # Insert audit records for each changed field
+        for field_name, old_value, new_value in changes:
+            cursor.execute("""
+                INSERT INTO milk_production_edit_history 
+                (production_id, field_name, old_value, new_value, edited_by)
+                VALUES (%s, %s, %s, %s, %s)
+            """, (production_id, field_name, old_value, new_value, session['employee_id']))
+        
+        # Log activity
+        log_activity(session['employee_id'], 'MILK_PRODUCTION_EDIT', 
+                   f'Milk production record {production_id} updated: {data["milk_quantity"]}L')
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Milk production record updated successfully'
+        })
+        
+    except Exception as e:
+        print(f"Error updating milk production record: {str(e)}")
+        return jsonify({'success': False, 'message': f'Failed to update production record: {str(e)}'})
+
+@app.route('/api/milk-production/<int:production_id>/delete', methods=['DELETE'])
+def delete_milk_production_record(production_id):
+    """Delete a milk production record"""
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Check if record exists and get details for logging
+        cursor.execute("""
+            SELECT cow_id, milk_quantity, production_date 
+            FROM milk_production WHERE id = %s
+        """, (production_id,))
+        record = cursor.fetchone()
+        
+        if not record:
+            return jsonify({'success': False, 'message': 'Production record not found'}), 404
+        
+        # Check for any potential foreign key constraint issues
+        # This is just for debugging - we'll try the delete anyway
+        try:
+            cursor.execute("""
+                SELECT COUNT(*) as count FROM milk_production 
+                WHERE cow_id = %s AND id != %s
+            """, (record[0], production_id))
+            related_records = cursor.fetchone()
+            print(f"Found {related_records['count']} other production records for cow {record[0]}")
+        except Exception as debug_e:
+            print(f"Debug query failed: {debug_e}")
+        
+        # Delete the record
+        print(f"Attempting to delete milk production record {production_id}")
+        cursor.execute("DELETE FROM milk_production WHERE id = %s", (production_id,))
+        
+        # Check if any rows were affected
+        rows_affected = cursor.rowcount
+        print(f"Delete query affected {rows_affected} rows")
+        
+        if rows_affected == 0:
+            return jsonify({'success': False, 'message': 'No record was deleted. Record may not exist.'})
+        
+        # Log activity (with error handling)
+        try:
+            log_activity(session['employee_id'], 'MILK_PRODUCTION_DELETE', 
+                       f'Milk production record {production_id} deleted: {record[1]}L from cow {record[0]} on {record[2]}')
+        except Exception as log_error:
+            print(f"Warning: Failed to log activity: {log_error}")
+            # Continue with the operation even if logging fails
+        
+        conn.commit()
+        return jsonify({
+            'success': True,
+            'message': 'Milk production record deleted successfully'
+        })
+        
+    except Exception as e:
+        if conn:
+            conn.rollback()
+        error_message = str(e)
+        print(f"Error deleting milk production record: {error_message}")
+        
+        # Provide more specific error messages based on the error type
+        if "foreign key constraint" in error_message.lower():
+            return jsonify({'success': False, 'message': 'Cannot delete this record because it is referenced by other records. Please remove related records first.'})
+        elif "cannot delete" in error_message.lower():
+            return jsonify({'success': False, 'message': 'Cannot delete this record due to database constraints.'})
+        elif "constraint" in error_message.lower():
+            return jsonify({'success': False, 'message': 'Database constraint violation. The record cannot be deleted.'})
+        else:
+            return jsonify({'success': False, 'message': f'Failed to delete production record: {error_message}'})
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+@app.route('/api/milk-production/<int:production_id>/audit', methods=['GET'])
+def get_milk_production_audit(production_id):
+    """Get audit history for a milk production record"""
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get audit history
+        cursor.execute("""
+            SELECT 
+                mpeh.field_name,
+                mpeh.old_value,
+                mpeh.new_value,
+                mpeh.edited_at,
+                COALESCE(e.full_name, 'Unknown User') as edited_by_name
+            FROM milk_production_edit_history mpeh
+            LEFT JOIN employees e ON mpeh.edited_by = e.id
+            WHERE mpeh.production_id = %s
+            ORDER BY mpeh.edited_at DESC
+        """, (production_id,))
+        
+        audit_records = cursor.fetchall()
+        
+        # Convert datetime to string for JSON serialization
+        for record in audit_records:
+            if record['edited_at']:
+                record['edited_at'] = record['edited_at'].strftime('%Y-%m-%d %H:%M:%S')
+        
+        return jsonify({
+            'success': True,
+            'audit_records': audit_records
+        })
+        
+    except Exception as e:
+        print(f"Error fetching milk production audit history: {str(e)}")
+        return jsonify({'success': False, 'message': f'Failed to fetch audit history: {str(e)}'}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
 @app.route('/api/milk-sales-usage/record', methods=['POST'])
 def record_milk_sales_usage():
     """Record milk sales or usage data"""
@@ -5285,17 +9878,23 @@ def get_cow_detailed_info(cow_id):
         # Get milk production history for this cow
         cursor.execute("""
             SELECT 
-                production_date,
-                milking_session,
-                milk_quantity,
-                fat_percentage,
-                protein_percentage,
-                milk_quality_assessment,
-                additional_notes,
-                created_at
-            FROM milk_production 
-            WHERE cow_id = %s 
-            ORDER BY production_date DESC, created_at DESC
+                mp.id,
+                mp.production_date,
+                mp.milking_session,
+                mp.milk_quantity,
+                mp.fat_percentage,
+                mp.protein_percentage,
+                mp.milk_quality_assessment,
+                mp.additional_notes,
+                mp.created_at,
+                CASE 
+                    WHEN EXISTS(SELECT 1 FROM milk_production_edit_history mpeh WHERE mpeh.production_id = mp.id) 
+                    THEN 1 
+                    ELSE 0 
+                END as is_edited
+            FROM milk_production mp
+            WHERE mp.cow_id = %s 
+            ORDER BY mp.production_date DESC, mp.created_at DESC
             LIMIT 30
         """, (cow_id,))
         production_history = cursor.fetchall()
@@ -5353,6 +9952,7 @@ def get_cow_detailed_info(cow_id):
                 'created_at': str(cow['created_at'])
             },
             'production_history': [{
+                'id': record['id'],
                 'production_date': str(record['production_date']),
                 'milking_session': record['milking_session'],
                 'milk_quantity': float(record['milk_quantity']),
@@ -5360,7 +9960,8 @@ def get_cow_detailed_info(cow_id):
                 'protein_percentage': float(record['protein_percentage']) if record['protein_percentage'] else None,
                 'milk_quality_assessment': record['milk_quality_assessment'],
                 'additional_notes': record['additional_notes'],
-                'created_at': str(record['created_at'])
+                'created_at': str(record['created_at']),
+                'is_edited': bool(record['is_edited'])
             } for record in production_history],
             'statistics': {
                 'total_records': stats['total_records'] or 0,
@@ -6304,9 +10905,9 @@ def get_animal_details(animal_id):
         conn = get_db_connection()
         cursor = conn.cursor()
         
-        # Get animal details with birth date
+        # Get animal details with birth date and status
         cursor.execute("""
-            SELECT p.id, p.tag_id, p.name, p.breed, p.gender, p.birth_date, p.farm_id,
+            SELECT p.id, p.tag_id, p.name, p.breed, p.gender, p.birth_date, p.farm_id, p.status,
                    f.farm_name, DATEDIFF(CURDATE(), p.birth_date) as age_days
             FROM pigs p
             LEFT JOIN farms f ON p.farm_id = f.id
@@ -6748,6 +11349,65 @@ def check_and_trigger_recovery_period(farrowing_record_id):
     except Exception as e:
         print(f"Error checking recovery period: {str(e)}")
 
+def check_and_update_litter_status(farrowing_record_id):
+    """Check if all farrowing activities are completed and update litter status to weaned"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Check if all activities for this farrowing are completed
+        cursor.execute("""
+            SELECT COUNT(*) as total_activities,
+                   SUM(CASE WHEN completed = TRUE THEN 1 ELSE 0 END) as completed_activities
+            FROM farrowing_activities 
+            WHERE farrowing_record_id = %s
+        """, (farrowing_record_id,))
+        
+        result = cursor.fetchone()
+        if result['total_activities'] == result['completed_activities'] and result['total_activities'] > 0:
+            print(f"All activities completed for farrowing {farrowing_record_id}, updating litter status to weaned")
+            
+            # Get the weaning activity details
+            cursor.execute("""
+                SELECT weaning_weight, weaning_date
+                FROM farrowing_activities 
+                WHERE farrowing_record_id = %s AND activity_name = 'Weaning' AND completed = TRUE
+            """, (farrowing_record_id,))
+            
+            weaning_activity = cursor.fetchone()
+            
+            # Get the litter associated with this farrowing
+            cursor.execute("""
+                SELECT l.id, l.litter_id, l.status
+                FROM litters l
+                WHERE l.farrowing_record_id = %s
+            """, (farrowing_record_id,))
+            
+            litter = cursor.fetchone()
+            
+            if litter and litter['status'] != 'weaned':
+                # Update litter status to weaned
+                weaning_weight = weaning_activity['weaning_weight'] if weaning_activity else None
+                weaning_date = weaning_activity['weaning_date'] if weaning_activity else None
+                
+                cursor.execute("""
+                    UPDATE litters 
+                    SET status = 'weaned', weaning_date = %s, weaning_weight = %s, updated_at = CURRENT_TIMESTAMP
+                    WHERE id = %s
+                """, (weaning_date, weaning_weight, litter['id']))
+                
+                print(f"✅ Updated litter {litter['litter_id']} status to 'weaned'")
+                
+                # Log the activity
+                log_activity(session.get('employee_id', 1), 'LITTER_WEANED_AUTO', 
+                           f'Litter {litter["litter_id"]} automatically marked as weaned after all activities completed')
+        
+        cursor.close()
+        conn.close()
+        
+    except Exception as e:
+        print(f"Error checking and updating litter status: {str(e)}")
+
 # Weight Settings API Endpoints
 @app.route('/api/weight/settings', methods=['GET'])
 def get_weight_settings():
@@ -6791,7 +11451,7 @@ def get_weight_categories():
         cursor = conn.cursor()
         
         cursor.execute("""
-            SELECT id, category, min_weight, max_weight, daily_gain, start_age, end_age, description
+            SELECT id, category_name, min_weight, max_weight, daily_gain, start_age, end_age
             FROM weight_categories
             ORDER BY start_age ASC
         """)
@@ -7244,6 +11904,1408 @@ def get_vaccination_animals():
         
     except Exception as e:
         print(f"Error getting vaccination animals: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+# Slaughter Management API endpoints
+@app.route('/api/slaughter/records', methods=['GET'])
+def get_slaughter_records():
+    """Get all slaughter records"""
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get all slaughter records with pig/litter and employee information
+        cursor.execute("""
+            SELECT sr.*, 
+                   p.tag_id as pig_tag_id, p.breed as pig_breed, p.gender as pig_gender,
+                   l.litter_id,
+                   sow.breed as litter_breed,
+                   e.full_name as created_by_name,
+                   CASE 
+                       WHEN EXISTS(SELECT 1 FROM slaughter_records_edit_history sreh WHERE sreh.record_id = sr.id) 
+                       THEN 1 
+                       ELSE 0 
+                   END as is_edited
+            FROM slaughter_records sr
+            LEFT JOIN pigs p ON sr.pig_id = p.id
+            LEFT JOIN litters l ON sr.litter_id = l.id
+            LEFT JOIN pigs sow ON l.sow_id = sow.id
+            LEFT JOIN employees e ON sr.created_by = e.id
+            ORDER BY sr.slaughter_date DESC, sr.created_at DESC
+        """)
+        records = cursor.fetchall()
+        
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'records': records
+        })
+        
+    except Exception as e:
+        print(f"Error fetching slaughter records: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/slaughter/record', methods=['POST'])
+def create_slaughter_record():
+    """Create a new slaughter record"""
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        data = request.get_json()
+        print(f"Slaughter record data received: {data}")
+        
+        # Validate required fields
+        required_fields = ['pig_type', 'slaughter_date', 'live_weight', 'carcass_weight', 
+                          'meat_grade', 'price_per_kg', 'buyer_name']
+        for field in required_fields:
+            if not data.get(field):
+                return jsonify({'success': False, 'message': f'{field.replace("_", " ").title()} is required'})
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Calculate dressing percentage
+        live_weight = float(data['live_weight'])
+        carcass_weight = float(data['carcass_weight'])
+        dressing_percentage = (carcass_weight / live_weight) * 100
+        
+        # Calculate total revenue
+        price_per_kg = float(data['price_per_kg'])
+        pigs_count = int(data.get('pigs_count', 1))
+        total_revenue = carcass_weight * price_per_kg * pigs_count
+        
+        # Insert slaughter record
+        cursor.execute("""
+            INSERT INTO slaughter_records (
+                pig_id, litter_id, pig_type, slaughter_date, live_weight, carcass_weight,
+                dressing_percentage, meat_grade, price_per_kg, total_revenue, buyer_name,
+                pigs_count, notes, created_by
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """, (
+            data.get('pig_id'), data.get('litter_id'), data['pig_type'],
+            data['slaughter_date'], live_weight, carcass_weight, dressing_percentage,
+            data['meat_grade'], price_per_kg, total_revenue, data['buyer_name'],
+            pigs_count, data.get('notes', ''), session['employee_id']
+        ))
+        
+        record_id = cursor.lastrowid
+        
+        # Update pig status to slaughtered
+        if data['pig_type'] == 'grown_pig' and data.get('pig_id'):
+            print(f"Updating pig {data['pig_id']} status to 'slaughtered'")
+            cursor.execute("""
+                UPDATE pigs 
+                SET status = 'slaughtered', updated_at = CURRENT_TIMESTAMP
+                WHERE id = %s
+            """, (data['pig_id'],))
+            print(f"Pig status update affected {cursor.rowcount} rows")
+            
+            # Verify the status update
+            cursor.execute("SELECT status FROM pigs WHERE id = %s", (data['pig_id'],))
+            updated_pig = cursor.fetchone()
+            print(f"Pig {data['pig_id']} status after update: {updated_pig['status'] if updated_pig else 'NOT FOUND'}")
+            
+        elif data['pig_type'] == 'litter' and data.get('litter_id'):
+            # For litters, reduce the number of available pigs
+            pigs_to_slaughter = int(data.get('pigs_count', 1))
+            
+            # Update litter to reduce available pigs
+            cursor.execute("""
+                UPDATE litters 
+                SET alive_piglets = alive_piglets - %s,
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE id = %s AND alive_piglets >= %s
+            """, (pigs_to_slaughter, data['litter_id'], pigs_to_slaughter))
+            
+            # Check if update was successful
+            if cursor.rowcount == 0:
+                raise Exception("Not enough pigs available in this litter for slaughter")
+            
+            # Get updated litter info
+            cursor.execute("""
+                SELECT alive_piglets, total_piglets FROM litters WHERE id = %s
+            """, (data['litter_id'],))
+            litter_info = cursor.fetchone()
+            
+            # If no pigs left, update litter status to slaughtered
+            if litter_info and litter_info['alive_piglets'] <= 0:
+                print(f"Updating litter {data['litter_id']} status to 'slaughtered'")
+                cursor.execute("""
+                    UPDATE litters 
+                    SET status = 'slaughtered', updated_at = CURRENT_TIMESTAMP
+                    WHERE id = %s
+                """, (data['litter_id'],))
+                print(f"Litter status update affected {cursor.rowcount} rows")
+                
+                # Verify the litter status update
+                cursor.execute("SELECT status, alive_piglets FROM litters WHERE id = %s", (data['litter_id'],))
+                updated_litter = cursor.fetchone()
+                print(f"Litter {data['litter_id']} status after update: {updated_litter['status'] if updated_litter else 'NOT FOUND'}, alive_piglets: {updated_litter['alive_piglets'] if updated_litter else 'N/A'}")
+                
+                # Check if all litters from the parent sow are slaughtered
+                cursor.execute("""
+                    SELECT sow_id FROM litters WHERE id = %s
+                """, (data['litter_id'],))
+                sow_result = cursor.fetchone()
+                
+                if sow_result:
+                    sow_id = sow_result['sow_id']
+                    cursor.execute("""
+                        SELECT COUNT(*) as total_litters,
+                               SUM(CASE WHEN status = 'slaughtered' THEN 1 ELSE 0 END) as slaughtered_litters
+                        FROM litters 
+                        WHERE sow_id = %s
+                    """, (sow_id,))
+                    
+                    litter_stats = cursor.fetchone()
+                    if litter_stats and litter_stats['total_litters'] == litter_stats['slaughtered_litters']:
+                        # All litters are slaughtered, update sow status
+                        cursor.execute("""
+                            UPDATE pigs 
+                            SET status = 'slaughtered', updated_at = CURRENT_TIMESTAMP
+                            WHERE id = %s
+                        """, (sow_id,))
+        
+        # Log activity
+        if data['pig_type'] == 'grown_pig':
+            log_activity(session['employee_id'], 'SLAUGHTER_RECORD', 
+                       f'Slaughter record created: Pig {data.get("pig_id")} - Status changed to slaughtered - ${total_revenue} revenue')
+        else:
+            pigs_count = int(data.get('pigs_count', 1))
+            log_activity(session['employee_id'], 'SLAUGHTER_RECORD', 
+                       f'Slaughter record created: Litter {data.get("litter_id")} - {pigs_count} pigs slaughtered - ${total_revenue} revenue')
+        
+        conn.commit()
+        
+        # Final verification after commit
+        if data['pig_type'] == 'grown_pig' and data.get('pig_id'):
+            cursor.execute("SELECT status FROM pigs WHERE id = %s", (data['pig_id'],))
+            final_pig = cursor.fetchone()
+            print(f"FINAL: Pig {data['pig_id']} status after commit: {final_pig['status'] if final_pig else 'NOT FOUND'}")
+        elif data['pig_type'] == 'litter' and data.get('litter_id'):
+            cursor.execute("SELECT status, alive_piglets FROM litters WHERE id = %s", (data['litter_id'],))
+            final_litter = cursor.fetchone()
+            print(f"FINAL: Litter {data['litter_id']} status after commit: {final_litter['status'] if final_litter else 'NOT FOUND'}, alive_piglets: {final_litter['alive_piglets'] if final_litter else 'N/A'}")
+        
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Slaughter record created successfully',
+            'record_id': record_id
+        })
+        
+    except Exception as e:
+        print(f"Error creating slaughter record: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/slaughter/record/<int:record_id>/edit', methods=['PUT'])
+def edit_slaughter_record(record_id):
+    """Edit a slaughter record"""
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        data = request.get_json()
+        
+        # Validate required fields
+        required_fields = ['slaughter_date', 'live_weight', 'carcass_weight', 'buyer_name', 'price_per_kg', 'total_revenue']
+        for field in required_fields:
+            if not data.get(field):
+                return jsonify({'success': False, 'message': f'{field.replace("_", " ").title()} is required'})
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get original data for comparison
+        cursor.execute("""
+            SELECT slaughter_date, live_weight, carcass_weight, buyer_name, 
+                   price_per_kg, total_revenue, meat_grade, notes
+            FROM slaughter_records WHERE id = %s
+        """, (record_id,))
+        original_data = cursor.fetchone()
+        
+        if not original_data:
+            return jsonify({'success': False, 'message': 'Slaughter record not found'}), 404
+        
+        # Track changes for audit trail
+        changes = []
+        
+        # Compare each field and track changes
+        if str(original_data['slaughter_date']) != str(data.get('slaughter_date')):
+            changes.append(('slaughter_date', str(original_data['slaughter_date']), str(data.get('slaughter_date'))))
+        if str(original_data['live_weight']) != str(data.get('live_weight')):
+            changes.append(('live_weight', str(original_data['live_weight']), str(data.get('live_weight'))))
+        if str(original_data['carcass_weight']) != str(data.get('carcass_weight')):
+            changes.append(('carcass_weight', str(original_data['carcass_weight']), str(data.get('carcass_weight'))))
+        if str(original_data['buyer_name'] or '') != str(data.get('buyer_name') or ''):
+            changes.append(('buyer_name', str(original_data['buyer_name'] or ''), str(data.get('buyer_name') or '')))
+        if str(original_data['price_per_kg']) != str(data.get('price_per_kg')):
+            changes.append(('price_per_kg', str(original_data['price_per_kg']), str(data.get('price_per_kg'))))
+        if str(original_data['total_revenue']) != str(data.get('total_revenue')):
+            changes.append(('total_revenue', str(original_data['total_revenue']), str(data.get('total_revenue'))))
+        if str(original_data['meat_grade'] or '') != str(data.get('meat_grade') or ''):
+            changes.append(('meat_grade', str(original_data['meat_grade'] or ''), str(data.get('meat_grade') or '')))
+        if str(original_data['notes'] or '') != str(data.get('notes') or ''):
+            changes.append(('notes', str(original_data['notes'] or ''), str(data.get('notes') or '')))
+        
+        # Update slaughter record
+        cursor.execute("""
+            UPDATE slaughter_records SET 
+                slaughter_date = %s, live_weight = %s, carcass_weight = %s,
+                buyer_name = %s, price_per_kg = %s, total_revenue = %s,
+                meat_grade = %s, notes = %s
+            WHERE id = %s
+        """, (
+            data['slaughter_date'], data['live_weight'], data['carcass_weight'],
+            data.get('buyer_name'), data['price_per_kg'], data['total_revenue'],
+            data.get('meat_grade'), data.get('notes'), record_id
+        ))
+        
+        # Insert audit records for each changed field
+        for field_name, old_value, new_value in changes:
+            cursor.execute("""
+                INSERT INTO slaughter_records_edit_history 
+                (record_id, field_name, old_value, new_value, edited_by)
+                VALUES (%s, %s, %s, %s, %s)
+            """, (record_id, field_name, old_value, new_value, session['employee_id']))
+        
+        # Log activity
+        log_activity(session['employee_id'], 'SLAUGHTER_RECORD_EDIT', 
+                   f'Slaughter record {record_id} updated: {data["live_weight"]}kg live weight')
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Slaughter record updated successfully'
+        })
+        
+    except Exception as e:
+        print(f"Error updating slaughter record: {str(e)}")
+        return jsonify({'success': False, 'message': f'Failed to update slaughter record: {str(e)}'})
+
+@app.route('/api/slaughter/record/<int:record_id>/delete', methods=['DELETE'])
+def delete_slaughter_record(record_id):
+    """Delete a slaughter record"""
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # First, let's see what slaughter records exist
+        cursor.execute("SELECT id, live_weight, buyer_name, slaughter_date FROM slaughter_records ORDER BY id")
+        all_records = cursor.fetchall()
+        print(f"All slaughter records in database: {all_records}")
+        
+        # Check if record exists and get details for logging
+        cursor.execute("""
+            SELECT live_weight, buyer_name, slaughter_date 
+            FROM slaughter_records WHERE id = %s
+        """, (record_id,))
+        record = cursor.fetchone()
+        
+        if not record:
+            print(f"Slaughter record {record_id} not found")
+            return jsonify({'success': False, 'message': 'Slaughter record not found'}), 404
+        
+        print(f"Found slaughter record {record_id}: {record[0]}kg to {record[1]} on {record[2]}")
+        
+        # First, delete any audit history records
+        cursor.execute("DELETE FROM slaughter_records_edit_history WHERE record_id = %s", (record_id,))
+        audit_deleted = cursor.rowcount
+        print(f"Deleted {audit_deleted} audit history records")
+        
+        # Try to delete the main record with explicit transaction handling
+        try:
+            # Disable foreign key checks temporarily
+            cursor.execute("SET FOREIGN_KEY_CHECKS = 0")
+            cursor.execute("DELETE FROM slaughter_records WHERE id = %s", (record_id,))
+            rows_affected = cursor.rowcount
+            print(f"Delete query affected {rows_affected} rows")
+            # Re-enable foreign key checks
+            cursor.execute("SET FOREIGN_KEY_CHECKS = 1")
+        except Exception as delete_error:
+            print(f"Delete error: {delete_error}")
+            # Re-enable foreign key checks in case of error
+            cursor.execute("SET FOREIGN_KEY_CHECKS = 1")
+            raise delete_error
+        
+        # Check if any rows were affected
+        if rows_affected == 0:
+            print(f"No rows were affected by delete operation for record {record_id}")
+            return jsonify({'success': False, 'message': 'No record was deleted. Record may not exist.'})
+        
+        # Log activity
+        log_activity(session['employee_id'], 'SLAUGHTER_RECORD_DELETE', 
+                   f'Slaughter record {record_id} deleted: {record[0]}kg to {record[1]} on {record[2]}')
+        
+        conn.commit()
+        print(f"Slaughter record {record_id} deleted successfully")
+        return jsonify({
+            'success': True,
+            'message': 'Slaughter record deleted successfully'
+        })
+        
+    except Exception as e:
+        if conn:
+            conn.rollback()
+        print(f"Error deleting slaughter record: {str(e)}")
+        return jsonify({'success': False, 'message': f'Failed to delete slaughter record: {str(e)}'})
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+@app.route('/api/slaughter/record/<int:record_id>/audit', methods=['GET'])
+def get_slaughter_record_audit(record_id):
+    """Get audit history for a slaughter record"""
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get audit history
+        cursor.execute("""
+            SELECT 
+                sreh.field_name,
+                sreh.old_value,
+                sreh.new_value,
+                sreh.edited_at,
+                COALESCE(e.full_name, 'Unknown User') as edited_by_name
+            FROM slaughter_records_edit_history sreh
+            LEFT JOIN employees e ON sreh.edited_by = e.id
+            WHERE sreh.record_id = %s
+            ORDER BY sreh.edited_at DESC
+        """, (record_id,))
+        
+        audit_records = cursor.fetchall()
+        
+        # Convert datetime to string for JSON serialization
+        for record in audit_records:
+            if record['edited_at']:
+                record['edited_at'] = record['edited_at'].strftime('%Y-%m-%d %H:%M:%S')
+        
+        return jsonify({
+            'success': True,
+            'audit_records': audit_records
+        })
+        
+    except Exception as e:
+        print(f"Error fetching slaughter record audit history: {str(e)}")
+        return jsonify({'success': False, 'message': f'Failed to fetch audit history: {str(e)}'}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+@app.route('/api/slaughter/statistics', methods=['GET'])
+def get_slaughter_statistics():
+    """Get slaughter statistics"""
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get statistics
+        cursor.execute("""
+            SELECT 
+                COUNT(*) as total_slaughtered,
+                SUM(pigs_count) as total_pigs,
+                SUM(carcass_weight * pigs_count) as total_meat_kg,
+                SUM(total_revenue) as total_revenue,
+                COUNT(CASE WHEN slaughter_date >= DATE_SUB(CURDATE(), INTERVAL DAY(CURDATE())-1 DAY) THEN 1 END) as this_month_count
+            FROM slaughter_records
+        """)
+        stats = cursor.fetchone()
+        
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'statistics': {
+                'total_slaughtered': stats['total_slaughtered'] or 0,
+                'total_pigs': stats['total_pigs'] or 0,
+                'total_meat_kg': float(stats['total_meat_kg'] or 0),
+                'total_revenue': float(stats['total_revenue'] or 0),
+                'this_month_count': stats['this_month_count'] or 0
+            }
+        })
+        
+    except Exception as e:
+        print(f"Error fetching slaughter statistics: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/death/record', methods=['POST'])
+def create_death_record():
+    """Create a death record"""
+    if 'employee_id' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        data = request.get_json()
+        print(f"Death record data received: {data}")
+        
+        # Validate required fields
+        required_fields = ['pig_type', 'death_date', 'cause_of_death', 'weight_at_death']
+        for field in required_fields:
+            if field not in data or not data[field]:
+                return jsonify({'success': False, 'message': f'{field} is required'}), 400
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Create death record
+        cursor.execute("""
+            INSERT INTO dead_pigs (
+                pig_id, litter_id, pig_type, death_date, cause_of_death, 
+                weight_at_death, age_at_death, additional_details, 
+                pigs_count, created_by, created_at
+            ) VALUES (
+                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, CURRENT_TIMESTAMP
+            )
+        """, (
+            data.get('pig_id'),
+            data.get('litter_id'),
+            data['pig_type'],
+            data['death_date'],
+            data['cause_of_death'],
+            data['weight_at_death'],
+            data.get('age_at_death'),
+            data.get('additional_details', ''),
+            data.get('pigs_count', 1),
+            session['employee_id']
+        ))
+        
+        record_id = cursor.lastrowid
+        
+        # Update pig/litter status
+        if data['pig_type'] == 'grown_pig' and data.get('pig_id'):
+            # Update pig status to dead
+            print(f"Updating pig {data['pig_id']} status to 'dead'")
+            cursor.execute("""
+                UPDATE pigs 
+                SET status = 'dead', updated_at = CURRENT_TIMESTAMP
+                WHERE id = %s
+            """, (data['pig_id'],))
+            print(f"Pig status update affected {cursor.rowcount} rows")
+            
+            # Verify the status update
+            cursor.execute("SELECT status FROM pigs WHERE id = %s", (data['pig_id'],))
+            updated_pig = cursor.fetchone()
+            print(f"Pig {data['pig_id']} status after update: {updated_pig['status'] if updated_pig else 'NOT FOUND'}")
+            
+        elif data['pig_type'] == 'litter' and data.get('litter_id'):
+            # For litters, reduce the number of available pigs
+            pigs_to_remove = int(data.get('pigs_count', 1))
+            
+            # Update litter to reduce available pigs
+            cursor.execute("""
+                UPDATE litters 
+                SET alive_piglets = alive_piglets - %s,
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE id = %s AND alive_piglets >= %s
+            """, (pigs_to_remove, data['litter_id'], pigs_to_remove))
+            
+            # Check if update was successful
+            if cursor.rowcount == 0:
+                raise Exception("Not enough pigs available in this litter for death record")
+            
+            # Get updated litter info
+            cursor.execute("""
+                SELECT alive_piglets, total_piglets FROM litters WHERE id = %s
+            """, (data['litter_id'],))
+            litter_info = cursor.fetchone()
+            
+            # If no pigs left, update litter status to dead
+            if litter_info and litter_info['alive_piglets'] <= 0:
+                print(f"Updating litter {data['litter_id']} status to 'dead'")
+                cursor.execute("""
+                    UPDATE litters 
+                    SET status = 'dead', updated_at = CURRENT_TIMESTAMP
+                    WHERE id = %s
+                """, (data['litter_id'],))
+                print(f"Litter status update affected {cursor.rowcount} rows")
+                
+                # Verify the litter status update
+                cursor.execute("SELECT status, alive_piglets FROM litters WHERE id = %s", (data['litter_id'],))
+                updated_litter = cursor.fetchone()
+                print(f"Litter {data['litter_id']} status after update: {updated_litter['status'] if updated_litter else 'NOT FOUND'}, alive_piglets: {updated_litter['alive_piglets'] if updated_litter else 'N/A'}")
+                
+                # Check if all litters from the parent sow are dead
+                cursor.execute("""
+                    SELECT sow_id FROM litters WHERE id = %s
+                """, (data['litter_id'],))
+                sow_result = cursor.fetchone()
+                
+                if sow_result:
+                    sow_id = sow_result['sow_id']
+                    cursor.execute("""
+                        SELECT COUNT(*) as total_litters,
+                               SUM(CASE WHEN status = 'dead' THEN 1 ELSE 0 END) as dead_litters
+                        FROM litters 
+                        WHERE sow_id = %s
+                    """, (sow_id,))
+                    
+                    litter_stats = cursor.fetchone()
+                    if litter_stats and litter_stats['total_litters'] == litter_stats['dead_litters']:
+                        # All litters are dead, update sow status
+                        cursor.execute("""
+                            UPDATE pigs 
+                            SET status = 'dead', updated_at = CURRENT_TIMESTAMP
+                            WHERE id = %s
+                        """, (sow_id,))
+        
+        # Log activity
+        if data['pig_type'] == 'grown_pig':
+            log_activity(session['employee_id'], 'DEATH_RECORD', 
+                       f'Death record created: Pig {data.get("pig_id")} - Status changed to dead - Cause: {data["cause_of_death"]}')
+        else:
+            pigs_count = int(data.get('pigs_count', 1))
+            log_activity(session['employee_id'], 'DEATH_RECORD', 
+                       f'Death record created: Litter {data.get("litter_id")} - {pigs_count} pigs marked as dead - Cause: {data["cause_of_death"]}')
+        
+        conn.commit()
+        
+        # Final verification after commit
+        if data['pig_type'] == 'grown_pig' and data.get('pig_id'):
+            cursor.execute("SELECT status FROM pigs WHERE id = %s", (data['pig_id'],))
+            final_pig = cursor.fetchone()
+            print(f"FINAL: Pig {data['pig_id']} status after commit: {final_pig['status'] if final_pig else 'NOT FOUND'}")
+        elif data['pig_type'] == 'litter' and data.get('litter_id'):
+            cursor.execute("SELECT status, alive_piglets FROM litters WHERE id = %s", (data['litter_id'],))
+            final_litter = cursor.fetchone()
+            print(f"FINAL: Litter {data['litter_id']} status after commit: {final_litter['status'] if final_litter else 'NOT FOUND'}, alive_piglets: {final_litter['alive_piglets'] if final_litter else 'N/A'}")
+        
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Death record created successfully',
+            'record_id': record_id
+        })
+        
+    except Exception as e:
+        print(f"Error creating death record: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/death/record/<int:record_id>/edit', methods=['PUT'])
+def edit_death_record(record_id):
+    """Edit a death record"""
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        data = request.get_json()
+        
+        # Validate required fields
+        required_fields = ['death_date', 'cause_of_death', 'weight_at_death']
+        for field in required_fields:
+            if not data.get(field):
+                return jsonify({'success': False, 'message': f'{field.replace("_", " ").title()} is required'})
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get original data for comparison
+        cursor.execute("""
+            SELECT death_date, cause_of_death, weight_at_death, age_at_death, additional_details
+            FROM dead_pigs WHERE id = %s
+        """, (record_id,))
+        original_data = cursor.fetchone()
+        
+        if not original_data:
+            return jsonify({'success': False, 'message': 'Death record not found'}), 404
+        
+        # Track changes for audit trail
+        changes = []
+        
+        # Compare each field and track changes
+        if str(original_data['death_date']) != str(data.get('death_date')):
+            changes.append(('death_date', str(original_data['death_date']), str(data.get('death_date'))))
+        if str(original_data['cause_of_death'] or '') != str(data.get('cause_of_death') or ''):
+            changes.append(('cause_of_death', str(original_data['cause_of_death'] or ''), str(data.get('cause_of_death') or '')))
+        if str(original_data['weight_at_death']) != str(data.get('weight_at_death')):
+            changes.append(('weight_at_death', str(original_data['weight_at_death']), str(data.get('weight_at_death'))))
+        if str(original_data['age_at_death'] or '') != str(data.get('age_at_death') or ''):
+            changes.append(('age_at_death', str(original_data['age_at_death'] or ''), str(data.get('age_at_death') or '')))
+        if str(original_data['additional_details'] or '') != str(data.get('additional_details') or ''):
+            changes.append(('additional_details', str(original_data['additional_details'] or ''), str(data.get('additional_details') or '')))
+        
+        # Update death record
+        cursor.execute("""
+            UPDATE dead_pigs SET 
+                death_date = %s, cause_of_death = %s, weight_at_death = %s,
+                age_at_death = %s, additional_details = %s
+            WHERE id = %s
+        """, (
+            data['death_date'], data['cause_of_death'], data['weight_at_death'],
+            data.get('age_at_death'), data.get('additional_details'), record_id
+        ))
+        
+        # Insert audit records for each changed field
+        for field_name, old_value, new_value in changes:
+            cursor.execute("""
+                INSERT INTO death_records_edit_history 
+                (record_id, field_name, old_value, new_value, edited_by)
+                VALUES (%s, %s, %s, %s, %s)
+            """, (record_id, field_name, old_value, new_value, session['employee_id']))
+        
+        # Log activity
+        log_activity(session['employee_id'], 'DEATH_RECORD_EDIT', 
+                   f'Death record {record_id} updated: {data["weight_at_death"]}kg weight')
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Death record updated successfully'
+        })
+        
+    except Exception as e:
+        print(f"Error updating death record: {str(e)}")
+        return jsonify({'success': False, 'message': f'Failed to update death record: {str(e)}'})
+
+@app.route('/api/death/record/<int:record_id>/delete', methods=['DELETE'])
+def delete_death_record(record_id):
+    """Delete a death record"""
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # First, let's see what death records exist
+        cursor.execute("SELECT id, weight_at_death, cause_of_death, death_date FROM dead_pigs ORDER BY id")
+        all_records = cursor.fetchall()
+        print(f"All death records in database: {all_records}")
+        
+        # Check if record exists and get details for logging
+        cursor.execute("""
+            SELECT weight_at_death, cause_of_death, death_date 
+            FROM dead_pigs WHERE id = %s
+        """, (record_id,))
+        record = cursor.fetchone()
+        
+        if not record:
+            print(f"Death record {record_id} not found")
+            return jsonify({'success': False, 'message': 'Death record not found'}), 404
+        
+        print(f"Found death record {record_id}: {record[0]}kg - {record[1]} on {record[2]}")
+        
+        # First, delete any audit history records
+        cursor.execute("DELETE FROM death_records_edit_history WHERE record_id = %s", (record_id,))
+        audit_deleted = cursor.rowcount
+        print(f"Deleted {audit_deleted} audit history records")
+        
+        # Try to delete the main record with explicit transaction handling
+        try:
+            # Check if record still exists before deletion
+            cursor.execute("SELECT COUNT(*) FROM dead_pigs WHERE id = %s", (record_id,))
+            count_before = cursor.fetchone()[0]
+            print(f"Records with ID {record_id} before deletion: {count_before}")
+            
+            # Disable foreign key checks temporarily
+            cursor.execute("SET FOREIGN_KEY_CHECKS = 0")
+            print("Foreign key checks disabled")
+            
+            # Try the delete operation
+            cursor.execute("DELETE FROM dead_pigs WHERE id = %s", (record_id,))
+            rows_affected = cursor.rowcount
+            print(f"Delete query affected {rows_affected} rows")
+            
+            # Check if record still exists after deletion
+            cursor.execute("SELECT COUNT(*) FROM dead_pigs WHERE id = %s", (record_id,))
+            count_after = cursor.fetchone()[0]
+            print(f"Records with ID {record_id} after deletion: {count_after}")
+            
+            # Re-enable foreign key checks
+            cursor.execute("SET FOREIGN_KEY_CHECKS = 1")
+            print("Foreign key checks re-enabled")
+            
+        except Exception as delete_error:
+            print(f"Delete error: {delete_error}")
+            # Re-enable foreign key checks in case of error
+            try:
+                cursor.execute("SET FOREIGN_KEY_CHECKS = 1")
+            except:
+                pass
+            raise delete_error
+        
+        # Check if any rows were affected
+        if rows_affected == 0:
+            print(f"No rows were affected by delete operation for record {record_id}")
+            # Try a simple test deletion
+            print("Testing if we can delete any record...")
+            cursor.execute("SELECT id FROM dead_pigs LIMIT 1")
+            test_record = cursor.fetchone()
+            if test_record:
+                test_id = test_record[0]
+                print(f"Trying to delete test record {test_id}")
+                cursor.execute("DELETE FROM dead_pigs WHERE id = %s", (test_id,))
+                test_rows = cursor.rowcount
+                print(f"Test deletion affected {test_rows} rows")
+                if test_rows > 0:
+                    print("Test deletion worked - there might be a specific issue with record", record_id)
+                else:
+                    print("Test deletion also failed - there's a general deletion issue")
+            return jsonify({'success': False, 'message': 'No record was deleted. Record may not exist.'})
+        
+        # Log activity
+        log_activity(session['employee_id'], 'DEATH_RECORD_DELETE', 
+                   f'Death record {record_id} deleted: {record[0]}kg - {record[1]} on {record[2]}')
+        
+        conn.commit()
+        print(f"Death record {record_id} deleted successfully")
+        return jsonify({
+            'success': True,
+            'message': 'Death record deleted successfully'
+        })
+        
+    except Exception as e:
+        if conn:
+            conn.rollback()
+        print(f"Error deleting death record: {str(e)}")
+        return jsonify({'success': False, 'message': f'Failed to delete death record: {str(e)}'})
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+@app.route('/api/death/record/<int:record_id>/audit', methods=['GET'])
+def get_death_record_audit(record_id):
+    """Get audit history for a death record"""
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get audit history
+        cursor.execute("""
+            SELECT 
+                dreh.field_name,
+                dreh.old_value,
+                dreh.new_value,
+                dreh.edited_at,
+                COALESCE(e.full_name, 'Unknown User') as edited_by_name
+            FROM death_records_edit_history dreh
+            LEFT JOIN employees e ON dreh.edited_by = e.id
+            WHERE dreh.record_id = %s
+            ORDER BY dreh.edited_at DESC
+        """, (record_id,))
+        
+        audit_records = cursor.fetchall()
+        
+        # Convert datetime to string for JSON serialization
+        for record in audit_records:
+            if record['edited_at']:
+                record['edited_at'] = record['edited_at'].strftime('%Y-%m-%d %H:%M:%S')
+        
+        return jsonify({
+            'success': True,
+            'audit_records': audit_records
+        })
+        
+    except Exception as e:
+        print(f"Error fetching death record audit history: {str(e)}")
+        return jsonify({'success': False, 'message': f'Failed to fetch audit history: {str(e)}'}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+@app.route('/api/pigs/available', methods=['GET'])
+def get_available_pigs():
+    """Get available pigs and litters for slaughter"""
+    if 'employee_id' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        pig_type = request.args.get('type', 'grown_pig')
+        
+        if pig_type == 'grown_pig':
+            # Get available grown pigs with latest weight
+            cursor.execute("""
+                SELECT p.id, p.tag_id, p.breed, p.gender, p.status, p.created_at,
+                       COALESCE(w.weight, 0) as weight
+                FROM pigs p 
+                LEFT JOIN (
+                    SELECT animal_id, weight,
+                           ROW_NUMBER() OVER (PARTITION BY animal_id ORDER BY weighing_date DESC, created_at DESC) as rn
+                    FROM weight_records 
+                    WHERE animal_id IS NOT NULL
+                ) w ON p.id = w.animal_id AND w.rn = 1
+                WHERE p.status = 'active' 
+                AND p.pig_type = 'grown_pig'
+                ORDER BY p.tag_id ASC
+            """)
+            pigs = cursor.fetchall()
+            
+            cursor.close()
+            conn.close()
+            
+            return jsonify({
+                'success': True,
+                'pigs': pigs
+            })
+            
+        elif pig_type == 'litter':
+            # Get available litters with sow breed information
+            cursor.execute("""
+                SELECT l.id, l.litter_id, l.total_piglets as total_pigs, l.alive_piglets as available_pigs, 
+                       l.avg_weight, l.status, l.created_at, l.farrowing_date,
+                       p.breed, p.tag_id as sow_tag_id
+                FROM litters l
+                LEFT JOIN pigs p ON l.sow_id = p.id
+                WHERE l.status IN ('unweaned', 'weaned') 
+                AND l.alive_piglets > 0
+                ORDER BY l.litter_id ASC
+            """)
+            litters = cursor.fetchall()
+            
+            cursor.close()
+            conn.close()
+            
+            return jsonify({
+                'success': True,
+                'litters': litters
+            })
+        else:
+            return jsonify({'success': False, 'message': 'Invalid type parameter'}), 400
+            
+    except Exception as e:
+        print(f"Error fetching available pigs/litters: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/litters/available', methods=['GET'])
+def get_available_litters():
+    """Get available litters for death records"""
+    if 'employee_id' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get available litters with sow breed information
+        cursor.execute("""
+            SELECT l.id, l.litter_id, l.total_piglets as total_pigs, l.alive_piglets as available_pigs, 
+                   l.avg_weight, l.status, l.created_at, l.farrowing_date,
+                   p.breed, p.tag_id as sow_tag_id
+            FROM litters l
+            LEFT JOIN pigs p ON l.sow_id = p.id
+            WHERE l.status IN ('unweaned', 'weaned') 
+            AND l.alive_piglets > 0
+            ORDER BY l.litter_id ASC
+        """)
+        litters = cursor.fetchall()
+        
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'litters': litters
+        })
+        
+    except Exception as e:
+        print(f"Error fetching available litters: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/pigs/death-details/<int:pig_id>', methods=['GET'])
+def get_pig_death_details(pig_id):
+    """Get pig details for death record age calculation"""
+    if 'employee_id' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            SELECT id, tag_id, birth_date, breed, gender, status
+            FROM pigs 
+            WHERE id = %s
+        """, (pig_id,))
+        pig = cursor.fetchone()
+        
+        cursor.close()
+        conn.close()
+        
+        if pig:
+            return jsonify({
+                'success': True,
+                'pig': pig
+            })
+        else:
+            return jsonify({'success': False, 'message': 'Pig not found'}), 404
+        
+    except Exception as e:
+        print(f"Error fetching pig details: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/litters/death-details/<int:litter_id>', methods=['GET'])
+def get_litter_death_details(litter_id):
+    """Get litter details for death record age calculation"""
+    if 'employee_id' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            SELECT id, litter_id, farrowing_date, total_piglets, alive_piglets, status
+            FROM litters 
+            WHERE id = %s
+        """, (litter_id,))
+        litter = cursor.fetchone()
+        
+        cursor.close()
+        conn.close()
+        
+        if litter:
+            return jsonify({
+                'success': True,
+                'litter': litter
+            })
+        else:
+            return jsonify({'success': False, 'message': 'Litter not found'}), 404
+        
+    except Exception as e:
+        print(f"Error fetching litter details: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/sale/record', methods=['POST'])
+def create_sale_record():
+    """Create a sale record"""
+    if 'employee_id' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        data = request.get_json()
+        print(f"Sale record data received: {data}")
+        
+        # Validate required fields
+        required_fields = ['pig_type', 'sale_date', 'buyer_name', 'sale_price']
+        for field in required_fields:
+            if field not in data or not data[field]:
+                return jsonify({'success': False, 'message': f'{field} is required'}), 400
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Create sale record
+        cursor.execute("""
+            INSERT INTO sale_records (
+                pig_id, litter_id, pig_type, sale_date, buyer_name, buyer_contact,
+                sale_price, total_revenue, notes, 
+                pigs_count, created_by, created_at
+            ) VALUES (
+                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, CURRENT_TIMESTAMP
+            )
+        """, (
+            data.get('pig_id'),
+            data.get('litter_id'),
+            data['pig_type'],
+            data['sale_date'],
+            data['buyer_name'],
+            data.get('buyer_contact', ''),
+            data['sale_price'],
+            data['total_revenue'],
+            data.get('notes', ''),
+            data.get('pigs_count', 1),
+            session['employee_id']
+        ))
+        
+        record_id = cursor.lastrowid
+        
+        # Update pig/litter status
+        if data['pig_type'] == 'grown_pig' and data.get('pig_id'):
+            # Update pig status to sold
+            print(f"Updating pig {data['pig_id']} status to 'sold'")
+            cursor.execute("""
+                UPDATE pigs 
+                SET status = 'sold', updated_at = CURRENT_TIMESTAMP
+                WHERE id = %s
+            """, (data['pig_id'],))
+            print(f"Pig status update affected {cursor.rowcount} rows")
+            
+            # Verify the status update
+            cursor.execute("SELECT status FROM pigs WHERE id = %s", (data['pig_id'],))
+            updated_pig = cursor.fetchone()
+            print(f"Pig {data['pig_id']} status after update: {updated_pig['status'] if updated_pig else 'NOT FOUND'}")
+            
+        elif data['pig_type'] == 'litter' and data.get('litter_id'):
+            # For litters, reduce the number of available pigs
+            pigs_to_sell = int(data.get('pigs_count', 1))
+            
+            # Update litter to reduce available pigs
+            cursor.execute("""
+                UPDATE litters 
+                SET alive_piglets = alive_piglets - %s,
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE id = %s AND alive_piglets >= %s
+            """, (pigs_to_sell, data['litter_id'], pigs_to_sell))
+            
+            # Check if update was successful
+            if cursor.rowcount == 0:
+                raise Exception("Not enough pigs available in this litter for sale record")
+            
+            # Get updated litter info
+            cursor.execute("""
+                SELECT alive_piglets, total_piglets FROM litters WHERE id = %s
+            """, (data['litter_id'],))
+            litter_info = cursor.fetchone()
+            
+            # If no pigs left, update litter status to sold
+            if litter_info and litter_info['alive_piglets'] <= 0:
+                print(f"Updating litter {data['litter_id']} status to 'sold'")
+                cursor.execute("""
+                    UPDATE litters 
+                    SET status = 'sold', updated_at = CURRENT_TIMESTAMP
+                    WHERE id = %s
+                """, (data['litter_id'],))
+                print(f"Litter status update affected {cursor.rowcount} rows")
+                
+                # Verify the litter status update
+                cursor.execute("SELECT status, alive_piglets FROM litters WHERE id = %s", (data['litter_id'],))
+                updated_litter = cursor.fetchone()
+                print(f"Litter {data['litter_id']} status after update: {updated_litter['status'] if updated_litter else 'NOT FOUND'}, alive_piglets: {updated_litter['alive_piglets'] if updated_litter else 'N/A'}")
+        
+        # Log activity
+        if data['pig_type'] == 'grown_pig':
+            log_activity(session['employee_id'], 'SALE_RECORD', 
+                       f'Sale record created: Pig {data.get("pig_id")} - Status changed to sold - Revenue: ${data["total_revenue"]}')
+        else:
+            pigs_count = int(data.get('pigs_count', 1))
+            log_activity(session['employee_id'], 'SALE_RECORD', 
+                       f'Sale record created: Litter {data.get("litter_id")} - {pigs_count} pigs sold - Revenue: ${data["total_revenue"]}')
+        
+        conn.commit()
+        
+        # Final verification after commit
+        if data['pig_type'] == 'grown_pig' and data.get('pig_id'):
+            cursor.execute("SELECT status FROM pigs WHERE id = %s", (data['pig_id'],))
+            final_pig = cursor.fetchone()
+            print(f"FINAL: Pig {data['pig_id']} status after commit: {final_pig['status'] if final_pig else 'NOT FOUND'}")
+        elif data['pig_type'] == 'litter' and data.get('litter_id'):
+            cursor.execute("SELECT status, alive_piglets FROM litters WHERE id = %s", (data['litter_id'],))
+            final_litter = cursor.fetchone()
+            print(f"FINAL: Litter {data['litter_id']} status after commit: {final_litter['status'] if final_litter else 'NOT FOUND'}, alive_piglets: {final_litter['alive_piglets'] if final_litter else 'N/A'}")
+        
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Sale record created successfully',
+            'record_id': record_id
+        })
+        
+    except Exception as e:
+        print(f"Error creating sale record: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/sale/record/<int:record_id>/edit', methods=['PUT'])
+def edit_sale_record(record_id):
+    """Edit a sale record"""
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        data = request.get_json()
+        
+        # Validate required fields
+        required_fields = ['sale_date', 'buyer_name', 'sale_price', 'total_revenue']
+        for field in required_fields:
+            if not data.get(field):
+                return jsonify({'success': False, 'message': f'{field.replace("_", " ").title()} is required'})
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get original data for comparison
+        cursor.execute("""
+            SELECT sale_date, buyer_name, buyer_contact, sale_price, total_revenue, notes
+            FROM sale_records WHERE id = %s
+        """, (record_id,))
+        original_data = cursor.fetchone()
+        
+        if not original_data:
+            return jsonify({'success': False, 'message': 'Sale record not found'}), 404
+        
+        # Track changes for audit trail
+        changes = []
+        
+        # Compare each field and track changes
+        if str(original_data['sale_date']) != str(data.get('sale_date')):
+            changes.append(('sale_date', str(original_data['sale_date']), str(data.get('sale_date'))))
+        if str(original_data['buyer_name'] or '') != str(data.get('buyer_name') or ''):
+            changes.append(('buyer_name', str(original_data['buyer_name'] or ''), str(data.get('buyer_name') or '')))
+        if str(original_data['buyer_contact'] or '') != str(data.get('buyer_contact') or ''):
+            changes.append(('buyer_contact', str(original_data['buyer_contact'] or ''), str(data.get('buyer_contact') or '')))
+        if str(original_data['sale_price']) != str(data.get('sale_price')):
+            changes.append(('sale_price', str(original_data['sale_price']), str(data.get('sale_price'))))
+        if str(original_data['total_revenue']) != str(data.get('total_revenue')):
+            changes.append(('total_revenue', str(original_data['total_revenue']), str(data.get('total_revenue'))))
+        if str(original_data['notes'] or '') != str(data.get('notes') or ''):
+            changes.append(('notes', str(original_data['notes'] or ''), str(data.get('notes') or '')))
+        
+        # Update sale record
+        cursor.execute("""
+            UPDATE sale_records SET 
+                sale_date = %s, buyer_name = %s, buyer_contact = %s,
+                sale_price = %s, total_revenue = %s, notes = %s
+            WHERE id = %s
+        """, (
+            data['sale_date'], data.get('buyer_name'), data.get('buyer_contact'),
+            data['sale_price'], data['total_revenue'], data.get('notes'), record_id
+        ))
+        
+        # Insert audit records for each changed field
+        for field_name, old_value, new_value in changes:
+            cursor.execute("""
+                INSERT INTO sale_records_edit_history 
+                (record_id, field_name, old_value, new_value, edited_by)
+                VALUES (%s, %s, %s, %s, %s)
+            """, (record_id, field_name, old_value, new_value, session['employee_id']))
+        
+        # Log activity
+        log_activity(session['employee_id'], 'SALE_RECORD_EDIT', 
+                   f'Sale record {record_id} updated: ${data["total_revenue"]} revenue')
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Sale record updated successfully'
+        })
+        
+    except Exception as e:
+        print(f"Error updating sale record: {str(e)}")
+        return jsonify({'success': False, 'message': f'Failed to update sale record: {str(e)}'})
+
+@app.route('/api/sale/record/<int:record_id>/delete', methods=['DELETE'])
+def delete_sale_record(record_id):
+    """Delete a sale record"""
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Check if record exists and get details for logging
+        cursor.execute("""
+            SELECT total_revenue, buyer_name, sale_date 
+            FROM sale_records WHERE id = %s
+        """, (record_id,))
+        record = cursor.fetchone()
+        
+        if not record:
+            return jsonify({'success': False, 'message': 'Sale record not found'}), 404
+        
+        # Delete the record
+        cursor.execute("DELETE FROM sale_records WHERE id = %s", (record_id,))
+        
+        # Check if any rows were affected
+        if cursor.rowcount == 0:
+            return jsonify({'success': False, 'message': 'No record was deleted. Record may not exist.'})
+        
+        # Log activity
+        log_activity(session['employee_id'], 'SALE_RECORD_DELETE', 
+                   f'Sale record {record_id} deleted: ${record[0]} to {record[1]} on {record[2]}')
+        
+        conn.commit()
+        return jsonify({
+            'success': True,
+            'message': 'Sale record deleted successfully'
+        })
+        
+    except Exception as e:
+        if conn:
+            conn.rollback()
+        print(f"Error deleting sale record: {str(e)}")
+        return jsonify({'success': False, 'message': f'Failed to delete sale record: {str(e)}'})
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+@app.route('/api/sale/record/<int:record_id>/audit', methods=['GET'])
+def get_sale_record_audit(record_id):
+    """Get audit history for a sale record"""
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get audit history
+        cursor.execute("""
+            SELECT 
+                sreh.field_name,
+                sreh.old_value,
+                sreh.new_value,
+                sreh.edited_at,
+                COALESCE(e.full_name, 'Unknown User') as edited_by_name
+            FROM sale_records_edit_history sreh
+            LEFT JOIN employees e ON sreh.edited_by = e.id
+            WHERE sreh.record_id = %s
+            ORDER BY sreh.edited_at DESC
+        """, (record_id,))
+        
+        audit_records = cursor.fetchall()
+        
+        # Convert datetime to string for JSON serialization
+        for record in audit_records:
+            if record['edited_at']:
+                record['edited_at'] = record['edited_at'].strftime('%Y-%m-%d %H:%M:%S')
+        
+        return jsonify({
+            'success': True,
+            'audit_records': audit_records
+        })
+        
+    except Exception as e:
+        print(f"Error fetching sale record audit history: {str(e)}")
+        return jsonify({'success': False, 'message': f'Failed to fetch audit history: {str(e)}'}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+@app.route('/api/death/records', methods=['GET'])
+def get_death_records():
+    """Get all death records"""
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get all death records with pig/litter and employee information
+        cursor.execute("""
+            SELECT dp.*, 
+                   p.tag_id as pig_tag_id, p.breed as pig_breed, p.gender as pig_gender,
+                   l.litter_id,
+                   sow.breed as litter_breed,
+                   e.full_name as created_by_name,
+                   CASE 
+                       WHEN EXISTS(SELECT 1 FROM death_records_edit_history dreh WHERE dreh.record_id = dp.id) 
+                       THEN 1 
+                       ELSE 0 
+                   END as is_edited
+            FROM dead_pigs dp
+            LEFT JOIN pigs p ON dp.pig_id = p.id
+            LEFT JOIN litters l ON dp.litter_id = l.id
+            LEFT JOIN pigs sow ON l.sow_id = sow.id
+            LEFT JOIN employees e ON dp.created_by = e.id
+            ORDER BY dp.death_date DESC, dp.created_at DESC
+        """)
+        records = cursor.fetchall()
+        
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'records': records
+        })
+        
+    except Exception as e:
+        print(f"Error fetching death records: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/sale/records', methods=['GET'])
+def get_sale_records():
+    """Get all sale records"""
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get all sale records with pig/litter and employee information
+        cursor.execute("""
+            SELECT sr.*, 
+                   p.tag_id as pig_tag_id, p.breed as pig_breed, p.gender as pig_gender,
+                   l.litter_id,
+                   sow.breed as litter_breed,
+                   e.full_name as created_by_name,
+                   CASE 
+                       WHEN EXISTS(SELECT 1 FROM sale_records_edit_history sreh WHERE sreh.record_id = sr.id) 
+                       THEN 1 
+                       ELSE 0 
+                   END as is_edited
+            FROM sale_records sr
+            LEFT JOIN pigs p ON sr.pig_id = p.id
+            LEFT JOIN litters l ON sr.litter_id = l.id
+            LEFT JOIN pigs sow ON l.sow_id = sow.id
+            LEFT JOIN employees e ON sr.created_by = e.id
+            ORDER BY sr.sale_date DESC, sr.created_at DESC
+        """)
+        records = cursor.fetchall()
+        
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'records': records
+        })
+        
+    except Exception as e:
+        print(f"Error fetching sale records: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
 
 # Vaccination Schedule API endpoints
@@ -7711,6 +13773,35 @@ def cow_detail_page(cow_id):
     
     return render_template('admin_farm_cow_detail.html', cow_id=cow_id)
 
+@app.route('/admin/farm/animal-details/<int:animal_id>')
+def animal_details_page(animal_id):
+    """Animal details page for pigs and litters"""
+    if 'employee_id' not in session:
+        return redirect(url_for('employee_login'))
+    
+    if session.get('employee_role') != 'administrator':
+        flash('Access denied. Administrator privileges required.', 'error')
+        return redirect(url_for('admin_dashboard'))
+    
+    # Get the type parameter from query string
+    animal_type = request.args.get('type', 'grown_pig')
+    
+    return render_template('admin_farm_animal_details.html', 
+                         animal_id=animal_id, 
+                         animal_type=animal_type)
+
+@app.route('/admin/farm/vaccination-analytics')
+def vaccination_analytics_page():
+    """Vaccination Analytics page"""
+    if 'employee_id' not in session:
+        return redirect(url_for('employee_login'))
+    
+    if session.get('employee_role') != 'administrator':
+        flash('Access denied. Administrator privileges required.', 'error')
+        return redirect(url_for('admin_dashboard'))
+    
+    return render_template('admin_farm_vaccination_analytics.html')
+
 @app.route('/admin/farm/cow-breeding')
 def cow_breeding_page():
     """Cow Breeding Management page"""
@@ -7722,6 +13813,197 @@ def cow_breeding_page():
         return redirect(url_for('admin_dashboard'))
     
     return render_template('admin_farm_cow_breeding.html')
+
+@app.route('/admin/farm/chicken-weight-check')
+def admin_farm_chicken_weight_check():
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return redirect(url_for('employee_login'))
+    
+    # Get user data from session
+    user_data = {
+        'id': session['employee_id'],
+        'name': session['employee_name'],
+        'role': session['employee_role'],
+        'status': session['employee_status'],
+        'email': f"{session['employee_name'].lower().replace(' ', '.')}@farm.com"
+    }
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get all active chickens
+        cursor.execute("""
+            SELECT 
+                chicken_id,
+                batch_name,
+                chicken_type,
+                breed_name,
+                gender,
+                hatch_date,
+                age_days,
+                source,
+                coop_number,
+                quantity,
+                current_status,
+                registration_date
+            FROM chickens 
+            WHERE current_status = 'active'
+            ORDER BY chicken_type, age_days
+        """)
+        chickens = cursor.fetchall()
+        
+        # Get all weight standards
+        cursor.execute("""
+            SELECT 
+                id,
+                category,
+                age_days,
+                expected_weight,
+                description,
+                created_at
+            FROM chicken_weight_standards 
+            ORDER BY category, age_days
+        """)
+        weight_standards = cursor.fetchall()
+        
+        # Create weight tracking table if it doesn't exist
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS chicken_weight_tracking (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                chicken_id VARCHAR(50) NOT NULL,
+                weight_standard_id INT NOT NULL,
+                actual_weight DECIMAL(6,3) NOT NULL,
+                expected_weight DECIMAL(6,3) NOT NULL,
+                weight_percentage DECIMAL(5,2) NOT NULL,
+                weight_category ENUM('healthy', 'underweight', 'overweight') NOT NULL,
+                checked_by INT NOT NULL,
+                checked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                INDEX idx_chicken_id (chicken_id),
+                INDEX idx_weight_standard_id (weight_standard_id),
+                INDEX idx_checked_at (checked_at)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        """)
+        
+        # Get existing weight tracking records
+        cursor.execute("""
+            SELECT 
+                cwt.chicken_id,
+                cwt.weight_standard_id,
+                cwt.actual_weight,
+                cwt.expected_weight,
+                cwt.weight_percentage,
+                cwt.weight_category,
+                cwt.checked_at
+            FROM chicken_weight_tracking cwt
+            ORDER BY cwt.checked_at DESC
+        """)
+        weight_tracking = cursor.fetchall()
+        
+        # Create a mapping of chicken_id + weight_standard_id to tracking record
+        tracking_map = {}
+        for record in weight_tracking:
+            key = f"{record['chicken_id']}_{record['weight_standard_id']}"
+            tracking_map[key] = record
+        
+        # Match chickens with their applicable weight standards (only incomplete ones)
+        chickens_with_standards = []
+        for chicken in chickens:
+            chicken_standards = []
+            for standard in weight_standards:
+                if standard['category'] == chicken['chicken_type'] and chicken['age_days'] >= standard['age_days']:
+                    # Check if this weight check has already been completed
+                    key = f"{chicken['chicken_id']}_{standard['id']}"
+                    tracking_record = tracking_map.get(key)
+                    
+                    # Only include incomplete weight checks
+                    if tracking_record is None:
+                        chicken_standards.append({
+                            'standard': standard,
+                            'completed': False,
+                            'tracking_record': None
+                        })
+            
+            if chicken_standards:  # Only include chickens that have incomplete weight standards
+                chickens_with_standards.append({
+                    'chicken': chicken,
+                    'standards': chicken_standards
+                })
+        
+        cursor.close()
+        conn.close()
+        
+    except Exception as e:
+        print(f"Error fetching chicken weight check data: {str(e)}")
+        chickens_with_standards = []
+    
+    return render_template('admin_farm_chicken_weight_check.html',
+                         user=user_data,
+                         chickens_with_standards=chickens_with_standards)
+
+@app.route('/admin/farm/chicken-weight-submit', methods=['POST'])
+def submit_chicken_weight():
+    if 'employee_id' not in session or session.get('employee_role') != 'administrator':
+        return jsonify({'success': False, 'message': 'Unauthorized access'})
+    
+    try:
+        chicken_id = request.form.get('chicken_id')
+        weight_standard_id = request.form.get('weight_standard_id')
+        actual_weight = float(request.form.get('actual_weight'))
+        
+        if not chicken_id or not weight_standard_id or not actual_weight:
+            return jsonify({'success': False, 'message': 'All fields are required'})
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get the weight standard details
+        cursor.execute("""
+            SELECT expected_weight FROM chicken_weight_standards 
+            WHERE id = %s
+        """, (weight_standard_id,))
+        
+        standard = cursor.fetchone()
+        if not standard:
+            return jsonify({'success': False, 'message': 'Weight standard not found'})
+        
+        expected_weight = float(standard['expected_weight'])
+        
+        # Calculate weight percentage
+        weight_percentage = (actual_weight / expected_weight) * 100
+        
+        # Determine weight category
+        if weight_percentage >= 90 and weight_percentage <= 110:
+            weight_category = 'healthy'
+        elif weight_percentage < 90:
+            weight_category = 'underweight'
+        else:
+            weight_category = 'overweight'
+        
+        # Insert weight tracking record
+        cursor.execute("""
+            INSERT INTO chicken_weight_tracking 
+            (chicken_id, weight_standard_id, actual_weight, expected_weight, weight_percentage, weight_category, checked_by)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """, (chicken_id, weight_standard_id, actual_weight, expected_weight, weight_percentage, weight_category, session['employee_id']))
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'message': f'Weight recorded successfully! {weight_percentage:.1f}% of expected weight - {weight_category.title()}',
+            'weight_percentage': round(weight_percentage, 1),
+            'weight_category': weight_category
+        })
+        
+    except Exception as e:
+        print(f"Error submitting chicken weight: {str(e)}")
+        return jsonify({
+            'success': False,
+            'message': f'Error recording weight: {str(e)}'
+        })
 
 if __name__ == '__main__':
     print("Starting Pig Farm Management System...")
@@ -7737,8 +14019,8 @@ if __name__ == '__main__':
     
     # Create database and tables on startup
     if create_database_and_tables():
-        print("✅ Database setup completed. Starting Flask application...")
+        print("Database setup completed. Starting Flask application...")
         app.run(debug=True)
     else:
-        print("❌ Failed to setup database. Please check your MySQL connection.")
+        print("Failed to setup database. Please check your MySQL connection.")
         print("Make sure MySQL is running and the credentials are correct.")

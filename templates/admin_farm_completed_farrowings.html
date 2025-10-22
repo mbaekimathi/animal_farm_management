@@ -630,6 +630,12 @@
                     }
                     
                     records.forEach((record, index) => {
+                        // Debug: Log the record to see what fields are available
+                        console.log('Farrowing record data:', record);
+                        console.log('Available fields:', Object.keys(record));
+                        console.log('weak_piglets:', record.weak_piglets);
+                        console.log('notes:', record.notes);
+                        
                         const card = document.createElement('div');
                         card.className = 'completed-farrowing-card group bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden relative animate-slide-up';
                         card.style.animationDelay = `${index * 0.1}s`;
@@ -649,7 +655,10 @@
                                             <i class="fas fa-check-circle text-green-600 dark:text-green-400 text-lg"></i>
                                         </div>
                                         <div>
-                                            <h3 class="text-lg font-bold text-gray-900 dark:text-white">Litter ${record.litter_id || 'N/A'}</h3>
+                                            <h3 class="text-lg font-bold text-gray-900 dark:text-white">
+                                                Litter ${record.litter_id || 'N/A'}
+                                                ${record.is_edited ? '<span class="ml-2 text-xs bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 px-2 py-1 rounded-full cursor-pointer hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors" onclick="showFarrowingAuditModal(' + record.id + ')" title="Click to view edit history">✏️ Edited</span>' : ''}
+                                            </h3>
                                             <p class="text-sm text-gray-600 dark:text-gray-400">Farrowing #${record.id} - ${daysSinceFarrowing} days ago</p>
                                         </div>
                                     </div>
@@ -746,7 +755,15 @@
                                 
                                 <!-- Action Buttons -->
                                 <div class="flex flex-wrap gap-3">
-                                    <button onclick="checkRecoveryStatus(${record.id})" class="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5">
+                                    <button onclick="showEditFarrowingModal(${record.id}, '${record.sow_tag_id}', '${record.boar_tag_id}', '${record.farrowing_date}', ${record.alive_piglets || 0}, ${record.dead_piglets || 0}, ${record.weak_piglets || 0}, '${record.notes || ''}')" class="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5">
+                                        <i class="fas fa-edit text-sm"></i>
+                                        <span class="font-medium">Edit</span>
+                                    </button>
+                                    <button onclick="showDeleteFarrowingModal(${record.id}, '${record.sow_tag_id}')" class="flex items-center space-x-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5">
+                                        <i class="fas fa-trash text-sm"></i>
+                                        <span class="font-medium">Delete</span>
+                                    </button>
+                                    <button onclick="checkRecoveryStatus(${record.id})" class="flex items-center space-x-2 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5">
                                         <i class="fas fa-heartbeat text-sm"></i>
                                         <span class="font-medium">Check Recovery</span>
                                     </button>
@@ -1406,6 +1423,496 @@
             const popup = document.getElementById('incomplete-activities-popup');
             if (popup) {
                 popup.remove();
+            }
+        }
+
+        // Edit Farrowing Modal
+        function showEditFarrowingModal(farrowingId, sowTagId, boarTagId, farrowingDate, alivePiglets, deadPiglets, weakPiglets, notes) {
+            console.log('showEditFarrowingModal called with:', {
+                farrowingId, sowTagId, boarTagId, farrowingDate, alivePiglets, deadPiglets, weakPiglets, notes
+            });
+            console.log('weakPiglets value:', weakPiglets, 'type:', typeof weakPiglets);
+            console.log('notes value:', notes, 'type:', typeof notes);
+            
+            // Format date for HTML date input
+            const formattedFarrowingDate = formatDateForInput(farrowingDate);
+            console.log('Formatted farrowing date:', formattedFarrowingDate);
+            
+            const modalHTML = `
+                <div id="edit-farrowing-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-start sm:items-center justify-center p-1 sm:p-4 transition-all duration-300 overflow-y-auto">
+                    <div class="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl lg:rounded-3xl shadow-2xl w-full max-w-2xl mx-1 sm:mx-4 my-2 sm:my-4 max-h-[98vh] sm:max-h-[90vh] transform scale-95 opacity-0 transition-all duration-300">
+                        <!-- Modal Header -->
+                        <div class="relative px-4 sm:px-6 lg:px-8 py-4 sm:py-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-500/5 via-indigo-500/5 to-purple-500/5 rounded-t-2xl sm:rounded-t-3xl">
+                            <div class="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-indigo-500/5 rounded-t-2xl sm:rounded-t-3xl"></div>
+                            <div class="relative flex items-center justify-between">
+                                <div class="flex items-center space-x-3 sm:space-x-4 lg:space-x-6">
+                                    <div class="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-xl">
+                                        <i class="fas fa-edit text-white text-lg sm:text-xl lg:text-2xl"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">Edit Farrowing Record</h3>
+                                        <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 font-medium mt-1">Update farrowing details</p>
+                                        <div class="flex items-center mt-1 sm:mt-2">
+                                            <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-500 rounded-full mr-1 sm:mr-2 animate-pulse"></div>
+                                            <span class="text-xs sm:text-sm text-blue-600 dark:text-blue-400 font-medium">Live Editing</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button onclick="closeEditFarrowingModal()" class="p-2 sm:p-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg sm:rounded-xl transition-all duration-200" aria-label="Close modal">
+                                    <i class="fas fa-times text-lg sm:text-xl"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Modal Body -->
+                        <div class="px-3 sm:px-6 lg:px-8 py-3 sm:py-6 lg:py-8 border-b border-gray-200 dark:border-gray-700">
+                            <form id="edit-farrowing-form" class="space-y-3 sm:space-y-6 lg:space-y-8">
+                                <input type="hidden" id="edit-farrowing-id" value="${farrowingId}">
+                                
+                                <!-- Basic Information Grid -->
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6">
+                                    <div class="group">
+                                        <label class="block text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-300 mb-1 sm:mb-3">
+                                            <i class="fas fa-female text-pink-500 mr-1 sm:mr-2 text-sm"></i>Sow Tag ID
+                                        </label>
+                                        <input type="text" id="edit-sow-tag-id" value="${sowTagId}" readonly 
+                                               class="w-full px-2 sm:px-4 py-2 sm:py-4 border border-gray-300 dark:border-gray-600 rounded-lg sm:rounded-2xl bg-gradient-to-r from-pink-50 to-pink-100 dark:from-pink-900/20 dark:to-pink-800/20 text-gray-900 dark:text-white font-bold text-xs sm:text-base lg:text-lg border-pink-200 dark:border-pink-700/50">
+                                    </div>
+                                    
+                                    <div class="group">
+                                        <label class="block text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-300 mb-1 sm:mb-3">
+                                            <i class="fas fa-male text-blue-500 mr-1 sm:mr-2 text-sm"></i>Boar Tag ID
+                                        </label>
+                                        <input type="text" id="edit-boar-tag-id" value="${boarTagId}" readonly 
+                                               class="w-full px-2 sm:px-4 py-2 sm:py-4 border border-gray-300 dark:border-gray-600 rounded-lg sm:rounded-2xl bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 text-gray-900 dark:text-white font-bold text-xs sm:text-base lg:text-lg border-blue-200 dark:border-blue-700/50">
+                                    </div>
+                                    
+                                    <div class="group">
+                                        <label class="block text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-300 mb-1 sm:mb-3">
+                                            <i class="fas fa-calendar text-purple-500 mr-1 sm:mr-2 text-sm"></i>Farrowing Date
+                                        </label>
+                                        <input type="date" id="edit-farrowing-date" value="${formattedFarrowingDate}" required 
+                                               class="w-full px-2 sm:px-4 py-2 sm:py-4 border border-gray-300 dark:border-gray-600 rounded-lg sm:rounded-2xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-xs sm:text-base lg:text-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300">
+                                    </div>
+                                    
+                                    <div class="group">
+                                        <label class="block text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-300 mb-1 sm:mb-3">
+                                            <i class="fas fa-baby text-green-500 mr-1 sm:mr-2 text-sm"></i>Alive Piglets
+                                        </label>
+                                        <input type="number" id="edit-alive-piglets" value="${alivePiglets}" min="0" required 
+                                               class="w-full px-2 sm:px-4 py-2 sm:py-4 border border-gray-300 dark:border-gray-600 rounded-lg sm:rounded-2xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-xs sm:text-base lg:text-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300">
+                                    </div>
+                                    
+                                    <div class="group">
+                                        <label class="block text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-300 mb-1 sm:mb-3">
+                                            <i class="fas fa-skull text-red-500 mr-1 sm:mr-2 text-sm"></i>Dead Piglets
+                                        </label>
+                                        <input type="number" id="edit-dead-piglets" value="${deadPiglets}" min="0" 
+                                               class="w-full px-2 sm:px-4 py-2 sm:py-4 border border-gray-300 dark:border-gray-600 rounded-lg sm:rounded-2xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-xs sm:text-base lg:text-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300">
+                                    </div>
+                                    
+                                    <div class="group">
+                                        <label class="block text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-300 mb-1 sm:mb-3">
+                                            <i class="fas fa-exclamation-triangle text-yellow-500 mr-1 sm:mr-2 text-sm"></i>Weak Piglets
+                                        </label>
+                                        <input type="number" id="edit-weak-piglets" value="${weakPiglets}" min="0" 
+                                               class="w-full px-2 sm:px-4 py-2 sm:py-4 border border-gray-300 dark:border-gray-600 rounded-lg sm:rounded-2xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-xs sm:text-base lg:text-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300">
+                                    </div>
+                                </div>
+                                
+                                <!-- Notes Section -->
+                                <div class="group">
+                                    <label class="block text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-300 mb-1 sm:mb-3">
+                                        <i class="fas fa-sticky-note text-gray-500 mr-1 sm:mr-2 text-sm"></i>Notes
+                                    </label>
+                                    <textarea id="edit-notes" rows="3" 
+                                              class="w-full px-2 sm:px-4 py-2 sm:py-4 border border-gray-300 dark:border-gray-600 rounded-lg sm:rounded-2xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-xs sm:text-base lg:text-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 resize-none"
+                                              placeholder="Additional notes about the farrowing...">${notes}</textarea>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- Modal Footer -->
+                        <div class="px-3 sm:px-6 lg:px-8 py-3 sm:py-6 lg:py-8 flex flex-col sm:flex-row gap-2 sm:gap-4">
+                            <button type="button" onclick="closeEditFarrowingModal()" class="group flex-1 bg-gray-200 hover:bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300 px-3 sm:px-6 lg:px-8 py-2.5 sm:py-4 rounded-lg sm:rounded-2xl font-bold text-xs sm:text-base lg:text-lg transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                                <i class="fas fa-times mr-2 text-sm"></i>Cancel
+                            </button>
+                            <button type="button" onclick="submitEditFarrowing()" class="group flex-1 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-3 sm:px-6 lg:px-8 py-2.5 sm:py-4 rounded-lg sm:rounded-2xl font-bold text-xs sm:text-base lg:text-lg transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                                <i class="fas fa-save mr-2 text-sm"></i>Update Farrowing
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            
+            // Animate modal in
+            setTimeout(() => {
+                const modal = document.getElementById('edit-farrowing-modal');
+                const modalContent = modal.querySelector('.bg-white');
+                modalContent.style.transform = 'scale(1)';
+                modalContent.style.opacity = '1';
+            }, 10);
+        }
+
+        function closeEditFarrowingModal() {
+            const modal = document.getElementById('edit-farrowing-modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        async function submitEditFarrowing() {
+            const farrowingId = document.getElementById('edit-farrowing-id').value;
+            const farrowingDate = document.getElementById('edit-farrowing-date').value;
+            const alivePiglets = document.getElementById('edit-alive-piglets').value;
+            const deadPiglets = document.getElementById('edit-dead-piglets').value;
+            const weakPiglets = document.getElementById('edit-weak-piglets').value;
+            const notes = document.getElementById('edit-notes').value;
+            
+            if (!farrowingDate) {
+                alert('Please select a farrowing date');
+                return;
+            }
+            
+            if (!alivePiglets || alivePiglets < 0) {
+                alert('Please enter a valid number of alive piglets');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/farrowing/${farrowingId}/edit`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        farrowing_date: farrowingDate,
+                        alive_piglets: parseInt(alivePiglets),
+                        dead_piglets: parseInt(deadPiglets) || 0,
+                        weak_piglets: parseInt(weakPiglets) || 0,
+                        notes: notes
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Farrowing record updated successfully');
+                    closeEditFarrowingModal();
+                    loadCompletedFarrowings();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error updating farrowing:', error);
+                alert('Error updating farrowing. Please try again.');
+            }
+        }
+
+        // Delete Farrowing Modal
+        function showDeleteFarrowingModal(farrowingId, sowTagId) {
+            const modalHTML = `
+                <div id="delete-farrowing-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-start sm:items-center justify-center p-1 sm:p-4 transition-all duration-300 overflow-y-auto">
+                    <div class="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl lg:rounded-3xl shadow-2xl w-full max-w-lg mx-1 sm:mx-4 my-2 sm:my-4 max-h-[98vh] sm:max-h-[90vh] transform scale-95 opacity-0 transition-all duration-300">
+                        <!-- Modal Header -->
+                        <div class="relative px-4 sm:px-6 lg:px-8 py-4 sm:py-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-red-500/5 via-pink-500/5 to-rose-500/5 rounded-t-2xl sm:rounded-t-3xl">
+                            <div class="absolute inset-0 bg-gradient-to-r from-red-500/5 to-pink-500/5 rounded-t-2xl sm:rounded-t-3xl"></div>
+                            <div class="relative flex items-center justify-between">
+                                <div class="flex items-center space-x-3 sm:space-x-4 lg:space-x-6">
+                                    <div class="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 bg-gradient-to-br from-red-500 via-pink-500 to-rose-600 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-xl">
+                                        <i class="fas fa-trash text-white text-lg sm:text-xl lg:text-2xl"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">Delete Farrowing Record</h3>
+                                        <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 font-medium mt-1">This action cannot be undone</p>
+                                        <div class="flex items-center mt-1 sm:mt-2">
+                                            <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-red-500 rounded-full mr-1 sm:mr-2 animate-pulse"></div>
+                                            <span class="text-xs sm:text-sm text-red-600 dark:text-red-400 font-medium">Permanent Action</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button onclick="closeDeleteFarrowingModal()" class="p-2 sm:p-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg sm:rounded-xl transition-all duration-200" aria-label="Close modal">
+                                    <i class="fas fa-times text-lg sm:text-xl"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Modal Body -->
+                        <div class="px-3 sm:px-6 lg:px-8 py-3 sm:py-6 lg:py-8 border-b border-gray-200 dark:border-gray-700">
+                            <div class="text-center">
+                                <div class="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-6 bg-gradient-to-br from-red-100 to-pink-100 dark:from-red-900/20 dark:to-pink-900/20 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-exclamation-triangle text-red-500 text-2xl sm:text-3xl"></i>
+                                </div>
+                                <h4 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-2 sm:mb-4">Are you sure you want to delete this farrowing record?</h4>
+                                <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-4 sm:mb-6">
+                                    This will permanently delete the farrowing record for <strong>${sowTagId}</strong> and all associated data.
+                                </p>
+                                <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700/50 rounded-lg p-3 sm:p-4">
+                                    <p class="text-sm text-red-700 dark:text-red-400 font-medium">
+                                        <i class="fas fa-info-circle mr-2"></i>
+                                        This action cannot be undone. All piglet records and associated data will be lost.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Modal Footer -->
+                        <div class="px-3 sm:px-6 lg:px-8 py-3 sm:py-6 lg:py-8 flex flex-col sm:flex-row gap-2 sm:gap-4">
+                            <button type="button" onclick="closeDeleteFarrowingModal()" class="group flex-1 bg-gray-200 hover:bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300 px-3 sm:px-6 lg:px-8 py-2.5 sm:py-4 rounded-lg sm:rounded-2xl font-bold text-xs sm:text-base lg:text-lg transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                                <i class="fas fa-times mr-2 text-sm"></i>Cancel
+                            </button>
+                            <button type="button" onclick="submitDeleteFarrowing(${farrowingId})" class="group flex-1 bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white px-3 sm:px-6 lg:px-8 py-2.5 sm:py-4 rounded-lg sm:rounded-2xl font-bold text-xs sm:text-base lg:text-lg transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                                <i class="fas fa-trash mr-2 text-sm"></i>Delete Farrowing
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            
+            // Animate modal in
+            setTimeout(() => {
+                const modal = document.getElementById('delete-farrowing-modal');
+                const modalContent = modal.querySelector('.bg-white');
+                modalContent.style.transform = 'scale(1)';
+                modalContent.style.opacity = '1';
+            }, 10);
+        }
+
+        function closeDeleteFarrowingModal() {
+            const modal = document.getElementById('delete-farrowing-modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        async function submitDeleteFarrowing(farrowingId) {
+            try {
+                const response = await fetch(`/api/farrowing/${farrowingId}/delete`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Farrowing record deleted successfully.');
+                    closeDeleteFarrowingModal();
+                    loadCompletedFarrowings();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error deleting farrowing:', error);
+                alert('Error deleting farrowing. Please try again.');
+            }
+        }
+
+        // Farrowing Audit Modal
+        function showFarrowingAuditModal(farrowingId) {
+            const modalHTML = `
+                <div id="farrowing-audit-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-start sm:items-center justify-center p-1 sm:p-4 transition-all duration-300 overflow-y-auto">
+                    <div class="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl lg:rounded-3xl shadow-2xl w-full max-w-4xl mx-1 sm:mx-4 my-2 sm:my-4 max-h-[98vh] sm:max-h-[90vh] transform scale-95 opacity-0 transition-all duration-300">
+                        <!-- Modal Header -->
+                        <div class="relative px-4 sm:px-6 lg:px-8 py-4 sm:py-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-500/5 via-indigo-500/5 to-purple-500/5 rounded-t-2xl sm:rounded-t-3xl">
+                            <div class="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-indigo-500/5 rounded-t-2xl sm:rounded-t-3xl"></div>
+                            <div class="relative flex items-center justify-between">
+                                <div class="flex items-center space-x-3 sm:space-x-4 lg:space-x-6">
+                                    <div class="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-xl">
+                                        <i class="fas fa-history text-white text-lg sm:text-xl lg:text-2xl"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">Farrowing Edit History</h3>
+                                        <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 font-medium mt-1">Audit trail for farrowing record #${farrowingId}</p>
+                                        <div class="flex items-center mt-1 sm:mt-2">
+                                            <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-500 rounded-full mr-1 sm:mr-2 animate-pulse"></div>
+                                            <span class="text-xs sm:text-sm text-blue-600 dark:text-blue-400 font-medium">Live Audit</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button onclick="closeFarrowingAuditModal()" class="p-2 sm:p-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg sm:rounded-xl transition-all duration-200" aria-label="Close modal">
+                                    <i class="fas fa-times text-lg sm:text-xl"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Modal Body -->
+                        <div class="px-3 sm:px-6 lg:px-8 py-3 sm:py-6 lg:py-8">
+                            <div id="farrowing-audit-content" class="space-y-4">
+                                <div class="flex justify-center items-center py-8">
+                                    <div class="text-center">
+                                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                                        <p class="text-gray-600 dark:text-gray-400 font-medium">Loading audit history...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            
+            // Animate modal in
+            setTimeout(() => {
+                const modal = document.getElementById('farrowing-audit-modal');
+                const modalContent = modal.querySelector('.bg-white');
+                modalContent.style.transform = 'scale(1)';
+                modalContent.style.opacity = '1';
+            }, 10);
+            
+            // Load audit history
+            loadFarrowingAuditHistory(farrowingId);
+        }
+
+        function closeFarrowingAuditModal() {
+            const modal = document.getElementById('farrowing-audit-modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        async function loadFarrowingAuditHistory(farrowingId) {
+            try {
+                const response = await fetch(`/api/farrowing/${farrowingId}/audit`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayFarrowingAuditHistory(data.audit_records);
+                } else {
+                    displayFarrowingAuditHistory([]);
+                }
+            } catch (error) {
+                console.error('Error loading farrowing audit history:', error);
+                displayFarrowingAuditHistory([]);
+            }
+        }
+
+        function displayFarrowingAuditHistory(auditRecords) {
+            const container = document.getElementById('farrowing-audit-content');
+            
+            if (!auditRecords || auditRecords.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8">
+                        <div class="w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                            <i class="fas fa-history text-gray-400 text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">No Edit History</h3>
+                        <p class="text-gray-600 dark:text-gray-400">This farrowing record has not been edited.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = auditRecords.map(record => {
+                const fieldNames = {
+                    'farrowing_date': 'Farrowing Date',
+                    'alive_piglets': 'Alive Piglets',
+                    'dead_piglets': 'Dead Piglets',
+                    'weak_piglets': 'Weak Piglets',
+                    'notes': 'Notes'
+                };
+                
+                const fieldName = fieldNames[record.field_name] || record.field_name;
+                const editDate = new Date(record.edited_at).toLocaleString();
+                
+                return `
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-edit text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-900 dark:text-white">${fieldName}</h4>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">${editDate}</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Edited by:</p>
+                                <p class="font-medium text-gray-900 dark:text-white">${record.edited_by_name || 'Unknown'}</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">Previous Value:</p>
+                                <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700/50 rounded-lg p-3">
+                                    <p class="text-sm text-red-700 dark:text-red-400 font-medium">${record.old_value || 'Empty'}</p>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">New Value:</p>
+                                <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700/50 rounded-lg p-3">
+                                    <p class="text-sm text-green-700 dark:text-green-400 font-medium">${record.new_value || 'Empty'}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Date formatting function (reuse from breeding records)
+        function formatDateForInput(dateString) {
+            console.log('formatDateForInput called with:', dateString, 'type:', typeof dateString);
+            
+            if (!dateString || dateString === 'null' || dateString === 'undefined') {
+                console.log('Empty or null date, returning empty string');
+                return '';
+            }
+            
+            try {
+                // Handle different date formats from database
+                let date;
+                
+                if (typeof dateString === 'string') {
+                    // If it's already in YYYY-MM-DD format, return as is
+                    if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+                        console.log('Date already in YYYY-MM-DD format:', dateString);
+                        return dateString;
+                    }
+                    
+                    // Handle JavaScript Date string format like "Wed, 08 Oct 2025 00:00:00 GMT"
+                    if (dateString.includes('GMT') || dateString.includes('UTC')) {
+                        console.log('Creating date from JavaScript Date string:', dateString);
+                        date = new Date(dateString);
+                    }
+                    // If it contains time, extract just the date part
+                    else if (dateString.includes('T')) {
+                        const datePart = dateString.split('T')[0];
+                        console.log('Extracted date part from ISO string:', datePart);
+                        date = new Date(datePart);
+                    } else {
+                        console.log('Creating date from string:', dateString);
+                        date = new Date(dateString);
+                    }
+                } else {
+                    console.log('Creating date from non-string:', dateString);
+                    date = new Date(dateString);
+                }
+                
+                // Check if date is valid
+                if (isNaN(date.getTime())) {
+                    console.error('Invalid date created from:', dateString);
+                    return '';
+                }
+                
+                // Format as YYYY-MM-DD for HTML date input
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                
+                const formattedDate = `${year}-${month}-${day}`;
+                console.log('Formatted date:', formattedDate);
+                return formattedDate;
+            } catch (error) {
+                console.error('Error formatting date:', error, 'Input:', dateString);
+                return '';
             }
         }
     </script>

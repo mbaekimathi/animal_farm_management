@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles for Jo Tech Solutions */
+:root {
+    --primary-green: #00A86B;
+    --primary-orange: #FF7A00;
+    --accent-green: #10b981;
+    --accent-orange: #f59e0b;
+}
+
+/* Custom components */
+.btn-primary {
+    @apply bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:shadow-lg hover:scale-105;
+}
+
+.btn-secondary {
+    @apply bg-gradient-to-r from-orange-500 to-orange-600 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:shadow-lg hover:scale-105;
+}
+
+.gradient-text {
+    @apply bg-gradient-to-r from-green-600 to-orange-600 bg-clip-text text-transparent;
+}
+
+.card-hover {
+    @apply transition-all duration-300 hover:transform hover:scale-105 hover:shadow-xl;
+}
+

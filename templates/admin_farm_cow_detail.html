@@ -546,6 +546,7 @@
                                         <th class="text-left py-3 px-4 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Protein %</th>
                                         <th class="text-left py-3 px-4 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Quality</th>
                                         <th class="text-left py-3 px-4 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Notes</th>
+                                        <th class="text-left py-3 px-4 text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody id="productionHistoryTable" class="divide-y divide-gray-200 dark:divide-gray-600">
@@ -558,6 +559,202 @@
             </div>
         </div>
     </main>
+
+    <!-- Edit Milk Production Modal -->
+    <div id="editMilkProductionModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden z-50 transition-all duration-300">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-2xl transform scale-95 opacity-0 transition-all duration-300">
+                <!-- Modal Header -->
+                <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                                <i class="fas fa-edit text-white text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-900 dark:text-white">Edit Milk Production</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Update production record details</p>
+                            </div>
+                        </div>
+                        <button onclick="closeEditMilkProductionModal()" class="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-all duration-200">
+                            <i class="fas fa-times text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="px-6 py-6">
+                    <form id="editMilkProductionForm" class="space-y-4">
+                        <input type="hidden" id="editProductionId" name="production_id">
+                        
+                        <!-- Production Date -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                <i class="fas fa-calendar mr-2 text-blue-500"></i>
+                                Production Date <span class="text-red-500">*</span>
+                            </label>
+                            <input type="date" id="editProductionDate" name="production_date" required
+                                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                        </div>
+
+                        <!-- Milking Session -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                <i class="fas fa-clock mr-2 text-purple-500"></i>
+                                Milking Session <span class="text-red-500">*</span>
+                            </label>
+                            <select id="editMilkingSession" name="milking_session" required
+                                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                                <option value="">Select session</option>
+                                <option value="morning">Morning</option>
+                                <option value="afternoon">Afternoon</option>
+                                <option value="evening">Evening</option>
+                            </select>
+                        </div>
+
+                        <!-- Milk Quantity -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                <i class="fas fa-tint mr-2 text-green-500"></i>
+                                Milk Quantity (Liters) <span class="text-red-500">*</span>
+                            </label>
+                            <input type="number" id="editMilkQuantity" name="milk_quantity" step="0.1" min="0" required
+                                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                   placeholder="Enter quantity in liters">
+                        </div>
+
+                        <!-- Quality Metrics -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    <i class="fas fa-percentage mr-2 text-orange-500"></i>
+                                    Fat Percentage (%)
+                                </label>
+                                <input type="number" id="editFatPercentage" name="fat_percentage" step="0.1" min="0" max="100"
+                                       class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                       placeholder="Enter fat percentage">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    <i class="fas fa-percentage mr-2 text-cyan-500"></i>
+                                    Protein Percentage (%)
+                                </label>
+                                <input type="number" id="editProteinPercentage" name="protein_percentage" step="0.1" min="0" max="100"
+                                       class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                       placeholder="Enter protein percentage">
+                            </div>
+                        </div>
+
+                        <!-- Milk Grade -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                <i class="fas fa-star mr-2 text-yellow-500"></i>
+                                Milk Grade
+                            </label>
+                            <input type="text" id="editMilkGrade" name="milk_grade"
+                                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                   placeholder="Enter milk grade (e.g., A, B, C)">
+                        </div>
+
+                        <!-- Quality Assessment -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                <i class="fas fa-check-circle mr-2 text-green-500"></i>
+                                Quality Assessment
+                            </label>
+                            <select id="editMilkQualityAssessment" name="milk_quality_assessment"
+                                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                                <option value="">Select quality</option>
+                                <option value="good_quality">Good Quality</option>
+                                <option value="moderate_quality">Moderate Quality</option>
+                                <option value="poor_quality">Poor Quality</option>
+                            </select>
+                        </div>
+
+                        <!-- Additional Notes -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                <i class="fas fa-sticky-note mr-2 text-gray-500"></i>
+                                Additional Notes
+                            </label>
+                            <textarea id="editAdditionalNotes" name="additional_notes" rows="3"
+                                      class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                      placeholder="Enter any additional notes or observations"></textarea>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="px-6 py-4 bg-gray-50 dark:bg-gray-700/50 rounded-b-xl">
+                    <div class="flex justify-end space-x-3">
+                        <button onclick="closeEditMilkProductionModal()" class="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 font-semibold">
+                            <i class="fas fa-times mr-2"></i>
+                            Cancel
+                        </button>
+                        <button onclick="submitEditMilkProduction()" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-lg transition-all duration-200 hover:shadow-lg hover:scale-105 font-semibold">
+                            <i class="fas fa-save mr-2"></i>
+                            Update Record
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteMilkProductionModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden z-50 transition-all duration-300">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md transform scale-95 opacity-0 transition-all duration-300">
+                <!-- Modal Header -->
+                <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gradient-to-br from-red-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
+                            <i class="fas fa-exclamation-triangle text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white">Delete Production Record</h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">This action cannot be undone</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="px-6 py-6">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-trash text-red-600 dark:text-red-400 text-2xl"></i>
+                        </div>
+                        <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Are you sure?</h4>
+                        <p class="text-gray-600 dark:text-gray-400 mb-4">
+                            You are about to delete this milk production record. This action cannot be undone and will permanently remove the data from the system.
+                        </p>
+                        <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg p-3">
+                            <div class="flex items-center">
+                                <i class="fas fa-exclamation-triangle text-yellow-600 dark:text-yellow-400 mr-2"></i>
+                                <span class="text-sm text-yellow-800 dark:text-yellow-300 font-medium">
+                                    This will also affect any related statistics and reports.
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="px-6 py-4 bg-gray-50 dark:bg-gray-700/50 rounded-b-xl">
+                    <div class="flex justify-end space-x-3">
+                        <button onclick="closeDeleteMilkProductionModal()" class="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 font-semibold">
+                            <i class="fas fa-times mr-2"></i>
+                            Cancel
+                        </button>
+                        <button onclick="confirmDeleteMilkProduction()" class="px-4 py-2 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white rounded-lg transition-all duration-200 hover:shadow-lg hover:scale-105 font-semibold">
+                            <i class="fas fa-trash mr-2"></i>
+                            Delete Record
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
         // Get cow ID from URL
@@ -693,7 +890,12 @@
                 tableBody.innerHTML = history.map(record => `
                     <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
                         <td class="py-4 px-4">
-                            <span class="text-sm text-gray-900 dark:text-white">${new Date(record.production_date).toLocaleDateString()}</span>
+                            ${record.is_edited ? 
+                                `<button onclick="viewMilkProductionAudit(${record.id})" class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline cursor-pointer font-medium" title="Click to view edit history">
+                                    ${new Date(record.production_date).toLocaleDateString()} ✏️
+                                </button>` :
+                                `<span class="text-sm text-gray-900 dark:text-white">${new Date(record.production_date).toLocaleDateString()}</span>`
+                            }
                         </td>
                         <td class="py-4 px-4">
                             <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getSessionColor(record.milking_session)}">
@@ -717,12 +919,24 @@
                         <td class="py-4 px-4">
                             <span class="text-sm text-gray-900 dark:text-white">${record.additional_notes || '-'}</span>
                         </td>
+                        <td class="py-4 px-4">
+                            <div class="flex items-center space-x-2">
+                                <button onclick="editMilkProduction(${record.id})" class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors duration-200" title="Edit record">
+                                    <i class="fas fa-edit mr-1"></i>
+                                    Edit
+                                </button>
+                                <button onclick="deleteMilkProduction(${record.id})" class="inline-flex items-center px-2 py-1 text-xs font-medium text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors duration-200" title="Delete record">
+                                    <i class="fas fa-trash mr-1"></i>
+                                    Delete
+                                </button>
+                            </div>
+                        </td>
                     </tr>
                 `).join('');
             } else {
                 tableBody.innerHTML = `
                     <tr>
-                        <td colspan="7" class="py-8 px-4 text-center text-gray-500 dark:text-gray-400">
+                        <td colspan="8" class="py-8 px-4 text-center text-gray-500 dark:text-gray-400">
                             No production records found for this cow
                         </td>
                     </tr>
@@ -767,10 +981,394 @@
             loadCowData();
         }
 
+        // Global variables for edit/delete operations
+        let currentProductionId = null;
+
+        // Edit milk production functionality
+        function editMilkProduction(productionId) {
+            currentProductionId = productionId;
+            
+            // Fetch production record details
+            fetch(`/api/milk-production/${productionId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        populateEditForm(data.record);
+                        openEditMilkProductionModal();
+                    } else {
+                        showNotification('Failed to load production record', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading production record:', error);
+                    showNotification('Failed to load production record. Please try again.', 'error');
+                });
+        }
+
+        function populateEditForm(record) {
+            document.getElementById('editProductionId').value = record.id;
+            document.getElementById('editProductionDate').value = record.production_date;
+            document.getElementById('editMilkingSession').value = record.milking_session;
+            document.getElementById('editMilkQuantity').value = record.milk_quantity;
+            document.getElementById('editFatPercentage').value = record.fat_percentage || '';
+            document.getElementById('editProteinPercentage').value = record.protein_percentage || '';
+            document.getElementById('editMilkGrade').value = record.milk_grade || '';
+            document.getElementById('editMilkQualityAssessment').value = record.milk_quality_assessment || '';
+            document.getElementById('editAdditionalNotes').value = record.additional_notes || '';
+        }
+
+        function openEditMilkProductionModal() {
+            const modal = document.getElementById('editMilkProductionModal');
+            modal.classList.remove('hidden');
+            
+            // Force a reflow to ensure the modal is visible before animation
+            modal.offsetHeight;
+            setTimeout(() => {
+                const modalContent = modal.querySelector('.bg-white\\/95, .bg-white');
+                if (modalContent) {
+                    modalContent.classList.remove('scale-95', 'opacity-0');
+                    modalContent.classList.add('scale-100', 'opacity-100');
+                }
+            }, 10);
+        }
+
+        function closeEditMilkProductionModal() {
+            const modal = document.getElementById('editMilkProductionModal');
+            const modalContent = modal.querySelector('.bg-white\\/95, .bg-white');
+            
+            if (modalContent) {
+                modalContent.classList.remove('scale-100', 'opacity-100');
+                modalContent.classList.add('scale-95', 'opacity-0');
+            }
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.getElementById('editMilkProductionForm').reset();
+                currentProductionId = null;
+            }, 300);
+        }
+
+        function submitEditMilkProduction() {
+            const form = document.getElementById('editMilkProductionForm');
+            const formData = new FormData(form);
+            
+            // Validate required fields
+            const productionDate = formData.get('production_date');
+            const milkingSession = formData.get('milking_session');
+            const milkQuantity = formData.get('milk_quantity');
+            
+            if (!productionDate || !milkingSession || !milkQuantity) {
+                showNotification('Please fill in all required fields', 'error');
+                return;
+            }
+
+            // Validate milk quantity
+            if (parseFloat(milkQuantity) <= 0) {
+                showNotification('Milk quantity must be greater than 0', 'error');
+                return;
+            }
+
+            // Prepare data for API
+            const data = {
+                production_date: productionDate,
+                milking_session: milkingSession,
+                milk_quantity: parseFloat(milkQuantity),
+                fat_percentage: formData.get('fat_percentage') ? parseFloat(formData.get('fat_percentage')) : null,
+                protein_percentage: formData.get('protein_percentage') ? parseFloat(formData.get('protein_percentage')) : null,
+                milk_grade: formData.get('milk_grade') || null,
+                milk_quality_assessment: formData.get('milk_quality_assessment') || null,
+                additional_notes: formData.get('additional_notes') || null
+            };
+
+            // Show loading state
+            const submitBtn = document.querySelector('button[onclick="submitEditMilkProduction()"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Updating...';
+            submitBtn.disabled = true;
+
+            fetch(`/api/milk-production/${currentProductionId}/edit`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    showNotification(result.message, 'success');
+                    closeEditMilkProductionModal();
+                    loadCowData(); // Refresh the cow data
+                } else {
+                    showNotification(result.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error updating production record:', error);
+                showNotification('Failed to update production record. Please try again.', 'error');
+            })
+            .finally(() => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            });
+        }
+
+        // Delete milk production functionality
+        function deleteMilkProduction(productionId) {
+            currentProductionId = productionId;
+            openDeleteMilkProductionModal();
+        }
+
+        function openDeleteMilkProductionModal() {
+            const modal = document.getElementById('deleteMilkProductionModal');
+            modal.classList.remove('hidden');
+            
+            // Force a reflow to ensure the modal is visible before animation
+            modal.offsetHeight;
+            setTimeout(() => {
+                const modalContent = modal.querySelector('.bg-white\\/95, .bg-white');
+                if (modalContent) {
+                    modalContent.classList.remove('scale-95', 'opacity-0');
+                    modalContent.classList.add('scale-100', 'opacity-100');
+                }
+            }, 10);
+        }
+
+        function closeDeleteMilkProductionModal() {
+            const modal = document.getElementById('deleteMilkProductionModal');
+            const modalContent = modal.querySelector('.bg-white\\/95, .bg-white');
+            
+            if (modalContent) {
+                modalContent.classList.remove('scale-100', 'opacity-100');
+                modalContent.classList.add('scale-95', 'opacity-0');
+            }
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                currentProductionId = null;
+            }, 300);
+        }
+
+        function confirmDeleteMilkProduction() {
+            // Show loading state
+            const deleteBtn = document.querySelector('button[onclick="confirmDeleteMilkProduction()"]');
+            const originalText = deleteBtn.innerHTML;
+            deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Deleting...';
+            deleteBtn.disabled = true;
+
+            fetch(`/api/milk-production/${currentProductionId}/delete`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    showNotification(result.message, 'success');
+                    closeDeleteMilkProductionModal();
+                    loadCowData(); // Refresh the cow data
+                } else {
+                    showNotification(result.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error deleting production record:', error);
+                showNotification('Failed to delete production record. Please try again.', 'error');
+            })
+            .finally(() => {
+                deleteBtn.innerHTML = originalText;
+                deleteBtn.disabled = false;
+            });
+        }
+
+        // Notification system
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm transform translate-x-full transition-transform duration-300`;
+            
+            // Set colors based on type
+            if (type === 'success') {
+                notification.className += ' bg-green-50 border border-green-200 dark:bg-green-900/20 dark:border-green-700';
+                notification.innerHTML = `
+                    <div class="flex items-center">
+                        <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                        <span class="text-green-800 dark:text-green-300 font-medium">${message}</span>
+                    </div>
+                `;
+            } else if (type === 'error') {
+                notification.className += ' bg-red-50 border border-red-200 dark:bg-red-900/20 dark:border-red-700';
+                notification.innerHTML = `
+                    <div class="flex items-center">
+                        <i class="fas fa-exclamation-circle text-red-500 mr-3"></i>
+                        <span class="text-red-800 dark:text-red-300 font-medium">${message}</span>
+                    </div>
+                `;
+            } else {
+                notification.className += ' bg-blue-50 border border-blue-200 dark:bg-blue-900/20 dark:border-blue-700';
+                notification.innerHTML = `
+                    <div class="flex items-center">
+                        <i class="fas fa-info-circle text-blue-500 mr-3"></i>
+                        <span class="text-blue-800 dark:text-blue-300 font-medium">${message}</span>
+                    </div>
+                `;
+            }
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 10);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 5000);
+        }
+
         // Load cow data on page load
         document.addEventListener('DOMContentLoaded', function() {
             loadCowData();
         });
+
+        // View milk production audit history
+        function viewMilkProductionAudit(productionId) {
+            fetch(`/api/milk-production/${productionId}/audit`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showMilkProductionAuditModal(data.audit_records);
+                    } else {
+                        showNotification('Failed to load audit history', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading audit history:', error);
+                    showNotification('Error loading audit history', 'error');
+                });
+        }
+
+        // Show milk production audit modal
+        function showMilkProductionAuditModal(auditRecords) {
+            const modal = document.getElementById('milkProductionAuditModal');
+            const modalContent = modal.querySelector('.bg-white\\/95, .bg-white');
+            const tbody = document.getElementById('auditTableBody');
+            
+            if (auditRecords.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                            No edit history found for this record
+                        </td>
+                    </tr>
+                `;
+            } else {
+                tbody.innerHTML = auditRecords.map(record => `
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                            ${record.field_name.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            ${record.old_value || '-'}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            ${record.new_value || '-'}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            ${record.edited_by_name}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            ${new Date(record.edited_at).toLocaleString()}
+                        </td>
+                    </tr>
+                `).join('');
+            }
+            
+            modal.classList.remove('hidden');
+            
+            // Force a reflow to ensure the modal is visible before animation
+            modal.offsetHeight;
+            setTimeout(() => {
+                if (modalContent) {
+                    modalContent.classList.remove('scale-95', 'opacity-0');
+                    modalContent.classList.add('scale-100', 'opacity-100');
+                }
+            }, 10);
+        }
+
+        // Close milk production audit modal
+        function closeMilkProductionAuditModal() {
+            const modal = document.getElementById('milkProductionAuditModal');
+            const modalContent = modal.querySelector('.bg-white\\/95, .bg-white');
+            
+            if (modalContent) {
+                modalContent.classList.remove('scale-100', 'opacity-100');
+                modalContent.classList.add('scale-95', 'opacity-0');
+            }
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
     </script>
+
+    <!-- Milk Production Audit Modal -->
+    <div id="milkProductionAuditModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden z-50 transition-all duration-300">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto transform scale-95 opacity-0 transition-all duration-300">
+                <!-- Modal Header -->
+                <div class="px-6 py-6 border-b border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                                <i class="fas fa-history text-white text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-900 dark:text-white">Milk Production Edit History</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">View all changes made to this production record</p>
+                            </div>
+                        </div>
+                        <button onclick="closeMilkProductionAuditModal()" class="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-all duration-200">
+                            <i class="fas fa-times text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="p-6">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                            <thead class="bg-gray-50 dark:bg-gray-700">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Field</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Old Value</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">New Value</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Edited By</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Date & Time</th>
+                                </tr>
+                            </thead>
+                            <tbody id="auditTableBody" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                <!-- Audit records will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="px-6 py-4 bg-gray-50 dark:bg-gray-700/50 rounded-b-2xl">
+                    <div class="flex justify-end">
+                        <button onclick="closeMilkProductionAuditModal()" class="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

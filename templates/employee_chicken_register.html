@@ -1,0 +1,478 @@
+{% extends "base_employee.html" %}
+
+{% block title %}🐔 Chicken Registration - AgriTech Pro{% endblock %}
+
+{% block content %}
+<main class="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-red-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-6">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <div class="mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">
+                        <i class="fas fa-plus-circle text-yellow-600 mr-3"></i>
+                        Chicken Registration
+                    </h1>
+                    <p class="text-gray-600 dark:text-gray-400">Register new chickens in the farm management system</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="text-right">
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Welcome back,</p>
+                        <p class="font-semibold text-gray-900 dark:text-white">{{ user.name }}</p>
+                    </div>
+                    <div class="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-user text-white text-lg"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Registration Form -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-8">
+            <form id="chicken-registration-form" class="space-y-6">
+                <!-- Row 1: Chicken ID and Batch Name -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <span class="text-lg mr-2">🏷️</span>Chicken ID / Tag Number
+                        </label>
+                        <input type="text" id="chicken-id" name="chicken_id" readonly 
+                               class="w-full px-4 py-3 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white font-mono text-sm"
+                               placeholder="Auto-generated">
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Format: C + Type + Number (e.g., CB001, CK001, CL001)</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <span class="text-lg mr-2">👥</span>Batch / Flock Name
+                        </label>
+                        <input type="text" id="batch-name" name="batch_name" required
+                               class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 dark:bg-gray-700 dark:text-white"
+                               placeholder="Enter batch or flock name">
+                    </div>
+                </div>
+
+                <!-- Row 2: Type/Category and Breed -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <span class="text-lg mr-2">📋</span>Type / Category
+                        </label>
+                        <select id="chicken-type" name="chicken_type" required
+                                class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 dark:bg-gray-700 dark:text-white">
+                            <option value="">Select Type</option>
+                            <option value="broiler">🥩 Broiler</option>
+                            <option value="kienyeji">🐔 Kienyeji</option>
+                            <option value="layer">🥚 Layer</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <span class="text-lg mr-2">🧬</span>Breed Name
+                        </label>
+                        <input type="text" id="breed-name" name="breed_name" required
+                               class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 dark:bg-gray-700 dark:text-white"
+                               placeholder="Enter breed name">
+                    </div>
+                </div>
+
+                <!-- Row 3: Gender and Date of Hatch -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <span class="text-lg mr-2">⚥</span>Gender
+                        </label>
+                        <select id="gender" name="gender" required
+                                class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 dark:bg-gray-700 dark:text-white">
+                            <option value="">Select Gender</option>
+                            <option value="male">♂️ Male</option>
+                            <option value="female">♀️ Female</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <span class="text-lg mr-2">📅</span>Date of Hatch / Acquisition
+                        </label>
+                        <input type="date" id="hatch-date" name="hatch_date" required
+                               class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 dark:bg-gray-700 dark:text-white">
+                    </div>
+                </div>
+
+                <!-- Row 4: Age and Source -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <span class="text-lg mr-2">📊</span>Age (days)
+                        </label>
+                        <input type="number" id="age-days" name="age_days" readonly
+                               class="w-full px-4 py-3 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white"
+                               placeholder="Auto-calculated">
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Calculated from hatch date</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <span class="text-lg mr-2">🏪</span>Source / Supplier
+                        </label>
+                        <input type="text" id="source" name="source" required
+                               class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 dark:bg-gray-700 dark:text-white"
+                               placeholder="Enter source or supplier">
+                    </div>
+                </div>
+
+                <!-- Row 5: Coop and Quantity -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <span class="text-lg mr-2">🏠</span>Coop / House Number
+                        </label>
+                        <select id="coop-number" name="coop_number" required
+                                class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 dark:bg-gray-700 dark:text-white">
+                            <option value="">Select Coop</option>
+                            <option value="1">Coop 1</option>
+                            <option value="2">Coop 2</option>
+                            <option value="3">Coop 3</option>
+                            <option value="4">Coop 4</option>
+                            <option value="5">Coop 5</option>
+                            <option value="6">Coop 6</option>
+                            <option value="7">Coop 7</option>
+                            <option value="8">Coop 8</option>
+                            <option value="9">Coop 9</option>
+                            <option value="10">Coop 10</option>
+                            <option value="11">Coop 11</option>
+                            <option value="12">Coop 12</option>
+                            <option value="13">Coop 13</option>
+                            <option value="14">Coop 14</option>
+                            <option value="15">Coop 15</option>
+                            <option value="16">Coop 16</option>
+                            <option value="17">Coop 17</option>
+                            <option value="18">Coop 18</option>
+                            <option value="19">Coop 19</option>
+                            <option value="20">Coop 20</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <span class="text-lg mr-2">🔢</span>Quantity (if group)
+                        </label>
+                        <input type="number" id="quantity" name="quantity" min="1" value="1" required
+                               class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 dark:bg-gray-700 dark:text-white"
+                               placeholder="Enter quantity">
+                    </div>
+                </div>
+
+                <!-- Hidden Status Field - Automatically set to Active -->
+                <input type="hidden" id="current-status" name="current_status" value="active">
+
+                <!-- Form Actions -->
+                <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200 dark:border-gray-700">
+                    <button type="button" id="cancel-registration" 
+                            class="px-6 py-3 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-xl transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit" 
+                            class="px-6 py-3 bg-yellow-600 hover:bg-yellow-700 text-white rounded-xl transition-colors shadow-lg hover:shadow-xl">
+                        <span class="mr-2">🐔</span>Register Chicken
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Registered Chickens List -->
+        <div class="mt-8 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Registered Chickens</h2>
+                <button onclick="loadRegisteredChickens()" class="px-4 py-2 bg-gradient-to-r from-blue-500 to-cyan-600 text-white rounded-lg hover:from-blue-600 hover:to-cyan-700 transition-all duration-300">
+                    <i class="fas fa-sync-alt mr-2"></i>
+                    Refresh
+                </button>
+            </div>
+            
+            <!-- Loading State -->
+            <div id="chickensLoading" class="text-center py-8">
+                <div class="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <p class="text-gray-600 dark:text-gray-400">Loading chickens...</p>
+            </div>
+            
+            <!-- Chickens List -->
+            <div id="chickensList" class="hidden">
+                <!-- Chickens will be loaded here -->
+            </div>
+            
+            <!-- Empty State -->
+            <div id="chickensEmpty" class="hidden text-center py-8">
+                <div class="w-16 h-16 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-chicken text-white text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">No chickens registered yet</h3>
+                <p class="text-gray-600 dark:text-gray-400">Register your first chicken to get started</p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Toast Container -->
+<div id="toastContainer" class="fixed top-4 right-4 z-50 space-y-2"></div>
+
+<script>
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+        // Show chicken management sidebar
+        const chickenManagementSidebar = document.getElementById('chickenManagementSidebar');
+        if (chickenManagementSidebar) {
+            chickenManagementSidebar.classList.remove('-translate-x-full');
+        }
+        
+        // Load registered chickens
+        loadRegisteredChickens();
+        
+        // Set today's date as default for hatch date
+        const today = new Date();
+        const oneMonthAgo = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
+        document.getElementById('hatch-date').value = oneMonthAgo.toISOString().split('T')[0];
+        
+        // Calculate age in days when hatch date changes
+        document.getElementById('hatch-date').addEventListener('change', calculateAge);
+        
+        // Generate chicken ID when type changes
+        document.getElementById('chicken-type').addEventListener('change', generateChickenId);
+        
+        console.log('Chicken Registration page loaded with custom sidebar');
+    });
+
+    // Generate chicken ID (like admin version)
+    function generateChickenId() {
+        const chickenType = document.getElementById('chicken-type').value;
+        const chickenIdField = document.getElementById('chicken-id');
+        
+        if (chickenType) {
+            // Generate ID based on type
+            let prefix = '';
+            switch(chickenType) {
+                case 'broiler':
+                    prefix = 'CB';
+                    break;
+                case 'kienyeji':
+                    prefix = 'CK';
+                    break;
+                case 'layer':
+                    prefix = 'CL';
+                    break;
+            }
+            
+            // Generate random number (001-999)
+            const randomNum = Math.floor(Math.random() * 999) + 1;
+            const paddedNum = randomNum.toString().padStart(3, '0');
+            
+            chickenIdField.value = `${prefix}${paddedNum}`;
+        } else {
+            chickenIdField.value = '';
+        }
+    }
+
+    // Calculate age in days
+    function calculateAge() {
+        const hatchDate = new Date(document.getElementById('hatch-date').value);
+        const today = new Date();
+        const ageInDays = Math.floor((today - hatchDate) / (1000 * 60 * 60 * 24));
+        document.getElementById('age-days').value = Math.max(0, ageInDays);
+    }
+
+    // Load registered chickens
+    async function loadRegisteredChickens() {
+        const chickensLoading = document.getElementById('chickensLoading');
+        const chickensList = document.getElementById('chickensList');
+        const chickensEmpty = document.getElementById('chickensEmpty');
+        
+        // Show loading state
+        chickensLoading.classList.remove('hidden');
+        chickensList.classList.add('hidden');
+        chickensEmpty.classList.add('hidden');
+        
+        try {
+            const response = await fetch('/api/chicken/list');
+            const result = await response.json();
+            
+            if (result.success && result.chickens && result.chickens.length > 0) {
+                displayChickens(result.chickens);
+                chickensLoading.classList.add('hidden');
+                chickensList.classList.remove('hidden');
+            } else {
+                chickensLoading.classList.add('hidden');
+                chickensEmpty.classList.remove('hidden');
+            }
+        } catch (error) {
+            console.error('Error loading chickens:', error);
+            chickensLoading.classList.add('hidden');
+            chickensEmpty.classList.remove('hidden');
+            showToast('Error loading chickens. Please try again.', 'error');
+        }
+    }
+
+    // Display chickens
+    function displayChickens(chickens) {
+        const chickensList = document.getElementById('chickensList');
+        
+        const chickensHTML = `
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b border-gray-200 dark:border-gray-600">
+                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Chicken ID</th>
+                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Batch Name</th>
+                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Type</th>
+                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Breed</th>
+                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Gender</th>
+                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Age</th>
+                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${chickens.map(chicken => `
+                            <tr class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                <td class="py-4 px-4">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-8 h-8 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-chicken text-white text-sm"></i>
+                                        </div>
+                                        <span class="font-semibold text-gray-900 dark:text-white">${chicken.chicken_id}</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-4">
+                                    <span class="text-gray-900 dark:text-white">${chicken.batch_name}</span>
+                                </td>
+                                <td class="py-4 px-4">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                                        chicken.chicken_type === 'broiler' 
+                                            ? 'bg-red-100 text-red-800 border border-red-200' 
+                                            : chicken.chicken_type === 'kienyeji'
+                                            ? 'bg-green-100 text-green-800 border border-green-200'
+                                            : 'bg-blue-100 text-blue-800 border border-blue-200'
+                                    }">
+                                        ${chicken.chicken_type.charAt(0).toUpperCase() + chicken.chicken_type.slice(1)}
+                                    </span>
+                                </td>
+                                <td class="py-4 px-4">
+                                    <span class="text-gray-700 dark:text-gray-300">${chicken.breed_name}</span>
+                                </td>
+                                <td class="py-4 px-4">
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-sm font-medium ${
+                                        chicken.gender === 'male' 
+                                            ? 'bg-blue-100 text-blue-800 border border-blue-200' 
+                                            : 'bg-pink-100 text-pink-800 border border-pink-200'
+                                    }">
+                                        <i class="fas fa-${chicken.gender === 'male' ? 'mars' : 'venus'} mr-1"></i>
+                                        ${chicken.gender.charAt(0).toUpperCase() + chicken.gender.slice(1)}
+                                    </span>
+                                </td>
+                                <td class="py-4 px-4">
+                                    <span class="text-gray-700 dark:text-gray-300">${chicken.age_days} days</span>
+                                </td>
+                                <td class="py-4 px-4">
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-sm font-medium ${
+                                        chicken.current_status === 'active' 
+                                            ? 'bg-green-100 text-green-800 border border-green-200' 
+                                            : 'bg-gray-100 text-gray-800 border border-gray-200'
+                                    }">
+                                        ${chicken.current_status.charAt(0).toUpperCase() + chicken.current_status.slice(1)}
+                                    </span>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+        
+        chickensList.innerHTML = chickensHTML;
+    }
+
+    // Submit chicken registration (like admin version)
+    async function submitChickenRegistration() {
+        const form = document.getElementById('chicken-registration-form');
+        const formData = new FormData(form);
+        
+        // Show loading state
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<span class="mr-2">⏳</span>Registering...';
+        submitBtn.disabled = true;
+        
+        try {
+            // Submit to backend (like admin version)
+            const response = await fetch('/api/chicken/register', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                // Show success message (like admin version)
+                showToast(`✅ ${result.message}\n\nChicken ID: ${result.chicken_id}`, 'success');
+                form.reset();
+                generateChickenId();
+                calculateAge();
+                loadRegisteredChickens();
+            } else {
+                // Show error message
+                showToast(`❌ Error: ${result.message}`, 'error');
+            }
+        } catch (error) {
+            console.error('Registration error:', error);
+            showToast('❌ Error: Failed to register chicken. Please try again.', 'error');
+        } finally {
+            // Reset button state
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
+    }
+
+    // Form submission
+    document.getElementById('chicken-registration-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        submitChickenRegistration();
+    });
+
+    // Cancel button
+    document.getElementById('cancel-registration').addEventListener('click', function() {
+        document.getElementById('chicken-registration-form').reset();
+        generateChickenId();
+        calculateAge();
+    });
+
+    // Toast notification function
+    function showToast(message, type = 'info') {
+        const toastContainer = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        
+        const colors = {
+            success: 'bg-green-500',
+            error: 'bg-red-500',
+            warning: 'bg-yellow-500',
+            info: 'bg-blue-500'
+        };
+        
+        toast.className = `${colors[type]} text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 translate-x-full`;
+        toast.innerHTML = `
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'times' : type === 'warning' ? 'exclamation' : 'info'}-circle"></i>
+                <span>${message}</span>
+            </div>
+        `;
+        
+        toastContainer.appendChild(toast);
+        
+        // Animate in
+        setTimeout(() => {
+            toast.classList.remove('translate-x-full');
+        }, 100);
+        
+        // Auto remove
+        setTimeout(() => {
+            toast.classList.add('translate-x-full');
+            setTimeout(() => {
+                toastContainer.removeChild(toast);
+            }, 300);
+        }, 3000);
+    }
+</script>
+{% endblock %}

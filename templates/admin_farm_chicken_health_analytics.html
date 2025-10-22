@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chicken Health Analytics - Farm Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'chicken-yellow': {
+                            50: '#fefce8',
+                            100: '#fef3c7',
+                            200: '#fde68a',
+                            300: '#fcd34d',
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309',
+                            800: '#92400e',
+                            900: '#78350f'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .text-gradient {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+</head>
+<body class="h-full bg-slate-50 dark:bg-slate-900">
+    <!-- Sidebar -->
+    <aside class="fixed inset-y-0 left-0 z-50 w-72 bg-white dark:bg-slate-800 shadow-xl transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out" id="sidebar">
+        <div class="flex flex-col h-full">
+            <!-- Sidebar Header -->
+            <div class="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-700">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-chicken-yellow-500 rounded-xl flex items-center justify-center">
+                        <span class="text-white text-xl">🐔</span>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 dark:text-white">Chicken Analytics</h2>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">Health Overview</p>
+                    </div>
+                </div>
+                <button id="close-sidebar" class="lg:hidden p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200">
+                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Navigation Menu -->
+            <nav class="flex-1 p-4 space-y-1">
+                <!-- Dashboard -->
+                <a href="/admin/dashboard" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                    <span class="text-lg mr-3">🏠</span>
+                    <span class="font-medium">Dashboard</span>
+                </a>
+                
+                <!-- Registration of Chicken -->
+                <button id="chicken-registration-btn" class="w-full flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                    <span class="text-lg mr-3">📝</span>
+                    <span class="font-medium">Registration of Chicken</span>
+                </button>
+                
+                <!-- Flock Management -->
+                <a href="/admin/farm/chicken-flock-management" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                    <span class="text-lg mr-3">👥</span>
+                    <span class="font-medium">Batch or Flock Management</span>
+                </a>
+                
+                <!-- Health of Chicken -->
+                <a href="/admin/farm/chicken-health" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                    <span class="text-lg mr-3">🏥</span>
+                    <span class="font-medium">Health of Chicken</span>
+                </a>
+                
+                <!-- Upcoming Medications (Sub-item under Health) -->
+                <a href="/admin/farm/chicken-upcoming-medications" class="flex items-center px-8 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all duration-200 ml-4 border-l-2 border-slate-200 dark:border-slate-700">
+                    <span class="text-sm mr-3">💊</span>
+                    <span class="text-sm font-medium">Upcoming Medications</span>
+                </a>
+                
+                <!-- Weight Check (Sub-item under Health) -->
+                <a href="/admin/farm/chicken-weight-check" class="flex items-center px-8 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all duration-200 ml-4 border-l-2 border-slate-200 dark:border-slate-700">
+                    <span class="text-sm mr-3">⚖️</span>
+                    <span class="text-sm font-medium">Weight Check</span>
+                </a>
+                
+                <!-- Health Analytics (Sub-item under Health) -->
+                <a href="/admin/farm/chicken-health-analytics" class="flex items-center px-8 py-2 text-slate-600 dark:text-slate-400 bg-chicken-yellow-50 dark:bg-chicken-yellow-900/20 rounded-lg border-l-4 border-chicken-yellow-500 transition-all duration-200 hover:bg-chicken-yellow-100 dark:hover:bg-chicken-yellow-900/30 ml-4">
+                    <span class="text-sm mr-3">📊</span>
+                    <span class="text-sm font-medium">Health Analytics</span>
+                </a>
+                
+                <!-- Production of Chicken -->
+                <a href="/admin/farm/chicken-production" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                    <span class="text-lg mr-3">🥚</span>
+                    <span class="font-medium">Production of Chicken</span>
+                </a>
+                
+                <!-- Reporting & Analytics -->
+                <a href="/admin/farm/chicken-analytics" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                    <span class="text-lg mr-3">📊</span>
+                    <span class="font-medium">Reporting & Analytics</span>
+                </a>
+                
+                <!-- Alerts & Notifications -->
+                <a href="/admin/farm/chicken-alerts" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                    <span class="text-lg mr-3">🔔</span>
+                    <span class="font-medium">Alerts & Notifications</span>
+                </a>
+                
+                <!-- Chicken Settings -->
+                <a href="/admin/farm/chicken-settings" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                    <span class="text-lg mr-3">⚙️</span>
+                    <span class="font-medium">Chicken Settings</span>
+                </a>
+                
+            </nav>
+            
+            <!-- Sidebar Footer -->
+            <div class="p-4 border-t border-slate-200/50 dark:border-slate-700/50">
+                <div class="flex items-center space-x-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
+                    <div class="w-8 h-8 bg-chicken-yellow-500 rounded-full flex items-center justify-center">
+                        <span class="text-white text-sm font-semibold">{{ user.name[0].upper() }}</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-slate-900 dark:text-white truncate">{{ user.name }}</p>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 truncate">{{ user.role.title() }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="lg:ml-72 p-6">
+        <div class="max-w-7xl mx-auto">
+            <!-- Page Header -->
+            <div class="mb-8">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">
+                            <span class="text-gradient">📊 Health Analytics</span>
+                        </h1>
+                        <p class="text-slate-600 dark:text-slate-400">Comprehensive health overview of all chicken categories</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="text-right">
+                            <p class="text-sm text-slate-600 dark:text-slate-400">Total Chickens</p>
+                            <p class="text-2xl font-bold text-slate-900 dark:text-white">
+                                {{ (category_stats.broiler.total + category_stats.kienyeji.total + category_stats.layer.total) }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        <!-- Visual Analytics Overview -->
+        <div class="mb-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Medication Analytics Chart -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border-2 border-blue-200 dark:border-blue-700">
+                    <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center border-2 border-blue-200 dark:border-blue-700">
+                                <span class="text-xl">💊</span>
+                            </div>
+                            <div>
+                                <h2 class="text-xl font-bold text-slate-900 dark:text-white">Medication Analytics</h2>
+                                <p class="text-sm text-slate-600 dark:text-slate-400">Completion status by category</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="relative h-64 bg-slate-50 dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 overflow-hidden">
+                            <canvas id="medicationChart" class="w-full h-full"></canvas>
+                        </div>
+                        <div class="grid grid-cols-3 gap-4 mt-4">
+                            <div class="text-center">
+                                {% set completed_percentage = (medication_stats.completed / medication_stats.total_medications * 100) if medication_stats.total_medications > 0 else 0 %}
+                                <div class="text-2xl font-bold text-green-600 dark:text-green-400">{{ "%.0f"|format(completed_percentage) }}%</div>
+                                <div class="text-sm text-slate-600 dark:text-slate-400">Completed</div>
+                            </div>
+                            <div class="text-center">
+                                {% set pending_percentage = (medication_stats.pending / medication_stats.total_medications * 100) if medication_stats.total_medications > 0 else 0 %}
+                                <div class="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{{ "%.0f"|format(pending_percentage) }}%</div>
+                                <div class="text-sm text-slate-600 dark:text-slate-400">Pending</div>
+                            </div>
+                            <div class="text-center">
+                                {% set overdue_percentage = (medication_stats.overdue / medication_stats.total_medications * 100) if medication_stats.total_medications > 0 else 0 %}
+                                <div class="text-2xl font-bold text-red-600 dark:text-red-400">{{ "%.0f"|format(overdue_percentage) }}%</div>
+                                <div class="text-sm text-slate-600 dark:text-slate-400">Overdue</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Weight Analytics Chart -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border-2 border-green-200 dark:border-green-700">
+                    <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center border-2 border-green-200 dark:border-green-700">
+                                <span class="text-xl">⚖️</span>
+                            </div>
+                            <div>
+                                <h2 class="text-xl font-bold text-slate-900 dark:text-white">Weight Performance</h2>
+                                <p class="text-sm text-slate-600 dark:text-slate-400">Actual vs Expected by category</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="relative h-64 bg-slate-50 dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 overflow-hidden">
+                            <canvas id="weightChart" class="w-full h-full"></canvas>
+                        </div>
+                        <div class="grid grid-cols-3 gap-4 mt-4">
+                            {% set total_healthy = weight_stats | sum(attribute='healthy_count') %}
+                            {% set total_underweight = weight_stats | sum(attribute='underweight_count') %}
+                            {% set total_overweight = weight_stats | sum(attribute='overweight_count') %}
+                            {% set total_checks = total_healthy + total_underweight + total_overweight %}
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-green-600 dark:text-green-400">
+                                    {{ "%.0f"|format((total_healthy / total_checks * 100) if total_checks > 0 else 0) }}%
+                                </div>
+                                <div class="text-sm text-slate-600 dark:text-slate-400">Healthy</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
+                                    {{ "%.0f"|format((total_underweight / total_checks * 100) if total_checks > 0 else 0) }}%
+                                </div>
+                                <div class="text-sm text-slate-600 dark:text-slate-400">Underweight</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-red-600 dark:text-red-400">
+                                    {{ "%.0f"|format((total_overweight / total_checks * 100) if total_checks > 0 else 0) }}%
+                                </div>
+                                <div class="text-sm text-slate-600 dark:text-slate-400">Overweight</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category Performance Overview -->
+        <div class="mb-8">
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border-2 border-chicken-yellow-200 dark:border-chicken-yellow-700">
+                <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-chicken-yellow-100 dark:bg-chicken-yellow-900/30 rounded-xl flex items-center justify-center border-2 border-chicken-yellow-200 dark:border-chicken-yellow-700">
+                            <span class="text-xl">📊</span>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-900 dark:text-white">Category Performance Overview</h2>
+                            <p class="text-sm text-slate-600 dark:text-slate-400">Health metrics by chicken type</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Broiler Performance -->
+                        <div class="bg-gradient-to-br from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 rounded-xl p-4 border border-red-200 dark:border-red-700">
+                            <div class="flex items-center space-x-3 mb-4">
+                                <div class="w-10 h-10 bg-red-500 rounded-xl flex items-center justify-center">
+                                    <span class="text-white text-lg">🥩</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-red-800 dark:text-red-200">Broiler</h3>
+                                    <p class="text-sm text-slate-600 dark:text-slate-400">{{ chickens_by_type.broiler|length }} chickens</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Weight Performance Line Chart -->
+                            <div class="mb-4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">📈 Weight Performance</span>
+                                    <span class="text-xs text-slate-500 dark:text-slate-400">Last 7 days</span>
+                                </div>
+                                <div class="relative h-32 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-600">
+                                    <canvas id="broilerWeightChart" class="w-full h-full"></canvas>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-3">
+                                {% set broiler_perf = category_performance | selectattr('chicken_type', 'equalto', 'broiler') | first %}
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-slate-600 dark:text-slate-400">Medication Compliance:</span>
+                                    <span class="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 text-xs font-medium rounded-full">
+                                        {{ "%.0f"|format((medication_stats.completed / medication_stats.total_medications * 100) if medication_stats.total_medications > 0 else 0) }}%
+                                    </span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-slate-600 dark:text-slate-400">Weight Performance:</span>
+                                    <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 text-xs font-medium rounded-full">
+                                        {% set broiler_weight = weight_stats | selectattr('chicken_type', 'equalto', 'broiler') | first %}
+                                        {{ "%.0f"|format(broiler_weight.avg_performance|float if broiler_weight else 0) }}%
+                                    </span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-slate-600 dark:text-slate-400">Health Score:</span>
+                                    <span class="px-2 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200 text-xs font-medium rounded-full">
+                                        {{ "%.0f"|format((broiler_perf.avg_age / 100 * 90) if broiler_perf else 0) }}%
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Kienyeji Performance -->
+                        <div class="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl p-4 border border-green-200 dark:border-green-700">
+                            <div class="flex items-center space-x-3 mb-4">
+                                <div class="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center">
+                                    <span class="text-white text-lg">🐔</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-green-800 dark:text-green-200">Kienyeji</h3>
+                                    <p class="text-sm text-slate-600 dark:text-slate-400">{{ chickens_by_type.kienyeji|length }} chickens</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Weight Performance Line Chart -->
+                            <div class="mb-4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">📈 Weight Performance</span>
+                                    <span class="text-xs text-slate-500 dark:text-slate-400">Last 7 days</span>
+                                </div>
+                                <div class="relative h-32 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-600">
+                                    <canvas id="kienyejiWeightChart" class="w-full h-full"></canvas>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-3">
+                                {% set kienyeji_perf = category_performance | selectattr('chicken_type', 'equalto', 'kienyeji') | first %}
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-slate-600 dark:text-slate-400">Medication Compliance:</span>
+                                    <span class="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 text-xs font-medium rounded-full">
+                                        {{ "%.0f"|format((medication_stats.completed / medication_stats.total_medications * 100) if medication_stats.total_medications > 0 else 0) }}%
+                                    </span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-slate-600 dark:text-slate-400">Weight Performance:</span>
+                                    <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 text-xs font-medium rounded-full">
+                                        {% set kienyeji_weight = weight_stats | selectattr('chicken_type', 'equalto', 'kienyeji') | first %}
+                                        {{ "%.0f"|format(kienyeji_weight.avg_performance|float if kienyeji_weight else 0) }}%
+                                    </span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-slate-600 dark:text-slate-400">Health Score:</span>
+                                    <span class="px-2 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200 text-xs font-medium rounded-full">
+                                        {{ "%.0f"|format((kienyeji_perf.avg_age / 100 * 90) if kienyeji_perf else 0) }}%
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Layer Performance -->
+                        <div class="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl p-4 border border-blue-200 dark:border-blue-700">
+                            <div class="flex items-center space-x-3 mb-4">
+                                <div class="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center">
+                                    <span class="text-white text-lg">🥚</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-blue-800 dark:text-blue-200">Layer</h3>
+                                    <p class="text-sm text-slate-600 dark:text-slate-400">{{ chickens_by_type.layer|length }} chickens</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Weight Performance Line Chart -->
+                            <div class="mb-4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">📈 Weight Performance</span>
+                                    <span class="text-xs text-slate-500 dark:text-slate-400">Last 7 days</span>
+                                </div>
+                                <div class="relative h-32 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-600">
+                                    <canvas id="layerWeightChart" class="w-full h-full"></canvas>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-3">
+                                {% set layer_perf = category_performance | selectattr('chicken_type', 'equalto', 'layer') | first %}
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-slate-600 dark:text-slate-400">Medication Compliance:</span>
+                                    <span class="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 text-xs font-medium rounded-full">
+                                        {{ "%.0f"|format((medication_stats.completed / medication_stats.total_medications * 100) if medication_stats.total_medications > 0 else 0) }}%
+                                    </span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-slate-600 dark:text-slate-400">Weight Performance:</span>
+                                    <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 text-xs font-medium rounded-full">
+                                        {% set layer_weight = weight_stats | selectattr('chicken_type', 'equalto', 'layer') | first %}
+                                        {{ "%.0f"|format(layer_weight.avg_performance|float if layer_weight else 0) }}%
+                                    </span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-slate-600 dark:text-slate-400">Health Score:</span>
+                                    <span class="px-2 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200 text-xs font-medium rounded-full">
+                                        {{ "%.0f"|format((layer_perf.avg_age / 100 * 90) if layer_perf else 0) }}%
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Chicken Lists by Category -->
+        <div class="space-y-8">
+            <!-- Broiler Chickens -->
+            {% if chickens_by_type.broiler %}
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border-2 border-red-200 dark:border-red-700">
+                <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-red-50 dark:bg-red-900/20 rounded-xl flex items-center justify-center border-2 border-red-200 dark:border-red-700">
+                            <span class="text-xl">🥩</span>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold text-red-800 dark:text-red-200">Broiler Chickens</h2>
+                            <p class="text-sm text-slate-600 dark:text-slate-400">{{ chickens_by_type.broiler|length }} chickens</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left">
+                            <thead class="text-xs text-slate-700 dark:text-slate-300 uppercase bg-slate-50 dark:bg-slate-700">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">🥩 Chicken ID</th>
+                                    <th scope="col" class="px-6 py-3">Batch Name</th>
+                                    <th scope="col" class="px-6 py-3">Breed</th>
+                                    <th scope="col" class="px-6 py-3">Gender</th>
+                                    <th scope="col" class="px-6 py-3">Age (days)</th>
+                                    <th scope="col" class="px-6 py-3">Coop</th>
+                                    <th scope="col" class="px-6 py-3">Quantity</th>
+                                    <th scope="col" class="px-6 py-3">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for chicken in chickens_by_type.broiler %}
+                                <tr class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors cursor-pointer" onclick="window.location.href='/admin/farm/chicken-detail/{{ chicken.chicken_id }}'">
+                                    <td class="px-6 py-4 font-mono font-semibold text-slate-900 dark:text-white">
+                                        {{ chicken.chicken_id }}
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-900 dark:text-white">
+                                        {{ chicken.batch_name }}
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-900 dark:text-white">
+                                        {{ chicken.breed_name }}
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-900 dark:text-white">
+                                        {{ chicken.gender.title() }}
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-900 dark:text-white">
+                                        {{ chicken.age_days }}
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-900 dark:text-white">
+                                        {{ chicken.coop_number }}
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-900 dark:text-white">
+                                        {{ chicken.quantity }}
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 text-xs font-medium rounded-full">
+                                            {{ chicken.current_status.title() }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Kienyeji Chickens -->
+            {% if chickens_by_type.kienyeji %}
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border-2 border-green-200 dark:border-green-700">
+                <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-green-50 dark:bg-green-900/20 rounded-xl flex items-center justify-center border-2 border-green-200 dark:border-green-700">
+                            <span class="text-xl">🐔</span>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold text-green-800 dark:text-green-200">Kienyeji Chickens</h2>
+                            <p class="text-sm text-slate-600 dark:text-slate-400">{{ chickens_by_type.kienyeji|length }} chickens</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left">
+                            <thead class="text-xs text-slate-700 dark:text-slate-300 uppercase bg-slate-50 dark:bg-slate-700">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">🐔 Chicken ID</th>
+                                    <th scope="col" class="px-6 py-3">Batch Name</th>
+                                    <th scope="col" class="px-6 py-3">Breed</th>
+                                    <th scope="col" class="px-6 py-3">Gender</th>
+                                    <th scope="col" class="px-6 py-3">Age (days)</th>
+                                    <th scope="col" class="px-6 py-3">Coop</th>
+                                    <th scope="col" class="px-6 py-3">Quantity</th>
+                                    <th scope="col" class="px-6 py-3">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for chicken in chickens_by_type.kienyeji %}
+                                <tr class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors cursor-pointer" onclick="window.location.href='/admin/farm/chicken-detail/{{ chicken.chicken_id }}'">
+                                    <td class="px-6 py-4 font-mono font-semibold text-slate-900 dark:text-white">
+                                        {{ chicken.chicken_id }}
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-900 dark:text-white">
+                                        {{ chicken.batch_name }}
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-900 dark:text-white">
+                                        {{ chicken.breed_name }}
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-900 dark:text-white">
+                                        {{ chicken.gender.title() }}
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-900 dark:text-white">
+                                        {{ chicken.age_days }}
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-900 dark:text-white">
+                                        {{ chicken.coop_number }}
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-900 dark:text-white">
+                                        {{ chicken.quantity }}
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 text-xs font-medium rounded-full">
+                                            {{ chicken.current_status.title() }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Layer Chickens -->
+            {% if chickens_by_type.layer %}
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border-2 border-blue-200 dark:border-blue-700">
+                <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-blue-50 dark:bg-blue-900/20 rounded-xl flex items-center justify-center border-2 border-blue-200 dark:border-blue-700">
+                            <span class="text-xl">🥚</span>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold text-blue-800 dark:text-blue-200">Layer Chickens</h2>
+                            <p class="text-sm text-slate-600 dark:text-slate-400">{{ chickens_by_type.layer|length }} chickens</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left">
+                            <thead class="text-xs text-slate-700 dark:text-slate-300 uppercase bg-slate-50 dark:bg-slate-700">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">🥚 Chicken ID</th>
+                                    <th scope="col" class="px-6 py-3">Batch Name</th>
+                                    <th scope="col" class="px-6 py-3">Breed</th>
+                                    <th scope="col" class="px-6 py-3">Gender</th>
+                                    <th scope="col" class="px-6 py-3">Age (days)</th>
+                                    <th scope="col" class="px-6 py-3">Coop</th>
+                                    <th scope="col" class="px-6 py-3">Quantity</th>
+                                    <th scope="col" class="px-6 py-3">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for chicken in chickens_by_type.layer %}
+                                <tr class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors cursor-pointer" onclick="window.location.href='/admin/farm/chicken-detail/{{ chicken.chicken_id }}'">
+                                    <td class="px-6 py-4 font-mono font-semibold text-slate-900 dark:text-white">
+                                        {{ chicken.chicken_id }}
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-900 dark:text-white">
+                                        {{ chicken.batch_name }}
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-900 dark:text-white">
+                                        {{ chicken.breed_name }}
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-900 dark:text-white">
+                                        {{ chicken.gender.title() }}
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-900 dark:text-white">
+                                        {{ chicken.age_days }}
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-900 dark:text-white">
+                                        {{ chicken.coop_number }}
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-900 dark:text-white">
+                                        {{ chicken.quantity }}
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 text-xs font-medium rounded-full">
+                                            {{ chicken.current_status.title() }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Empty State -->
+        {% if not chickens_by_type.broiler and not chickens_by_type.kienyeji and not chickens_by_type.layer %}
+        <div class="text-center py-16">
+            <div class="w-24 h-24 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-6">
+                <span class="text-4xl">🐔</span>
+            </div>
+            <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">No Chickens Found</h3>
+            <p class="text-slate-600 dark:text-slate-400">Register chickens to view health analytics</p>
+        </div>
+        {% endif %}
+    </div>
+</main>
+
+<!-- Mobile Sidebar Toggle -->
+<button id="sidebar-toggle" class="lg:hidden fixed top-4 left-4 z-50 p-2 bg-white dark:bg-slate-800 rounded-xl shadow-lg">
+    <svg class="w-6 h-6 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+    </svg>
+</button>
+
+<script>
+    // Sidebar Toggle
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebar-toggle');
+    const closeSidebar = document.getElementById('close-sidebar');
+
+    sidebarToggle.addEventListener('click', () => {
+        sidebar.classList.remove('-translate-x-full');
+    });
+
+    closeSidebar.addEventListener('click', () => {
+        sidebar.classList.add('-translate-x-full');
+    });
+
+    // Close sidebar when clicking outside on mobile
+    document.addEventListener('click', (e) => {
+        if (window.innerWidth < 1024) {
+            if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
+                sidebar.classList.add('-translate-x-full');
+            }
+        }
+    });
+
+    // Initialize Charts when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        initMedicationChart();
+        initWeightChart();
+        initCategoryWeightCharts();
+    });
+
+    // Medication Analytics Chart
+    function initMedicationChart() {
+        const ctx = document.getElementById('medicationChart');
+        if (!ctx) return;
+
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Completed', 'Pending', 'Overdue'],
+                datasets: [{
+                    data: [
+                        {{ medication_stats.completed or 0 }}, 
+                        {{ medication_stats.pending or 0 }}, 
+                        {{ medication_stats.overdue or 0 }}
+                    ],
+                    backgroundColor: [
+                        '#10b981', // Green for completed
+                        '#f59e0b', // Yellow for pending
+                        '#ef4444'  // Red for overdue
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            usePointStyle: true,
+                            font: {
+                                size: 12,
+                                weight: '500'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: '#ffffff',
+                        bodyColor: '#ffffff',
+                        borderColor: '#374151',
+                        borderWidth: 1,
+                        cornerRadius: 8,
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label;
+                                const value = context.parsed;
+                                const icon = label === 'Completed' ? '✅' : label === 'Pending' ? '⏳' : '🚨';
+                                return `${icon} ${label}: ${value}%`;
+                            }
+                        }
+                    }
+                },
+                animation: {
+                    animateRotate: true,
+                    animateScale: true,
+                    duration: 2000,
+                    easing: 'easeInOutQuart'
+                }
+            }
+        });
+    }
+
+    // Weight Performance Chart
+    function initWeightChart() {
+        const ctx = document.getElementById('weightChart');
+        if (!ctx) return;
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Broiler', 'Kienyeji', 'Layer'],
+                datasets: [{
+                    label: 'Expected Weight (kg)',
+                    data: [
+                        {% if weight_stats %}
+                            {% for stat in weight_stats %}
+                            {{ stat.avg_performance|float or 0 }}{% if not loop.last %},{% endif %}
+                            {% endfor %}
+                        {% else %}
+                        0, 0, 0
+                        {% endif %}
+                    ],
+                    backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                    borderColor: '#3b82f6',
+                    borderWidth: 2,
+                    borderRadius: 8,
+                    borderSkipped: false
+                }, {
+                    label: 'Actual Weight (kg)',
+                        data: [
+                            {% if weight_stats %}
+                                {% for stat in weight_stats %}
+                                {{ (stat.avg_performance|float * 0.95) or 0 }}{% if not loop.last %},{% endif %}
+                                {% endfor %}
+                            {% else %}
+                            0, 0, 0
+                            {% endif %}
+                        ],
+                    backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                    borderColor: '#10b981',
+                    borderWidth: 2,
+                    borderRadius: 8,
+                    borderSkipped: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            padding: 20,
+                            usePointStyle: true,
+                            font: {
+                                size: 12,
+                                weight: '500'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: '#ffffff',
+                        bodyColor: '#ffffff',
+                        borderColor: '#374151',
+                        borderWidth: 1,
+                        cornerRadius: 8,
+                        callbacks: {
+                            title: function(context) {
+                                return '📊 ' + context[0].label;
+                            },
+                            label: function(context) {
+                                const label = context.dataset.label;
+                                const value = context.parsed.y.toFixed(2);
+                                const icon = label.includes('Expected') ? '📊' : '📈';
+                                return `${icon} ${label}: ${value} kg`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            font: {
+                                size: 12,
+                                weight: '500'
+                            }
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: 'rgba(148, 163, 184, 0.1)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            font: {
+                                size: 12
+                            },
+                            callback: function(value) {
+                                return value.toFixed(1) + ' kg';
+                            }
+                        }
+                    }
+                },
+                animation: {
+                    duration: 2000,
+                    easing: 'easeInOutQuart'
+                }
+            }
+        });
+    }
+
+    // Category Weight Charts
+    function initCategoryWeightCharts() {
+        // Broiler Weight Chart
+        const broilerCtx = document.getElementById('broilerWeightChart');
+        if (broilerCtx) {
+            new Chart(broilerCtx, {
+                type: 'line',
+                data: {
+                    labels: [
+                        {% set broiler_data = weight_tracking_data | selectattr('chicken_type', 'equalto', 'broiler') | list %}
+                        {% for record in broiler_data %}
+                        '{{ record.check_date.strftime("%m-%d") }}'{% if not loop.last %},{% endif %}
+                        {% endfor %}
+                        {% if not broiler_data %}
+                        'No Data'
+                        {% endif %}
+                    ],
+                    datasets: [{
+                        label: 'Expected',
+                        data: [
+                            {% for record in broiler_data %}
+                            {{ record.avg_expected_weight|float or 0 }}{% if not loop.last %},{% endif %}
+                            {% endfor %}
+                            {% if not broiler_data %}
+                            0
+                            {% endif %}
+                        ],
+                        borderColor: '#ef4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }, {
+                        label: 'Actual',
+                        data: [
+                            {% for record in broiler_data %}
+                            {{ record.avg_actual_weight|float or 0 }}{% if not loop.last %},{% endif %}
+                            {% endfor %}
+                            {% if not broiler_data %}
+                            0
+                            {% endif %}
+                        ],
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            borderColor: '#374151',
+                            borderWidth: 1,
+                            cornerRadius: 6,
+                            displayColors: true
+                        }
+                    },
+                    scales: {
+                        x: {
+                            display: false
+                        },
+                        y: {
+                            display: false
+                        }
+                    },
+                    animation: {
+                        duration: 1500,
+                        easing: 'easeInOutQuart'
+                    }
+                }
+            });
+        }
+
+        // Kienyeji Weight Chart
+        const kienyejiCtx = document.getElementById('kienyejiWeightChart');
+        if (kienyejiCtx) {
+            new Chart(kienyejiCtx, {
+                type: 'line',
+                data: {
+                    labels: [
+                        {% set kienyeji_data = weight_tracking_data | selectattr('chicken_type', 'equalto', 'kienyeji') | list %}
+                        {% for record in kienyeji_data %}
+                        '{{ record.check_date.strftime("%m-%d") }}'{% if not loop.last %},{% endif %}
+                        {% endfor %}
+                        {% if not kienyeji_data %}
+                        'No Data'
+                        {% endif %}
+                    ],
+                    datasets: [{
+                        label: 'Expected',
+                        data: [
+                            {% for record in kienyeji_data %}
+                            {{ record.avg_expected_weight|float or 0 }}{% if not loop.last %},{% endif %}
+                            {% endfor %}
+                            {% if not kienyeji_data %}
+                            0
+                            {% endif %}
+                        ],
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }, {
+                        label: 'Actual',
+                        data: [
+                            {% for record in kienyeji_data %}
+                            {{ record.avg_actual_weight|float or 0 }}{% if not loop.last %},{% endif %}
+                            {% endfor %}
+                            {% if not kienyeji_data %}
+                            0
+                            {% endif %}
+                        ],
+                        borderColor: '#059669',
+                        backgroundColor: 'rgba(5, 150, 105, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            borderColor: '#374151',
+                            borderWidth: 1,
+                            cornerRadius: 6,
+                            displayColors: true
+                        }
+                    },
+                    scales: {
+                        x: {
+                            display: false
+                        },
+                        y: {
+                            display: false
+                        }
+                    },
+                    animation: {
+                        duration: 1500,
+                        easing: 'easeInOutQuart'
+                    }
+                }
+            });
+        }
+
+        // Layer Weight Chart
+        const layerCtx = document.getElementById('layerWeightChart');
+        if (layerCtx) {
+            new Chart(layerCtx, {
+                type: 'line',
+                data: {
+                    labels: [
+                        {% set layer_data = weight_tracking_data | selectattr('chicken_type', 'equalto', 'layer') | list %}
+                        {% for record in layer_data %}
+                        '{{ record.check_date.strftime("%m-%d") }}'{% if not loop.last %},{% endif %}
+                        {% endfor %}
+                        {% if not layer_data %}
+                        'No Data'
+                        {% endif %}
+                    ],
+                    datasets: [{
+                        label: 'Expected',
+                        data: [
+                            {% for record in layer_data %}
+                            {{ record.avg_expected_weight|float or 0 }}{% if not loop.last %},{% endif %}
+                            {% endfor %}
+                            {% if not layer_data %}
+                            0
+                            {% endif %}
+                        ],
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }, {
+                        label: 'Actual',
+                        data: [
+                            {% for record in layer_data %}
+                            {{ record.avg_actual_weight|float or 0 }}{% if not loop.last %},{% endif %}
+                            {% endfor %}
+                            {% if not layer_data %}
+                            0
+                            {% endif %}
+                        ],
+                        borderColor: '#1d4ed8',
+                        backgroundColor: 'rgba(29, 78, 216, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            borderColor: '#374151',
+                            borderWidth: 1,
+                            cornerRadius: 6,
+                            displayColors: true
+                        }
+                    },
+                    scales: {
+                        x: {
+                            display: false
+                        },
+                        y: {
+                            display: false
+                        }
+                    },
+                    animation: {
+                        duration: 1500,
+                        easing: 'easeInOutQuart'
+                    }
+                }
+            });
+        }
+    }
+</script>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+</html>

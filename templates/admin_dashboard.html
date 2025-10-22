@@ -3,164 +3,186 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administrator Dashboard - Pig Farm Management System</title>
+    <title>AgriTech Dashboard - Smart Farm Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
-        // Error handling for external script conflicts
-        window.addEventListener('error', function(e) {
-            // Ignore errors from external scripts that might conflict
-            if (e.filename && (e.filename.includes('screen-shader.js') || e.filename.includes('night-mode.js'))) {
-                e.preventDefault();
-                return false;
-            }
-        });
-
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'agri-emerald': {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            200: '#a7f3d0',
+                            300: '#6ee7b7',
+                            400: '#34d399',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                        }
+                    },
                     animation: {
-                        'float': 'float 6s ease-in-out infinite',
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                     }
                 }
             }
         }
     </script>
     <style>
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .glass-effect {
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
         
         .dark .glass-effect {
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(17, 24, 39, 0.8);
+            border: 1px solid rgba(75, 85, 99, 0.3);
         }
 
         .sidebar {
-            transition: transform 0.3s ease-in-out;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .sidebar.closed {
-            transform: translateX(-100%);
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        @media (min-width: 768px) {
-            .sidebar.closed {
-                transform: translateX(0);
-            }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #10b981, #059669);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
     </style>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-    <!-- Professional Header -->
-    <header class="fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 shadow-sm">
+<body class="bg-slate-50 dark:bg-slate-900 transition-colors duration-300 font-inter">
+    <!-- Modern Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 glass-effect border-b border-slate-200/50 dark:border-slate-700/50">
         <div class="flex items-center justify-between px-4 sm:px-6 lg:px-8 h-16">
-            <!-- Left Section: Mobile Menu + Logo + Page Title -->
+            <!-- Left Section: Mobile Menu + Logo -->
             <div class="flex items-center space-x-4">
                 <!-- Mobile Menu Button -->
-                <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                    <svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <button id="mobile-menu-btn" class="lg:hidden p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200">
+                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg>
                 </button>
                 
-                <!-- Farm Logo and Name -->
+                <!-- AgriTech Logo -->
                 <div class="flex items-center space-x-3">
-                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-red-500 to-pink-500 rounded-lg flex items-center justify-center">
-                        <span class="text-white font-bold text-sm sm:text-lg">🐷</span>
+                    <div class="w-10 h-10 gradient-bg rounded-xl flex items-center justify-center shadow-lg">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                        </svg>
                     </div>
                     <div class="hidden sm:block">
-                        <h1 class="text-lg font-bold text-gray-900 dark:text-white">PigFarm Pro</h1>
-                        <p class="text-xs text-gray-600 dark:text-gray-400">Meru Farm Management</p>
+                        <h1 class="text-xl font-bold text-gradient">AgriTech Pro</h1>
+                        <p class="text-xs text-slate-600 dark:text-slate-400">Smart Farm Management</p>
                     </div>
-                </div>
-                
-                <!-- Current Page Indicator -->
-                <div class="hidden lg:flex items-center space-x-2 ml-6">
-                    <span class="text-gray-400 dark:text-gray-500">/</span>
-                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Administrator Dashboard</span>
                 </div>
             </div>
             
-            <!-- Right Section: Time, Theme Toggle, and User Profile -->
-            <div class="flex items-center space-x-3 sm:space-x-4">
-                <!-- Live Time and Date -->
-                <div class="hidden sm:block text-right">
-                    <div id="live-time" class="text-sm font-medium text-gray-900 dark:text-white">12:00:00 PM</div>
-                    <div id="live-date" class="text-xs text-gray-600 dark:text-gray-400">January 1, 2024</div>
-                </div>
+            <!-- Right Section: Notifications, Theme Toggle, User Profile -->
+            <div class="flex items-center space-x-3">
+                <!-- Notifications -->
+                <button class="relative p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200">
+                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM4.828 7l2.586 2.586a2 2 0 002.828 0L12.828 7H4.828z"></path>
+                    </svg>
+                    <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
+                </button>
                 
                 <!-- Theme Toggle -->
-                <button id="theme-toggle" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                    <svg id="sun-icon" class="w-5 h-5 text-gray-600 dark:text-gray-300 hidden" fill="currentColor" viewBox="0 0 20 20">
+                <button id="theme-toggle" class="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200">
+                    <svg id="sun-icon" class="w-5 h-5 text-slate-600 dark:text-slate-300 hidden" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>
                     </svg>
-                    <svg id="moon-icon" class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                    <svg id="moon-icon" class="w-5 h-5 text-slate-600 dark:text-slate-300" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
                     </svg>
                 </button>
                 
-                <!-- User Profile Dropdown -->
+                <!-- User Profile -->
                 <div class="relative">
-                    <button id="user-dropdown-btn" class="flex items-center space-x-2 sm:space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                        <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                            <span class="text-white font-bold text-sm">👑</span>
+                    <button id="user-dropdown-btn" class="flex items-center space-x-3 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200">
+                        <div class="w-8 h-8 gradient-bg rounded-full flex items-center justify-center shadow-md">
+                            <span class="text-white font-semibold text-sm">{{ user.name.split()[0][0] + user.name.split()[-1][0] if user.name.split()|length > 1 else user.name[0] }}</span>
                         </div>
-                                                    <div class="hidden sm:block text-left">
-                                <div class="text-sm font-medium text-gray-900 dark:text-white">{{ user.name }}</div>
-                                <div class="text-xs text-gray-600 dark:text-gray-400">{{ user.role.title() }}</div>
-                            </div>
-                        <svg class="w-4 h-4 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="hidden sm:block text-left">
+                            <div class="text-sm font-semibold text-slate-900 dark:text-white">{{ user.name }}</div>
+                            <div class="text-xs text-slate-600 dark:text-slate-400">{{ user.role.title() }}</div>
+                        </div>
+                        <svg class="w-4 h-4 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                         </svg>
                     </button>
                     
                     <!-- Dropdown Menu -->
-                    <div id="user-dropdown" class="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 hidden">
-                        <!-- User Info Section -->
-                        <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                    <div id="user-dropdown" class="absolute right-0 mt-2 w-64 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 hidden animate-slide-up">
+                        <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700">
                             <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                                    <span class="text-white font-bold text-sm">👑</span>
+                                <div class="w-12 h-12 gradient-bg rounded-full flex items-center justify-center">
+                                    <span class="text-white font-semibold">{{ user.name.split()[0][0] + user.name.split()[-1][0] if user.name.split()|length > 1 else user.name[0] }}</span>
                                 </div>
                                 <div>
-                                    <div class="text-sm font-semibold text-gray-900 dark:text-white">{{ user.name }}</div>
-                                    <div class="text-xs text-gray-600 dark:text-gray-400">{{ user.email }}</div>
-                                    <div class="text-xs text-blue-600 dark:text-blue-400 font-medium">{{ user.role.title() }}</div>
+                                    <div class="text-sm font-semibold text-slate-900 dark:text-white">{{ user.name }}</div>
+                                    <div class="text-xs text-slate-600 dark:text-slate-400">{{ user.email }}</div>
+                                    <div class="text-xs text-agri-emerald-600 dark:text-agri-emerald-400 font-medium">{{ user.role.title() }}</div>
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- Menu Items -->
                         <div class="py-2">
-                            <a href="/profile" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <a href="/profile" class="flex items-center px-6 py-3 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
                                 <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                 </svg>
                                 My Profile
                             </a>
-                            <a href="/settings" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <a href="/settings" class="flex items-center px-6 py-3 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
                                 <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                 </svg>
                                 Account Settings
                             </a>
-                            <a href="/app-settings" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <a href="/app-settings" class="flex items-center px-6 py-3 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
                                 <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
                                 </svg>
                                 App Settings
                             </a>
-                            <hr class="my-2 border-gray-200 dark:border-gray-700">
-                            <button id="logout-btn" class="w-full flex items-center px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+                            <hr class="my-2 border-slate-200 dark:border-slate-700">
+                            <button id="logout-btn" class="w-full flex items-center px-6 py-3 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
                                 <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                                 </svg>
@@ -173,307 +195,417 @@
         </div>
     </header>
 
-    <!-- Professional Sidebar -->
-    <aside id="sidebar" class="fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 z-40 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out shadow-lg">
+    <!-- Modern Collapsible Sidebar -->
+    <aside id="sidebar" class="fixed left-0 top-16 h-[calc(100vh-4rem)] w-72 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-r border-slate-200/50 dark:border-slate-700/50 z-40 transform -translate-x-full lg:translate-x-0 transition-all duration-300 ease-out sidebar">
         <div class="flex flex-col h-full">
             <!-- Sidebar Header -->
-            <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex items-center justify-between p-6 border-b border-slate-200/50 dark:border-slate-700/50">
                 <div class="flex items-center space-x-3">
-                    <div class="w-8 h-8 bg-gradient-to-r from-red-500 to-pink-500 rounded-lg flex items-center justify-center">
-                        <span class="text-white font-bold text-sm">⚙️</span>
+                    <div class="w-10 h-10 gradient-bg rounded-xl flex items-center justify-center shadow-lg">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
+                        </svg>
                     </div>
-                    <span class="text-lg font-bold text-gray-900 dark:text-white">Admin Panel</span>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900 dark:text-white">Admin Panel</h2>
+                        <p class="text-xs text-slate-600 dark:text-slate-400">Farm Management</p>
+                    </div>
                 </div>
-                <button id="close-sidebar" class="md:hidden p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
-                    <svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <button id="close-sidebar" class="lg:hidden p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200">
+                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
                 </button>
             </div>
             
             <!-- Navigation Menu -->
-            <nav class="flex-1 p-4 space-y-2">
-                <a href="/admin/dashboard" class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 bg-blue-50 dark:bg-blue-900/20 rounded-lg border-l-4 border-blue-500">
-                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <nav class="flex-1 p-4 space-y-1">
+                <!-- Dashboard -->
+                <a href="/admin/dashboard" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 bg-agri-emerald-50 dark:bg-agri-emerald-900/20 rounded-xl border-l-4 border-agri-emerald-500 transition-all duration-200 hover:bg-agri-emerald-100 dark:hover:bg-agri-emerald-900/30">
+                    <svg class="w-5 h-5 mr-3 text-agri-emerald-600 dark:text-agri-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z"></path>
                     </svg>
-                    Dashboard
+                    <span class="font-medium">Dashboard</span>
                 </a>
                 
-                <a href="/admin/role-view" class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <!-- Role View -->
+                <a href="/admin/role-view" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                    <svg class="w-5 h-5 mr-3 group-hover:text-agri-emerald-600 dark:group-hover:text-agri-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                     </svg>
-                    Role View
+                    <span class="font-medium">Role View</span>
                 </a>
                 
-                <a href="/admin/human-resource" class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <!-- Human Resource Management -->
+                <a href="/admin/human-resource" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                    <svg class="w-5 h-5 mr-3 group-hover:text-agri-emerald-600 dark:group-hover:text-agri-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
                     </svg>
-                    Human Resource Management
+                    <span class="font-medium">Human Resource Management</span>
                 </a>
                 
-                <a href="/admin/farm-management" class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <!-- Farm Management -->
+                <a href="/admin/farm-management" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                    <svg class="w-5 h-5 mr-3 group-hover:text-agri-emerald-600 dark:group-hover:text-agri-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                     </svg>
-                    Farm Management
+                    <span class="font-medium">Farm Management</span>
                 </a>
                 
-                <a href="/admin/analytics" class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <!-- Analytics Management -->
+                <a href="/admin/analytics" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                    <svg class="w-5 h-5 mr-3 group-hover:text-agri-emerald-600 dark:group-hover:text-agri-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                     </svg>
-                    Analytics Management
+                    <span class="font-medium">Analytics Management</span>
                 </a>
                 
-                <a href="/admin/approvals" class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <!-- Pending Approvals -->
+                <a href="/admin/approvals" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                    <svg class="w-5 h-5 mr-3 group-hover:text-agri-emerald-600 dark:group-hover:text-agri-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
-                    Pending Approvals
+                    <span class="font-medium">Pending Approvals</span>
                 </a>
                 
-                <a href="/admin/settings" class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <!-- System Settings -->
+                <a href="/admin/settings" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                    <svg class="w-5 h-5 mr-3 group-hover:text-agri-emerald-600 dark:group-hover:text-agri-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                     </svg>
-                    System Settings
+                    <span class="font-medium">System Settings</span>
                 </a>
             </nav>
             
             <!-- Sidebar Footer -->
-            <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+            <div class="p-4 border-t border-slate-200/50 dark:border-slate-700/50">
                 <div class="text-center">
-                    <p class="text-xs text-gray-500 dark:text-gray-400">PigFarm Pro v1.0</p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">© 2024 Meru Farm</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">AgriTech Pro v2.0</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">© 2024 Smart Farm</p>
                 </div>
             </div>
         </div>
     </aside>
 
     <!-- Main Content -->
-    <div class="pt-16 md:pl-64 min-h-screen">
+    <div class="pt-16 lg:pl-72 min-h-screen bg-slate-50 dark:bg-slate-900">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
             <!-- Dashboard Header -->
-            <div class="mb-6 sm:mb-8">
-                <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white mb-2">Administrator Dashboard</h1>
-                <p class="text-sm sm:text-base text-gray-600 dark:text-gray-300">Manage employees, approve registrations, and oversee system operations</p>
-            </div>
-
-            <!-- Stats Cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
-                <!-- Total Employees -->
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-700">
-                    <div class="flex items-center">
-                        <div class="p-2 sm:p-3 rounded-full bg-blue-100 dark:bg-blue-900">
-                            <span class="text-xl sm:text-2xl">👥</span>
-                        </div>
-                        <div class="ml-3 sm:ml-4">
-                            <p class="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Total Employees</p>
-                            <p class="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white">15</p>
-                        </div>
+            <div class="mb-8 animate-fade-in">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">Smart Farm Dashboard</h1>
+                        <p class="text-slate-600 dark:text-slate-400">Monitor and manage your agricultural operations with real-time insights</p>
                     </div>
-                </div>
-
-                <!-- Pending Approvals -->
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-700">
-                    <div class="flex items-center">
-                        <div class="p-2 sm:p-3 rounded-full bg-yellow-100 dark:bg-yellow-900">
-                            <span class="text-xl sm:text-2xl">⏳</span>
-                        </div>
-                        <div class="ml-3 sm:ml-4">
-                            <p class="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Pending Approvals</p>
-                            <p class="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white">3</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Active Employees -->
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-700">
-                    <div class="flex items-center">
-                        <div class="p-2 sm:p-3 rounded-full bg-green-100 dark:bg-green-900">
-                            <span class="text-xl sm:text-2xl">✅</span>
-                        </div>
-                        <div class="ml-3 sm:ml-4">
-                            <p class="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Active Employees</p>
-                            <p class="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white">12</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Suspended Accounts -->
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-700">
-                    <div class="flex items-center">
-                        <div class="p-2 sm:p-3 rounded-full bg-red-100 dark:bg-red-900">
-                            <span class="text-xl sm:text-2xl">🚫</span>
-                        </div>
-                        <div class="ml-3 sm:ml-4">
-                            <p class="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Suspended</p>
-                            <p class="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white">0</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Quick Actions -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-shadow">
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <span class="text-white text-2xl">⏳</span>
-                        </div>
-                        <h3 class="text-base sm:text-lg font-semibold text-gray-800 dark:text-white mb-2">Pending Approvals</h3>
-                        <p class="text-gray-600 dark:text-gray-300 mb-4">Review and approve new employee registrations</p>
-                        <button class="w-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white py-2 px-4 rounded-lg hover:from-yellow-600 hover:to-orange-600 transition-all duration-300">
-                            Review Applications
-                        </button>
-                    </div>
-                </div>
-
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-shadow">
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <span class="text-white text-2xl">👥</span>
-                        </div>
-                        <h3 class="text-base sm:text-lg font-semibold text-gray-800 dark:text-white mb-2">Employee Management</h3>
-                        <p class="text-gray-600 dark:text-gray-300 mb-4">Manage all employee accounts and permissions</p>
-                        <button class="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white py-2 px-4 rounded-lg hover:from-blue-600 hover:to-purple-600 transition-all duration-300">
-                            Manage Employees
-                        </button>
-                    </div>
-                </div>
-
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-shadow">
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-gradient-to-r from-green-500 to-teal-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <span class="text-white text-2xl">📊</span>
-                        </div>
-                        <h3 class="text-base sm:text-lg font-semibold text-gray-800 dark:text-white mb-2">System Reports</h3>
-                        <p class="text-gray-600 dark:text-gray-300 mb-4">View system analytics and activity reports</p>
-                        <button class="w-full bg-gradient-to-r from-green-500 to-teal-500 text-white py-2 px-4 rounded-lg hover:from-green-600 hover:to-teal-600 transition-all duration-300">
-                            View Reports
+                    <div class="mt-4 sm:mt-0 flex space-x-3">
+                        <button class="px-4 py-2 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-200 shadow-lg hover:shadow-xl border border-slate-200 dark:border-slate-700">
+                            <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            Generate Report
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Pending Approvals Section -->
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700 mb-8">
-                <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Pending Employee Approvals</h3>
-                <div class="space-y-4">
-                    <div class="flex items-center justify-between p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
-                        <div class="flex items-center">
-                            <div class="w-12 h-12 bg-yellow-100 dark:bg-yellow-800 rounded-full flex items-center justify-center mr-4">
-                                <span class="text-yellow-600 dark:text-yellow-400 text-lg">👤</span>
+            <!-- Farm Management Sections -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                <!-- Pigs Section -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 card-hover border border-slate-200 dark:border-slate-700">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 bg-pink-100 dark:bg-pink-900/30 rounded-xl flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-pink-600 dark:text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Pigs Management</h3>
+                                    <p class="text-sm text-slate-600 dark:text-slate-400">Pig farming operations</p>
+                                </div>
                             </div>
-                            <div>
-                                <p class="text-sm font-medium text-gray-800 dark:text-white">Alice Johnson</p>
-                                <p class="text-sm text-gray-600 dark:text-gray-400">alice.johnson@farm.com • Code: 789012</p>
-                                <p class="text-xs text-yellow-600 dark:text-yellow-400">Registered 2 hours ago</p>
+                            <span class="px-3 py-1 bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400 text-xs font-medium rounded-full">Active</span>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-slate-600 dark:text-slate-400">Total Pigs</span>
+                                <span class="text-lg font-semibold text-slate-900 dark:text-white">{{ dashboard_data.pigs.total_pigs }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-slate-600 dark:text-slate-400">Breeding Sows</span>
+                                <span class="text-lg font-semibold text-slate-900 dark:text-white">{{ dashboard_data.pigs.breeding_sows }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-slate-600 dark:text-slate-400">Piglets</span>
+                                <span class="text-lg font-semibold text-slate-900 dark:text-white">{{ dashboard_data.pigs.piglets }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-slate-600 dark:text-slate-400">Litters</span>
+                                <span class="text-lg font-semibold text-slate-900 dark:text-white">{{ dashboard_data.pigs.litters }}</span>
                             </div>
                         </div>
-                        <div class="flex space-x-2">
-                            <button class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm">
-                                Approve
-                            </button>
-                            <button class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm">
-                                Reject
-                            </button>
+                        
+                        <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+                            <div class="flex space-x-2">
+                                <a href="/admin/farm/pig-management" class="flex-1 bg-pink-600 hover:bg-pink-700 text-white text-center py-2 px-3 rounded-lg text-sm font-medium transition-colors">
+                                    Pig Management
+                                </a>
+                                <a href="/admin/pigs-analytics" class="flex-1 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 text-center py-2 px-3 rounded-lg text-sm font-medium transition-colors">
+                                    View Analytics
+                                </a>
+                            </div>
                         </div>
                     </div>
-                    
-                    <div class="flex items-center justify-between p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
-                        <div class="flex items-center">
-                            <div class="w-12 h-12 bg-yellow-100 dark:bg-yellow-800 rounded-full flex items-center justify-center mr-4">
-                                <span class="text-yellow-600 dark:text-yellow-400 text-lg">👤</span>
+                </div>
+
+                <!-- Cows Section -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 card-hover border border-slate-200 dark:border-slate-700">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Cows Management</h3>
+                                    <p class="text-sm text-slate-600 dark:text-slate-400">Cattle farming operations</p>
+                                </div>
                             </div>
-                            <div>
-                                <p class="text-sm font-medium text-gray-800 dark:text-white">David Wilson</p>
-                                <p class="text-sm text-gray-600 dark:text-gray-400">david.wilson@farm.com • Code: 890123</p>
-                                <p class="text-xs text-yellow-600 dark:text-yellow-400">Registered 5 hours ago</p>
+                            <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-medium rounded-full">Active</span>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-slate-600 dark:text-slate-400">Total Cows</span>
+                                <span class="text-lg font-semibold text-slate-900 dark:text-white">{{ dashboard_data.cows.total_cows }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-slate-600 dark:text-slate-400">Female Cows</span>
+                                <span class="text-lg font-semibold text-slate-900 dark:text-white">{{ dashboard_data.cows.female_cows }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-slate-600 dark:text-slate-400">Male Cows</span>
+                                <span class="text-lg font-semibold text-slate-900 dark:text-white">{{ dashboard_data.cows.male_cows }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-slate-600 dark:text-slate-400">Avg Daily Milk</span>
+                                <span class="text-lg font-semibold text-slate-900 dark:text-white">{{ "%.1f"|format(dashboard_data.cows.avg_daily_milk_production or 0) }}L</span>
                             </div>
                         </div>
-                        <div class="flex space-x-2">
-                            <button class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm">
-                                Approve
-                            </button>
-                            <button class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm">
-                                Reject
-                            </button>
+                        
+                        <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+                            <div class="flex space-x-2">
+                                <a href="/admin/farm/cow-management" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-center py-2 px-3 rounded-lg text-sm font-medium transition-colors">
+                                    Cow Management
+                                </a>
+                                <a href="/admin/cows-analytics" class="flex-1 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 text-center py-2 px-3 rounded-lg text-sm font-medium transition-colors">
+                                    View Analytics
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chicken Section -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 card-hover border border-slate-200 dark:border-slate-700">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 bg-yellow-100 dark:bg-yellow-900/30 rounded-xl flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Chicken Farming</h3>
+                                    <p class="text-sm text-slate-600 dark:text-slate-400">Poultry operations</p>
+                                </div>
+                            </div>
+                            <span class="px-3 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 text-xs font-medium rounded-full">Coming Soon</span>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div class="flex justify-center items-center py-8">
+                                <div class="text-center">
+                                    <div class="w-16 h-16 bg-yellow-100 dark:bg-yellow-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <svg class="w-8 h-8 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                    </div>
+                                    <p class="text-sm text-slate-600 dark:text-slate-400">Chicken management system is under development</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+                            <div class="flex space-x-2">
+                                <a href="/admin/farm/chicken-management" class="flex-1 bg-yellow-600 hover:bg-yellow-700 text-white text-center py-2 px-3 rounded-lg text-sm font-medium transition-colors">
+                                    Chicken Management
+                                </a>
+                                <button disabled class="flex-1 bg-slate-200 dark:bg-slate-600 text-slate-500 dark:text-slate-400 text-center py-2 px-3 rounded-lg text-sm font-medium cursor-not-allowed">
+                                    In Development
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Recent Activity -->
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-700">
-                <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Recent System Activity</h3>
-                <div class="space-y-4">
-                    <div class="flex items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                        <div class="w-10 h-10 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mr-4">
-                            <span class="text-green-600 dark:text-green-400">✅</span>
+            <!-- Quick Stats Overview -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 border border-slate-200 dark:border-slate-700">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-slate-600 dark:text-slate-400">Total Animals</p>
+                            <p class="text-2xl font-bold text-slate-900 dark:text-white">{{ dashboard_data.totals.total_animals }}</p>
                         </div>
-                        <div class="flex-1">
-                            <p class="text-sm font-medium text-gray-800 dark:text-white">New employee approved - Alice Johnson</p>
-                            <p class="text-sm text-gray-600 dark:text-gray-400">2 minutes ago</p>
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                        <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mr-4">
-                            <span class="text-blue-600 dark:text-blue-400">👤</span>
-                        </div>
-                        <div class="flex-1">
-                            <p class="text-sm font-medium text-gray-800 dark:text-white">New registration - David Wilson</p>
-                            <p class="text-sm text-gray-600 dark:text-gray-400">5 hours ago</p>
+                        <div class="w-12 h-12 bg-agri-emerald-100 dark:bg-agri-emerald-900/30 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-agri-emerald-600 dark:text-agri-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                            </svg>
                         </div>
                     </div>
-                    
-                    <div class="flex items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                        <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mr-4">
-                            <span class="text-purple-600 dark:text-purple-400">🔒</span>
+                </div>
+
+                <div class="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 border border-slate-200 dark:border-slate-700">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-slate-600 dark:text-slate-400">Milk Production</p>
+                            <p class="text-2xl font-bold text-slate-900 dark:text-white">{{ "%.1f"|format(dashboard_data.totals.daily_production or 0) }}</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">liters (7d)</p>
                         </div>
-                        <div class="flex-1">
-                            <p class="text-sm font-medium text-gray-800 dark:text-white">Password policy updated</p>
-                            <p class="text-sm text-gray-600 dark:text-gray-400">1 day ago</p>
+                        <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                            </svg>
                         </div>
                     </div>
+                </div>
+
+                <div class="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 border border-slate-200 dark:border-slate-700">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-slate-600 dark:text-slate-400">Active Pigs</p>
+                            <p class="text-2xl font-bold text-pink-600 dark:text-pink-400">{{ dashboard_data.pigs.total_pigs }}</p>
+                        </div>
+                        <div class="w-12 h-12 bg-pink-100 dark:bg-pink-900/30 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-pink-600 dark:text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 border border-slate-200 dark:border-slate-700">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-slate-600 dark:text-slate-400">System Health</p>
+                            <p class="text-2xl font-bold text-green-600 dark:text-green-400">{{ dashboard_data.totals.system_health }}%</p>
+                        </div>
+                        <div class="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Department Notifications -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700">
+                <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Department Notifications</h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">Notifications from breeding, health, and medical departments</p>
+                </div>
+                <div class="p-6">
+                    {% if dashboard_data.upcoming_activities %}
+                        <div class="space-y-4">
+                            {% for notification in dashboard_data.upcoming_activities %}
+                            <div class="flex items-center space-x-4">
+                                {% if notification[1] == 'Pigs' %}
+                                    <!-- Pink bell for pigs -->
+                                    <div class="w-10 h-10 bg-pink-100 dark:bg-pink-900/30 rounded-full flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-pink-600 dark:text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM4.828 7l2.586 2.586a2 2 0 002.828 0L12.828 7H4.828z"></path>
+                                        </svg>
+                                    </div>
+                                {% elif notification[1] == 'Cows' %}
+                                    <!-- Orange bell for cows -->
+                                    <div class="w-10 h-10 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM4.828 7l2.586 2.586a2 2 0 002.828 0L12.828 7H4.828z"></path>
+                                        </svg>
+                                    </div>
+                                {% elif notification[1] == 'Chickens' %}
+                                    <!-- Blue bell for chickens -->
+                                    <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM4.828 7l2.586 2.586a2 2 0 002.828 0L12.828 7H4.828z"></path>
+                                        </svg>
+                                    </div>
+                                {% endif %}
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between">
+                                        <p class="text-sm font-medium text-slate-900 dark:text-white">{{ notification[0] }} - {{ notification[1] }}</p>
+                                        <span class="px-2 py-1 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-medium rounded-full">
+                                            {{ notification[2] }} notifications
+                                        </span>
+                                    </div>
+                                    <p class="text-xs text-slate-600 dark:text-slate-400">{{ notification[3] }}</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-8">
+                            <div class="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-8 h-8 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM4.828 7l2.586 2.586a2 2 0 002.828 0L12.828 7H4.828z"></path>
+                                </svg>
+                            </div>
+                            <p class="text-sm text-slate-600 dark:text-slate-400">No notifications available</p>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 mt-16">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <!-- Modern Footer -->
+    <footer class="bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-t border-slate-200/50 dark:border-slate-700/50 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div class="flex flex-col md:flex-row justify-between items-center">
                 <div class="flex items-center space-x-3 mb-4 md:mb-0">
-                    <div class="w-8 h-8 bg-gradient-to-r from-pink-500 to-red-500 rounded-full flex items-center justify-center">
-                        <span class="text-white font-bold text-sm">🐷</span>
+                    <div class="w-10 h-10 gradient-bg rounded-xl flex items-center justify-center shadow-lg">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                        </svg>
                     </div>
                     <div>
-                        <p class="text-sm font-medium text-gray-800 dark:text-white">PigFarm Pro</p>
-                        <p class="text-xs text-gray-600 dark:text-gray-400">Meru Farm Management System</p>
+                        <p class="text-sm font-semibold text-slate-900 dark:text-white">AgriTech Pro</p>
+                        <p class="text-xs text-slate-600 dark:text-slate-400">Smart Farm Management System</p>
                     </div>
                 </div>
                 <div class="flex items-center space-x-6">
-                    <a href="/privacy" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white transition-colors">Privacy Policy</a>
-                    <a href="/terms" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white transition-colors">Terms of Service</a>
-                    <a href="/support" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white transition-colors">Support</a>
+                    <a href="/privacy" class="text-sm text-slate-600 dark:text-slate-400 hover:text-agri-emerald-600 dark:hover:text-agri-emerald-400 transition-colors">Privacy Policy</a>
+                    <a href="/terms" class="text-sm text-slate-600 dark:text-slate-400 hover:text-agri-emerald-600 dark:hover:text-agri-emerald-400 transition-colors">Terms of Service</a>
+                    <a href="/support" class="text-sm text-slate-600 dark:text-slate-400 hover:text-agri-emerald-600 dark:hover:text-agri-emerald-400 transition-colors">Support</a>
                 </div>
             </div>
-            <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 text-center">
-                <p class="text-xs text-gray-500 dark:text-gray-400">© 2024 Meru Farm. All rights reserved.</p>
+            <div class="mt-6 pt-6 border-t border-slate-200/50 dark:border-slate-700/50 text-center">
+                <p class="text-xs text-slate-500 dark:text-slate-400">© 2024 AgriTech Pro. All rights reserved. Built with modern technology for smart agriculture.</p>
             </div>
         </div>
     </footer>
 
     <script>
-        // Theme Toggle Functionality
+        // Modern Theme Toggle with Smooth Transitions
         const themeToggle = document.getElementById('theme-toggle');
         const sunIcon = document.getElementById('sun-icon');
         const moonIcon = document.getElementById('moon-icon');
@@ -496,11 +628,12 @@
             moonIcon.classList.toggle('hidden', !isDark);
         }
 
-        // User Dropdown Functionality
+        // Enhanced User Dropdown with Better UX
         const userDropdownBtn = document.getElementById('user-dropdown-btn');
         const userDropdown = document.getElementById('user-dropdown');
         
-        userDropdownBtn.addEventListener('click', () => {
+        userDropdownBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
             userDropdown.classList.toggle('hidden');
         });
         
@@ -511,44 +644,30 @@
             }
         });
 
-        // Mobile Sidebar Functionality
+        // Enhanced Mobile Sidebar with Better Animations
         const mobileMenuBtn = document.getElementById('mobile-menu-btn');
         const closeSidebarBtn = document.getElementById('close-sidebar');
         const sidebar = document.getElementById('sidebar');
         
         mobileMenuBtn.addEventListener('click', () => {
             sidebar.classList.remove('-translate-x-full');
+            sidebar.classList.add('animate-slide-up');
         });
         
         closeSidebarBtn.addEventListener('click', () => {
             sidebar.classList.add('-translate-x-full');
         });
 
-        // Live Time and Date
-        function updateTime() {
-            const now = new Date();
-            const timeElement = document.getElementById('live-time');
-            const dateElement = document.getElementById('live-date');
-            
-            timeElement.textContent = now.toLocaleTimeString('en-US', {
-                hour12: true,
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            });
-            
-            dateElement.textContent = now.toLocaleDateString('en-US', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
-        }
-        
-        updateTime();
-        setInterval(updateTime, 1000);
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth < 1024) {
+                if (!sidebar.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                    sidebar.classList.add('-translate-x-full');
+                }
+            }
+        });
 
-        // Logout functionality
+        // Logout functionality with better error handling
         document.getElementById('logout-btn').addEventListener('click', async function() {
             try {
                 const response = await fetch('/api/logout', {
@@ -570,21 +689,61 @@
             }
         });
 
-        // Add some interactive animations
+        // Enhanced Animations and Interactions
         document.addEventListener('DOMContentLoaded', function() {
-            // Animate stats cards on load
-            const statsCards = document.querySelectorAll('.grid > div');
-            statsCards.forEach((card, index) => {
+            // Staggered animation for dashboard cards
+            const cards = document.querySelectorAll('.card-hover');
+            cards.forEach((card, index) => {
                 card.style.opacity = '0';
-                card.style.transform = 'translateY(20px)';
+                card.style.transform = 'translateY(30px)';
                 
                 setTimeout(() => {
-                    card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                    card.style.transition = 'opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
                     card.style.opacity = '1';
                     card.style.transform = 'translateY(0)';
                 }, index * 100);
             });
+
+            // Add hover effects to quick action cards
+            const quickActionCards = document.querySelectorAll('.group');
+            quickActionCards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    card.style.transform = 'translateY(-8px)';
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'translateY(0)';
+                });
+            });
+
+            // Add loading states for buttons
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    if (this.classList.contains('bg-agri-emerald-600')) {
+                        this.style.transform = 'scale(0.95)';
+                        setTimeout(() => {
+                            this.style.transform = 'scale(1)';
+                        }, 150);
+                    }
+                });
+            });
         });
+
+        // Responsive behavior for sidebar
+        function handleResize() {
+            if (window.innerWidth >= 1024) {
+                sidebar.classList.remove('-translate-x-full');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+            }
+        }
+
+        window.addEventListener('resize', handleResize);
+        handleResize(); // Call on load
+
+        // Add smooth scrolling for better UX
+        document.documentElement.style.scrollBehavior = 'smooth';
     </script>
 </body>
 </html>

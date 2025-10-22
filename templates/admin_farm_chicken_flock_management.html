@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐔 Chicken Flock Management - AgriTech Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'chicken-yellow': {
+                            50: '#fefce8',
+                            100: '#fef3c7',
+                            200: '#fde68a',
+                            300: '#fcd34d',
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309',
+                            800: '#92400e',
+                            900: '#78350f',
+                        },
+                        'chicken-orange': {
+                            50: '#fff7ed',
+                            100: '#ffedd5',
+                            200: '#fed7aa',
+                            300: '#fdba74',
+                            400: '#fb923c',
+                            500: '#f97316',
+                            600: '#ea580c',
+                            700: '#c2410c',
+                            800: '#9a3412',
+                            900: '#7c2d12',
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.6s ease-in-out',
+                        'slide-up': 'slideUp 0.4s ease-out',
+                        'slide-down': 'slideDown 0.4s ease-out',
+                        'bounce-gentle': 'bounceGentle 2s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'wiggle': 'wiggle 1s ease-in-out infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes bounceGentle {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        @keyframes wiggle {
+            0%, 7% { transform: rotateZ(0); }
+            15% { transform: rotateZ(-15deg); }
+            20% { transform: rotateZ(10deg); }
+            25% { transform: rotateZ(-10deg); }
+            30% { transform: rotateZ(6deg); }
+            35% { transform: rotateZ(-4deg); }
+            40%, 100% { transform: rotateZ(0); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes glow {
+            from { box-shadow: 0 0 20px rgba(245, 158, 11, 0.3); }
+            to { box-shadow: 0 0 30px rgba(245, 158, 11, 0.6), 0 0 40px rgba(245, 158, 11, 0.3); }
+        }
+
+        .glass-effect {
+            backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .dark .glass-effect {
+            background: rgba(17, 24, 39, 0.85);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+        }
+
+        .sidebar {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-hover:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .chicken-pattern {
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(245, 158, 11, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(217, 119, 6, 0.1) 0%, transparent 50%);
+        }
+
+        .floating-emoji {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .wiggle-emoji {
+            animation: wiggle 2s ease-in-out infinite;
+        }
+
+        .glow-effect {
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 transition-colors duration-300 font-inter chicken-pattern">
+    <!-- Modern Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 glass-effect border-b border-slate-200/50 dark:border-slate-700/50">
+        <div class="flex items-center justify-between px-4 sm:px-6 lg:px-8 h-16">
+            <!-- Left Section: Mobile Menu + Logo -->
+            <div class="flex items-center space-x-4">
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="lg:hidden p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200">
+                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+                
+                <!-- AgriTech Logo -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 gradient-bg rounded-xl flex items-center justify-center shadow-lg">
+                        <span class="text-white text-lg">🐔</span>
+                    </div>
+                    <div class="hidden sm:block">
+                        <h1 class="text-xl font-bold text-gradient">AgriTech Pro</h1>
+                        <p class="text-xs text-slate-600 dark:text-slate-400">Flock Management</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Section: Notifications, Theme Toggle, User Profile -->
+            <div class="flex items-center space-x-3">
+                <!-- Notifications -->
+                <button class="relative p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200">
+                    <span class="floating-emoji text-lg">🔔</span>
+                    <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
+                </button>
+                
+                <!-- Theme Toggle -->
+                <button id="theme-toggle" class="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200">
+                    <svg id="sun-icon" class="w-5 h-5 text-slate-600 dark:text-slate-300 hidden" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>
+                    </svg>
+                    <svg id="moon-icon" class="w-5 h-5 text-slate-600 dark:text-slate-300" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                    </svg>
+                </button>
+                
+                <!-- User Profile -->
+                <div class="relative">
+                    <button id="user-dropdown-btn" class="flex items-center space-x-3 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200">
+                        <div class="w-8 h-8 gradient-bg rounded-full flex items-center justify-center shadow-md">
+                            <span class="text-white font-semibold text-sm">{{ user.name.split()[0][0] + user.name.split()[-1][0] if user.name.split()|length > 1 else user.name[0] }}</span>
+                        </div>
+                        <div class="hidden sm:block text-left">
+                            <div class="text-sm font-semibold text-slate-900 dark:text-white">{{ user.name }}</div>
+                            <div class="text-xs text-slate-600 dark:text-slate-400">{{ user.role.title() }}</div>
+                        </div>
+                        <svg class="w-4 h-4 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    
+                    <!-- Dropdown Menu -->
+                    <div id="user-dropdown" class="absolute right-0 mt-2 w-64 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 hidden animate-slide-down">
+                        <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 gradient-bg rounded-full flex items-center justify-center">
+                                    <span class="text-white font-semibold">{{ user.name.split()[0][0] + user.name.split()[-1][0] if user.name.split()|length > 1 else user.name[0] }}</span>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold text-slate-900 dark:text-white">{{ user.name }}</div>
+                                    <div class="text-xs text-slate-600 dark:text-slate-400">{{ user.email }}</div>
+                                    <div class="text-xs text-chicken-yellow-600 dark:text-chicken-yellow-400 font-medium">{{ user.role.title() }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="py-2">
+                            <a href="/profile" class="flex items-center px-6 py-3 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                                <i class="fas fa-user w-4 h-4 mr-3"></i>
+                                My Profile
+                            </a>
+                            <a href="/settings" class="flex items-center px-6 py-3 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                                <i class="fas fa-cog w-4 h-4 mr-3"></i>
+                                Account Settings
+                            </a>
+                            <a href="/app-settings" class="flex items-center px-6 py-3 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                                <i class="fas fa-sliders-h w-4 h-4 mr-3"></i>
+                                App Settings
+                            </a>
+                            <hr class="my-2 border-slate-200 dark:border-slate-700">
+                            <button id="logout-btn" class="w-full flex items-center px-6 py-3 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+                                <i class="fas fa-sign-out-alt w-4 h-4 mr-3"></i>
+                                Sign Out
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Modern Collapsible Sidebar -->
+    <aside id="sidebar" class="fixed left-0 top-16 h-[calc(100vh-4rem)] w-72 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-r border-slate-200/50 dark:border-slate-700/50 z-40 transform -translate-x-full lg:translate-x-0 transition-all duration-300 ease-out sidebar">
+        <div class="flex flex-col h-full">
+            <!-- Sidebar Header -->
+            <div class="flex items-center justify-between p-6 border-b border-slate-200/50 dark:border-slate-700/50">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 gradient-bg rounded-xl flex items-center justify-center shadow-lg">
+                        <span class="text-white text-lg">🐔</span>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900 dark:text-white">Chicken Farm</h2>
+                        <p class="text-xs text-slate-600 dark:text-slate-400">Flock Management</p>
+                    </div>
+                </div>
+                <button id="close-sidebar" class="lg:hidden p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200">
+                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Navigation Menu -->
+            <nav class="flex-1 p-4 space-y-1">
+                <!-- Dashboard -->
+                <a href="/admin/dashboard" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                    <span class="text-lg mr-3">🏠</span>
+                    <span class="font-medium">Dashboard</span>
+                </a>
+                
+                <!-- Registration of Chicken -->
+                <button id="chicken-registration-btn" class="w-full flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                    <span class="text-lg mr-3">📝</span>
+                    <span class="font-medium">Registration of Chicken</span>
+                </button>
+                
+                <!-- Flock Management (Active) -->
+                <a href="/admin/farm/chicken-flock-management" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 bg-chicken-yellow-50 dark:bg-chicken-yellow-900/20 rounded-xl border-l-4 border-chicken-yellow-500 transition-all duration-200 hover:bg-chicken-yellow-100 dark:hover:bg-chicken-yellow-900/30">
+                    <span class="text-lg mr-3">👥</span>
+                    <span class="font-medium">Batch or Flock Management</span>
+                </a>
+                
+                <!-- Health of Chicken -->
+                <a href="/admin/farm/chicken-health" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                    <span class="text-lg mr-3">🏥</span>
+                    <span class="font-medium">Health of Chicken</span>
+                </a>
+                
+                <!-- Upcoming Medications (Sub-item under Health) -->
+                <a href="/admin/farm/chicken-upcoming-medications" class="flex items-center px-8 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all duration-200 ml-4 border-l-2 border-slate-200 dark:border-slate-700">
+                    <span class="text-sm mr-3">💊</span>
+                    <span class="text-sm font-medium">Upcoming Medications</span>
+                </a>
+                
+                <!-- Weight Check (Sub-item under Health) -->
+                <a href="/admin/farm/chicken-weight-check" class="flex items-center px-8 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all duration-200 ml-4 border-l-2 border-slate-200 dark:border-slate-700">
+                    <span class="text-sm mr-3">⚖️</span>
+                    <span class="text-sm font-medium">Weight Check</span>
+                </a>
+                
+                <!-- Health Analytics (Sub-item under Health) -->
+                <a href="/admin/farm/chicken-health-analytics" class="flex items-center px-8 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all duration-200 ml-4 border-l-2 border-slate-200 dark:border-slate-700">
+                    <span class="text-sm mr-3">📊</span>
+                    <span class="text-sm font-medium">Health Analytics</span>
+                </a>
+                
+                <!-- Production of Chicken -->
+                <a href="/admin/farm/chicken-production" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                    <span class="text-lg mr-3">🥚</span>
+                    <span class="font-medium">Production of Chicken</span>
+                </a>
+                
+                <!-- Reporting & Analytics -->
+                <a href="/admin/farm/chicken-analytics" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                    <span class="text-lg mr-3">📊</span>
+                    <span class="font-medium">Reporting & Analytics</span>
+                </a>
+                
+                <!-- Alerts & Notifications -->
+                <a href="/admin/farm/chicken-alerts" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                    <span class="text-lg mr-3">🔔</span>
+                    <span class="font-medium">Alerts & Notifications</span>
+                </a>
+                
+                <!-- Chicken Settings -->
+                <a href="/admin/farm/chicken-settings" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                    <span class="text-lg mr-3">⚙️</span>
+                    <span class="font-medium">Chicken Settings</span>
+                </a>
+            </nav>
+            
+            <!-- Sidebar Footer -->
+            <div class="p-4 border-t border-slate-200/50 dark:border-slate-700/50">
+                <div class="text-center">
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">AgriTech Pro v2.0</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">🐔 Flock Management</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="pt-16 lg:pl-72 min-h-screen bg-slate-50 dark:bg-slate-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+            <!-- Page Header -->
+            <div class="mb-8 animate-fade-in">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-16 h-16 gradient-bg rounded-2xl flex items-center justify-center shadow-lg glow-effect">
+                            <span class="text-white text-2xl wiggle-emoji">👥</span>
+                        </div>
+                        <div>
+                            <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">Chicken Flock Management</h1>
+                            <p class="text-slate-600 dark:text-slate-400">Monitor and manage your chicken flocks by category</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 sm:mt-0 flex space-x-3">
+                        <button class="px-4 py-2 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-200 shadow-lg hover:shadow-xl border border-slate-200 dark:border-slate-700">
+                            <i class="fas fa-download w-4 h-4 inline mr-2"></i>
+                            Export Data
+                        </button>
+                        <button class="px-4 py-2 bg-chicken-yellow-600 hover:bg-chicken-yellow-700 text-white rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl">
+                            <i class="fas fa-plus w-4 h-4 inline mr-2"></i>
+                            Add Flock
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Overview -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <!-- Broiler Stats -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 border border-slate-200 dark:border-slate-700">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-xl flex items-center justify-center">
+                                <span class="text-2xl">🥩</span>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Broilers</h3>
+                                <p class="text-sm text-slate-600 dark:text-slate-400">Meat production</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-sm text-slate-600 dark:text-slate-400">Total Flocks</span>
+                            <span class="font-semibold text-slate-900 dark:text-white">{{ stats.broiler.batch_count if stats.broiler else 0 }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-slate-600 dark:text-slate-400">Total Chickens</span>
+                            <span class="font-semibold text-slate-900 dark:text-white">{{ stats.broiler.total_quantity if stats.broiler else 0 }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-slate-600 dark:text-slate-400">Avg Age (days)</span>
+                            <span class="font-semibold text-slate-900 dark:text-white">{{ stats.broiler.avg_age if stats.broiler else 0 }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kienyeji Stats -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 border border-slate-200 dark:border-slate-700">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-xl flex items-center justify-center">
+                                <span class="text-2xl">🐔</span>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Kienyeji</h3>
+                                <p class="text-sm text-slate-600 dark:text-slate-400">Local breed</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-sm text-slate-600 dark:text-slate-400">Total Flocks</span>
+                            <span class="font-semibold text-slate-900 dark:text-white">{{ stats.kienyeji.batch_count if stats.kienyeji else 0 }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-slate-600 dark:text-slate-400">Total Chickens</span>
+                            <span class="font-semibold text-slate-900 dark:text-white">{{ stats.kienyeji.total_quantity if stats.kienyeji else 0 }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-slate-600 dark:text-slate-400">Avg Age (days)</span>
+                            <span class="font-semibold text-slate-900 dark:text-white">{{ stats.kienyeji.avg_age if stats.kienyeji else 0 }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Layer Stats -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 border border-slate-200 dark:border-slate-700">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-yellow-100 dark:bg-yellow-900/30 rounded-xl flex items-center justify-center">
+                                <span class="text-2xl">🥚</span>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Layers</h3>
+                                <p class="text-sm text-slate-600 dark:text-slate-400">Egg production</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-sm text-slate-600 dark:text-slate-400">Total Flocks</span>
+                            <span class="font-semibold text-slate-900 dark:text-white">{{ stats.layer.batch_count if stats.layer else 0 }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-slate-600 dark:text-slate-400">Total Chickens</span>
+                            <span class="font-semibold text-slate-900 dark:text-white">{{ stats.layer.total_quantity if stats.layer else 0 }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-slate-600 dark:text-slate-400">Avg Age (days)</span>
+                            <span class="font-semibold text-slate-900 dark:text-white">{{ stats.layer.avg_age if stats.layer else 0 }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chicken Categories -->
+            <div class="space-y-8">
+                <!-- Broiler Chickens -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700">
+                    <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-xl flex items-center justify-center">
+                                <span class="text-xl">🥩</span>
+                            </div>
+                            <div>
+                                <h2 class="text-xl font-bold text-slate-900 dark:text-white">Broiler Chickens</h2>
+                                <p class="text-sm text-slate-600 dark:text-slate-400">{{ chickens_by_type.broiler|length }} flocks registered</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        {% if chickens_by_type.broiler %}
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm text-left">
+                                    <thead class="text-xs text-slate-700 dark:text-slate-300 uppercase bg-slate-50 dark:bg-slate-700">
+                                        <tr>
+                                            <th scope="col" class="px-6 py-3">🥩 Chicken ID</th>
+                                            <th scope="col" class="px-6 py-3">Batch Name</th>
+                                            <th scope="col" class="px-6 py-3">Breed</th>
+                                            <th scope="col" class="px-6 py-3">Gender</th>
+                                            <th scope="col" class="px-6 py-3">Age (days)</th>
+                                            <th scope="col" class="px-6 py-3">Coop</th>
+                                            <th scope="col" class="px-6 py-3">Quantity</th>
+                                            <th scope="col" class="px-6 py-3">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for chicken in chickens_by_type.broiler %}
+                                        <tr class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+                                            <td class="px-6 py-4 font-mono font-semibold text-slate-900 dark:text-white">
+                                                {{ chicken.chicken_id }}
+                                            </td>
+                                            <td class="px-6 py-4 text-slate-900 dark:text-white">
+                                                {{ chicken.batch_name }}
+                                            </td>
+                                            <td class="px-6 py-4 text-slate-900 dark:text-white">
+                                                {{ chicken.breed_name }}
+                                            </td>
+                                            <td class="px-6 py-4 text-slate-900 dark:text-white">
+                                                {{ chicken.gender.title() }}
+                                            </td>
+                                            <td class="px-6 py-4 text-slate-900 dark:text-white">
+                                                {{ chicken.age_days }}
+                                            </td>
+                                            <td class="px-6 py-4 text-slate-900 dark:text-white">
+                                                {{ chicken.coop_number }}
+                                            </td>
+                                            <td class="px-6 py-4 text-slate-900 dark:text-white">
+                                                {{ chicken.quantity }}
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <span class="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 text-xs font-medium rounded-full">
+                                                    {{ chicken.current_status.title() }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="text-center py-12">
+                                <div class="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <span class="text-2xl">🥩</span>
+                                </div>
+                                <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">No Broiler Chickens</h3>
+                                <p class="text-slate-600 dark:text-slate-400">Register your first broiler chickens to get started</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Kienyeji Chickens -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700">
+                    <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-orange-100 dark:bg-orange-900/30 rounded-xl flex items-center justify-center">
+                                <span class="text-xl">🐔</span>
+                            </div>
+                            <div>
+                                <h2 class="text-xl font-bold text-slate-900 dark:text-white">Kienyeji Chickens</h2>
+                                <p class="text-sm text-slate-600 dark:text-slate-400">{{ chickens_by_type.kienyeji|length }} flocks registered</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        {% if chickens_by_type.kienyeji %}
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm text-left">
+                                    <thead class="text-xs text-slate-700 dark:text-slate-300 uppercase bg-slate-50 dark:bg-slate-700">
+                                        <tr>
+                                            <th scope="col" class="px-6 py-3">🐔 Chicken ID</th>
+                                            <th scope="col" class="px-6 py-3">Batch Name</th>
+                                            <th scope="col" class="px-6 py-3">Breed</th>
+                                            <th scope="col" class="px-6 py-3">Gender</th>
+                                            <th scope="col" class="px-6 py-3">Age (days)</th>
+                                            <th scope="col" class="px-6 py-3">Coop</th>
+                                            <th scope="col" class="px-6 py-3">Quantity</th>
+                                            <th scope="col" class="px-6 py-3">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for chicken in chickens_by_type.kienyeji %}
+                                        <tr class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+                                            <td class="px-6 py-4 font-mono font-semibold text-slate-900 dark:text-white">
+                                                {{ chicken.chicken_id }}
+                                            </td>
+                                            <td class="px-6 py-4 text-slate-900 dark:text-white">
+                                                {{ chicken.batch_name }}
+                                            </td>
+                                            <td class="px-6 py-4 text-slate-900 dark:text-white">
+                                                {{ chicken.breed_name }}
+                                            </td>
+                                            <td class="px-6 py-4 text-slate-900 dark:text-white">
+                                                {{ chicken.gender.title() }}
+                                            </td>
+                                            <td class="px-6 py-4 text-slate-900 dark:text-white">
+                                                {{ chicken.age_days }}
+                                            </td>
+                                            <td class="px-6 py-4 text-slate-900 dark:text-white">
+                                                {{ chicken.coop_number }}
+                                            </td>
+                                            <td class="px-6 py-4 text-slate-900 dark:text-white">
+                                                {{ chicken.quantity }}
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <span class="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 text-xs font-medium rounded-full">
+                                                    {{ chicken.current_status.title() }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="text-center py-12">
+                                <div class="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <span class="text-2xl">🐔</span>
+                                </div>
+                                <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">No Kienyeji Chickens</h3>
+                                <p class="text-slate-600 dark:text-slate-400">Register your first kienyeji chickens to get started</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Layer Chickens -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700">
+                    <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-yellow-100 dark:bg-yellow-900/30 rounded-xl flex items-center justify-center">
+                                <span class="text-xl">🥚</span>
+                            </div>
+                            <div>
+                                <h2 class="text-xl font-bold text-slate-900 dark:text-white">Layer Chickens</h2>
+                                <p class="text-sm text-slate-600 dark:text-slate-400">{{ chickens_by_type.layer|length }} flocks registered</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        {% if chickens_by_type.layer %}
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm text-left">
+                                    <thead class="text-xs text-slate-700 dark:text-slate-300 uppercase bg-slate-50 dark:bg-slate-700">
+                                        <tr>
+                                            <th scope="col" class="px-6 py-3">🥚 Chicken ID</th>
+                                            <th scope="col" class="px-6 py-3">Batch Name</th>
+                                            <th scope="col" class="px-6 py-3">Breed</th>
+                                            <th scope="col" class="px-6 py-3">Gender</th>
+                                            <th scope="col" class="px-6 py-3">Age (days)</th>
+                                            <th scope="col" class="px-6 py-3">Coop</th>
+                                            <th scope="col" class="px-6 py-3">Quantity</th>
+                                            <th scope="col" class="px-6 py-3">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for chicken in chickens_by_type.layer %}
+                                        <tr class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+                                            <td class="px-6 py-4 font-mono font-semibold text-slate-900 dark:text-white">
+                                                {{ chicken.chicken_id }}
+                                            </td>
+                                            <td class="px-6 py-4 text-slate-900 dark:text-white">
+                                                {{ chicken.batch_name }}
+                                            </td>
+                                            <td class="px-6 py-4 text-slate-900 dark:text-white">
+                                                {{ chicken.breed_name }}
+                                            </td>
+                                            <td class="px-6 py-4 text-slate-900 dark:text-white">
+                                                {{ chicken.gender.title() }}
+                                            </td>
+                                            <td class="px-6 py-4 text-slate-900 dark:text-white">
+                                                {{ chicken.age_days }}
+                                            </td>
+                                            <td class="px-6 py-4 text-slate-900 dark:text-white">
+                                                {{ chicken.coop_number }}
+                                            </td>
+                                            <td class="px-6 py-4 text-slate-900 dark:text-white">
+                                                {{ chicken.quantity }}
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <span class="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 text-xs font-medium rounded-full">
+                                                    {{ chicken.current_status.title() }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="text-center py-12">
+                                <div class="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <span class="text-2xl">🥚</span>
+                                </div>
+                                <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">No Layer Chickens</h3>
+                                <p class="text-slate-600 dark:text-slate-400">Register your first layer chickens to get started</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modern Footer -->
+    <footer class="bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-t border-slate-200/50 dark:border-slate-700/50 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center space-x-3 mb-4 md:mb-0">
+                    <div class="w-10 h-10 gradient-bg rounded-xl flex items-center justify-center shadow-lg">
+                        <span class="text-white text-lg">🐔</span>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold text-slate-900 dark:text-white">AgriTech Pro</p>
+                        <p class="text-xs text-slate-600 dark:text-slate-400">Chicken Flock Management</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <a href="/privacy" class="text-sm text-slate-600 dark:text-slate-400 hover:text-chicken-yellow-600 dark:hover:text-chicken-yellow-400 transition-colors">Privacy Policy</a>
+                    <a href="/terms" class="text-sm text-slate-600 dark:text-slate-400 hover:text-chicken-yellow-600 dark:hover:text-chicken-yellow-400 transition-colors">Terms of Service</a>
+                    <a href="/support" class="text-sm text-slate-600 dark:text-slate-400 hover:text-chicken-yellow-600 dark:hover:text-chicken-yellow-400 transition-colors">Support</a>
+                </div>
+            </div>
+            <div class="mt-6 pt-6 border-t border-slate-200/50 dark:border-slate-700/50 text-center">
+                <p class="text-xs text-slate-500 dark:text-slate-400">© 2024 AgriTech Pro. All rights reserved. 🐔 Chicken Flock Management System</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Modern Theme Toggle with Smooth Transitions
+        const themeToggle = document.getElementById('theme-toggle');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+        
+        // Check for saved theme preference or default to light mode
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.classList.toggle('dark', currentTheme === 'dark');
+        updateThemeIcon();
+        
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            updateThemeIcon();
+        });
+        
+        function updateThemeIcon() {
+            const isDark = document.documentElement.classList.contains('dark');
+            sunIcon.classList.toggle('hidden', isDark);
+            moonIcon.classList.toggle('hidden', !isDark);
+        }
+
+        // Enhanced User Dropdown with Better UX
+        const userDropdownBtn = document.getElementById('user-dropdown-btn');
+        const userDropdown = document.getElementById('user-dropdown');
+        
+        userDropdownBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            userDropdown.classList.toggle('hidden');
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!userDropdownBtn.contains(e.target) && !userDropdown.contains(e.target)) {
+                userDropdown.classList.add('hidden');
+            }
+        });
+
+        // Enhanced Mobile Sidebar with Better Animations
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const closeSidebarBtn = document.getElementById('close-sidebar');
+        const sidebar = document.getElementById('sidebar');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            sidebar.classList.remove('-translate-x-full');
+            sidebar.classList.add('animate-slide-up');
+        });
+        
+        closeSidebarBtn.addEventListener('click', () => {
+            sidebar.classList.add('-translate-x-full');
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth < 1024) {
+                if (!sidebar.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                    sidebar.classList.add('-translate-x-full');
+                }
+            }
+        });
+
+        // Logout functionality with better error handling
+        document.getElementById('logout-btn').addEventListener('click', async function() {
+            try {
+                const response = await fetch('/api/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    window.location.href = data.redirect;
+                }
+            } catch (error) {
+                console.error('Logout error:', error);
+                // Redirect anyway
+                window.location.href = '/';
+            }
+        });
+
+        // Enhanced Animations and Interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            // Staggered animation for dashboard cards
+            const cards = document.querySelectorAll('.card-hover');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+
+            // Add hover effects to quick action cards
+            const quickActionCards = document.querySelectorAll('.group');
+            quickActionCards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    card.style.transform = 'translateY(-8px)';
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'translateY(0)';
+                });
+            });
+
+            // Add loading states for buttons
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    if (this.classList.contains('bg-chicken-yellow-600')) {
+                        this.style.transform = 'scale(0.95)';
+                        setTimeout(() => {
+                            this.style.transform = 'scale(1)';
+                        }, 150);
+                    }
+                });
+            });
+
+            // Add floating animation to emojis
+            const emojis = document.querySelectorAll('.floating-emoji, .wiggle-emoji');
+            emojis.forEach(emoji => {
+                emoji.addEventListener('mouseenter', () => {
+                    emoji.style.animation = 'bounceGentle 0.5s ease-in-out';
+                });
+                
+                emoji.addEventListener('mouseleave', () => {
+                    emoji.style.animation = 'float 3s ease-in-out infinite';
+                });
+            });
+        });
+
+        // Responsive behavior for sidebar
+        function handleResize() {
+            if (window.innerWidth >= 1024) {
+                sidebar.classList.remove('-translate-x-full');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+            }
+        }
+
+        window.addEventListener('resize', handleResize);
+        handleResize(); // Call on load
+
+        // Add smooth scrolling for better UX
+        document.documentElement.style.scrollBehavior = 'smooth';
+
+        // Add interactive emoji effects
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click effects to emojis
+            const interactiveEmojis = document.querySelectorAll('.wiggle-emoji, .floating-emoji');
+            interactiveEmojis.forEach(emoji => {
+                emoji.addEventListener('click', function() {
+                    this.style.animation = 'wiggle 0.5s ease-in-out';
+                    setTimeout(() => {
+                        this.style.animation = 'float 3s ease-in-out infinite';
+                    }, 500);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

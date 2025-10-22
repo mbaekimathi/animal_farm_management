@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chicken Production Analytics - AgriTech Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'chicken-yellow': {
+                            50: '#fefce8',
+                            100: '#fef3c7',
+                            200: '#fde68a',
+                            300: '#fcd34d',
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309',
+                            800: '#92400e',
+                            900: '#78350f',
+                        }
+                    },
+                    animation: {
+                        'slide-up': 'slideUp 0.3s ease-out',
+                        'fade-in': 'fadeIn 0.5s ease-out',
+                        'bounce-in': 'bounceIn 0.6s ease-out',
+                    },
+                    keyframes: {
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        bounceIn: {
+                            '0%': { transform: 'scale(0.3)', opacity: '0' },
+                            '50%': { transform: 'scale(1.05)' },
+                            '70%': { transform: 'scale(0.9)' },
+                            '100%': { transform: 'scale(1)', opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .dark .glass-card {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+    </style>
+</head>
+<body class="h-full bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
+    <!-- Modern Header -->
+    <header class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-700/50 sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo and Title -->
+                <div class="flex items-center space-x-4">
+                    <button id="sidebar-toggle" class="lg:hidden p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                        <svg class="w-6 h-6 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-chicken-yellow-500 rounded-xl flex items-center justify-center">
+                            <span class="text-white text-lg">📊</span>
+                        </div>
+                        <div>
+                            <h1 class="text-xl font-bold text-slate-900 dark:text-white">Production Analytics</h1>
+                            <p class="text-sm text-slate-600 dark:text-slate-400">Chicken production insights and analytics</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- User Menu -->
+                <div class="flex items-center space-x-4">
+                    <!-- Theme Toggle -->
+                    <button id="theme-toggle" class="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                        <svg id="sun-icon" class="w-5 h-5 text-slate-600 dark:text-slate-300 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                        </svg>
+                        <svg id="moon-icon" class="w-5 h-5 text-slate-600 dark:text-slate-300 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                        </svg>
+                    </button>
+                    
+                    <!-- User Profile -->
+                    <div class="relative">
+                        <button id="user-menu-button" class="flex items-center space-x-3 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                            <div class="w-8 h-8 bg-chicken-yellow-500 rounded-lg flex items-center justify-center">
+                                <span class="text-white text-sm font-semibold">{{ user.name[0] }}</span>
+                            </div>
+                            <div class="text-left hidden sm:block">
+                                <p class="text-sm font-medium text-slate-900 dark:text-white">{{ user.name }}</p>
+                                <p class="text-xs text-slate-600 dark:text-slate-400">{{ user.role.title() }}</p>
+                            </div>
+                            <svg class="w-4 h-4 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        
+                        <!-- Dropdown Menu -->
+                        <div id="user-menu" class="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 hidden z-50">
+                            <div class="p-2">
+                                <a href="/admin/profile" class="flex items-center px-3 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors">
+                                    <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                    </svg>
+                                    Profile
+                                </a>
+                                <a href="/admin/settings" class="flex items-center px-3 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors">
+                                    <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                    Settings
+                                </a>
+                                <hr class="my-2 border-slate-200 dark:border-slate-700">
+                                <a href="/logout" class="flex items-center px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors">
+                                    <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                    </svg>
+                                    Logout
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Modern Collapsible Sidebar -->
+    <aside id="sidebar" class="fixed left-0 top-16 h-[calc(100vh-4rem)] w-72 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-r border-slate-200/50 dark:border-slate-700/50 z-40 transform -translate-x-full lg:translate-x-0 transition-all duration-300 ease-out sidebar">
+        <div class="flex flex-col h-full">
+            <!-- Sidebar Header -->
+            <div class="p-6 border-b border-slate-200/50 dark:border-slate-700/50">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-chicken-yellow-500 rounded-lg flex items-center justify-center">
+                        <span class="text-white text-sm">🐔</span>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900 dark:text-white">Chicken Farm</h2>
+                        <p class="text-xs text-slate-600 dark:text-slate-400">Production Analytics</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Navigation -->
+            <nav class="flex-1 p-6 space-y-2">
+                <!-- Dashboard -->
+                <a href="/admin/dashboard" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                    <span class="text-lg mr-3">🏠</span>
+                    <span class="font-medium">Dashboard</span>
+                </a>
+                
+                <!-- Production of Chicken -->
+                <div class="space-y-1">
+                    <div class="flex items-center px-4 py-3 bg-chicken-yellow-100 dark:bg-chicken-yellow-900/30 rounded-xl border border-chicken-yellow-200 dark:border-chicken-yellow-700">
+                        <span class="text-chicken-yellow-600 dark:text-chicken-yellow-400 text-lg mr-3">📊</span>
+                        <span class="font-medium text-chicken-yellow-800 dark:text-chicken-yellow-200">Production of Chicken</span>
+                    </div>
+                    
+                    <!-- Sub-links -->
+                    <div class="ml-4 space-y-1">
+                        <a href="/admin/farm/chicken-production" class="flex items-center px-4 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all duration-200">
+                            <span class="text-sm mr-3">📝</span>
+                            <span class="text-sm font-medium">Register Production</span>
+                        </a>
+                        <a href="/admin/farm/chicken-production-management" class="flex items-center px-4 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all duration-200">
+                            <span class="text-sm mr-3">📋</span>
+                            <span class="text-sm font-medium">Production Management</span>
+                        </a>
+                        <a href="/admin/farm/chicken-production-analytics" class="flex items-center px-4 py-2 text-chicken-yellow-600 dark:text-chicken-yellow-400 bg-chicken-yellow-50 dark:bg-chicken-yellow-900/20 rounded-lg transition-all duration-200">
+                            <span class="text-sm mr-3">📈</span>
+                            <span class="text-sm font-medium">Production Analytics</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="lg:ml-72 p-6">
+        <!-- Statistics Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Total Chickens -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg border border-slate-200 dark:border-slate-700 animate-fade-in">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-slate-600 dark:text-slate-400">Total Chickens</p>
+                        <p class="text-3xl font-bold text-slate-900 dark:text-white">{{ stats.total_chickens }}</p>
+                    </div>
+                    <div class="w-12 h-12 bg-chicken-yellow-100 dark:bg-chicken-yellow-900/30 rounded-xl flex items-center justify-center">
+                        <span class="text-chicken-yellow-600 dark:text-chicken-yellow-400 text-xl">🐔</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Active Chickens -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg border border-slate-200 dark:border-slate-700 animate-fade-in">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-slate-600 dark:text-slate-400">Active Chickens</p>
+                        <p class="text-3xl font-bold text-green-600 dark:text-green-400">{{ stats.active_chickens }}</p>
+                    </div>
+                    <div class="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center">
+                        <span class="text-green-600 dark:text-green-400 text-xl">✅</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Total Eggs -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg border border-slate-200 dark:border-slate-700 animate-fade-in">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-slate-600 dark:text-slate-400">Total Eggs</p>
+                        <p class="text-3xl font-bold text-blue-600 dark:text-blue-400">{{ stats.total_eggs }}</p>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
+                        <span class="text-blue-600 dark:text-blue-400 text-xl">🥚</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Productions -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg border border-slate-200 dark:border-slate-700 animate-fade-in">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-slate-600 dark:text-slate-400">Recent (7 days)</p>
+                        <p class="text-3xl font-bold text-purple-600 dark:text-purple-400">{{ stats.recent_productions }}</p>
+                    </div>
+                    <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center">
+                        <span class="text-purple-600 dark:text-purple-400 text-xl">📈</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters Section -->
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 mb-8 animate-slide-up">
+            <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-purple-500 rounded-xl flex items-center justify-center">
+                        <span class="text-white text-lg">🔍</span>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 dark:text-white">Production Filters</h2>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">Filter production data by date ranges</p>
+                    </div>
+                </div>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Single Date Filter -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Specific Date</label>
+                        <input type="date" id="single-date-filter" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-slate-700 dark:text-white">
+                    </div>
+                    
+                    <!-- Date Range Filter -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Start Date</label>
+                        <input type="date" id="start-date-filter" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-slate-700 dark:text-white">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">End Date</label>
+                        <input type="date" id="end-date-filter" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-slate-700 dark:text-white">
+                    </div>
+                    
+                    <!-- Month/Year Filter -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Month & Year</label>
+                        <input type="month" id="month-year-filter" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-slate-700 dark:text-white">
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-between mt-6">
+                    <div class="flex items-center space-x-4">
+                        <button onclick="applyFilters()" class="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors">
+                            <span class="mr-2">🔍</span>
+                            Apply Filters
+                        </button>
+                        <button onclick="clearFilters()" class="px-6 py-2 bg-slate-600 hover:bg-slate-700 text-white rounded-lg transition-colors">
+                            <span class="mr-2">🗑️</span>
+                            Clear Filters
+                        </button>
+                    </div>
+                    <div class="text-sm text-slate-600 dark:text-slate-400">
+                        <span id="filter-status">No filters applied</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Production Analysis -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- Detailed Eggs Analysis -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 animate-slide-up">
+                <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center">
+                            <span class="text-white text-lg">🥚</span>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-900 dark:text-white">Detailed Eggs Analysis</h2>
+                            <p class="text-sm text-slate-600 dark:text-slate-400">Collection patterns and quantities</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="space-y-6">
+                        <!-- Total Eggs -->
+                        <div class="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-6 border border-blue-200 dark:border-blue-700">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-blue-600 dark:text-blue-400">Total Eggs Collected</p>
+                                    <p class="text-3xl font-bold text-blue-700 dark:text-blue-300" id="total-eggs-display">{{ stats.total_eggs }}</p>
+                                </div>
+                                <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
+                                    <span class="text-blue-600 dark:text-blue-400 text-xl">🥚</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Collection Time Analysis -->
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Collection Time Analysis</h3>
+                            <div class="bg-slate-50 dark:bg-slate-700 rounded-lg p-4">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <p class="text-sm font-medium text-slate-600 dark:text-slate-400">Peak Collection Time</p>
+                                        <p class="text-lg font-bold text-blue-600 dark:text-blue-400" id="peak-collection-time">06:00 - 08:00</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-slate-600 dark:text-slate-400">Average per Collection</p>
+                                        <p class="text-lg font-bold text-blue-600 dark:text-blue-400" id="avg-eggs-per-collection">25 eggs</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Eggs by Category -->
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Production by Category</h3>
+                            <div class="space-y-3" id="eggs-category-analysis">
+                                <!-- Dynamic content will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Detailed Meat Analysis -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 animate-slide-up">
+                <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-red-500 rounded-xl flex items-center justify-center">
+                            <span class="text-white text-lg">🍗</span>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-900 dark:text-white">Detailed Meat Analysis</h2>
+                            <p class="text-sm text-slate-600 dark:text-slate-400">Slaughter weights and quantities</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="space-y-6">
+                        <!-- Total Meat -->
+                        <div class="bg-red-50 dark:bg-red-900/20 rounded-xl p-6 border border-red-200 dark:border-red-700">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-red-600 dark:text-red-400">Total Chickens Slaughtered</p>
+                                    <p class="text-3xl font-bold text-red-700 dark:text-red-300" id="total-meat-display">{{ stats.total_meat_production }}</p>
+                                </div>
+                                <div class="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-xl flex items-center justify-center">
+                                    <span class="text-red-600 dark:text-red-400 text-xl">🍗</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Weight Analysis -->
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Weight Analysis</h3>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="bg-slate-50 dark:bg-slate-700 rounded-lg p-4">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Average Alive Weight</span>
+                                        <span class="text-green-600 dark:text-green-400 text-lg">🟢</span>
+                                    </div>
+                                    <p class="text-2xl font-bold text-green-600 dark:text-green-400" id="avg-alive-weight">2.5 kg</p>
+                                </div>
+                                <div class="bg-slate-50 dark:bg-slate-700 rounded-lg p-4">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Average Dead Weight</span>
+                                        <span class="text-red-600 dark:text-red-400 text-lg">🔴</span>
+                                    </div>
+                                    <p class="text-2xl font-bold text-red-600 dark:text-red-400" id="avg-dead-weight">2.1 kg</p>
+                                </div>
+                            </div>
+                            <div class="bg-slate-50 dark:bg-slate-700 rounded-lg p-4">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Weight Loss Percentage</span>
+                                    <span class="text-2xl font-bold text-orange-600 dark:text-orange-400" id="weight-loss-percentage">16%</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Meat by Category -->
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Production by Category</h3>
+                            <div class="space-y-3" id="meat-category-analysis">
+                                <!-- Dynamic content will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chickens in Production -->
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 animate-slide-up">
+            <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-chicken-yellow-500 rounded-xl flex items-center justify-center">
+                            <span class="text-white text-lg">🐔</span>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-900 dark:text-white">Chickens in Production</h2>
+                            <p class="text-sm text-slate-600 dark:text-slate-400">Click on a chicken to view their production history</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-6">
+                {% if chickens %}
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+                            <thead class="bg-slate-50 dark:bg-slate-800">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Chicken</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Category</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Production Count</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total Eggs</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Meat Production</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Last Production</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
+                                {% for chicken in chickens %}
+                                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center space-x-3">
+                                                <div class="w-8 h-8 bg-chicken-yellow-100 dark:bg-chicken-yellow-900/30 rounded-lg flex items-center justify-center">
+                                                    <span class="text-chicken-yellow-600 dark:text-chicken-yellow-400 text-sm">🐔</span>
+                                                </div>
+                                                <div>
+                                                    <div class="text-sm font-medium text-slate-900 dark:text-white">{{ chicken.chicken_id }}</div>
+                                                    <div class="text-sm text-slate-500 dark:text-slate-400">{{ chicken.batch_name or 'N/A' }}</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-slate-900 dark:text-white capitalize">{{ chicken.chicken_type }}</div>
+                                            <div class="text-sm text-slate-500 dark:text-slate-400">{{ chicken.breed_name or 'N/A' }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 py-1 rounded-full text-xs font-medium {{ 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' if chicken.current_status == 'active' else 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' }}">
+                                                {{ chicken.current_status.title() }}
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-white">
+                                            <div class="flex items-center space-x-2">
+                                                <span class="font-semibold">{{ chicken.production_count }}</span>
+                                                <span class="text-slate-500 dark:text-slate-400">records</span>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center space-x-2">
+                                                <span class="text-blue-600 dark:text-blue-400 font-semibold">{{ chicken.total_eggs or 0 }}</span>
+                                                <span class="text-slate-500 dark:text-slate-400">eggs</span>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center space-x-2">
+                                                <span class="text-red-600 dark:text-red-400 font-semibold">{{ chicken.total_meat_production or 0 }}</span>
+                                                <span class="text-slate-500 dark:text-slate-400">chickens</span>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-white">
+                                            {{ chicken.last_production_date.strftime('%Y-%m-%d') if chicken.last_production_date else 'N/A' }}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <button onclick="viewChickenProduction('{{ chicken.chicken_id }}')" class="text-chicken-yellow-600 dark:text-chicken-yellow-400 hover:text-chicken-yellow-700 dark:hover:text-chicken-yellow-300 transition-colors flex items-center space-x-2">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                                </svg>
+                                                <span>View History</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-12">
+                        <div class="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-2xl">🐔</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">No Chickens in Production</h3>
+                        <p class="text-slate-600 dark:text-slate-400">No chickens have production records yet.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+
+    <!-- Chicken Production History Modal -->
+    <div id="chicken-history-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-y-auto animate-slide-up">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-700">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-chicken-yellow-500 rounded-xl flex items-center justify-center">
+                        <span class="text-white text-lg">📊</span>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white">Production History</h3>
+                        <p class="text-sm text-slate-600 dark:text-slate-400" id="chicken-info">Loading...</p>
+                    </div>
+                </div>
+                <button id="close-chicken-history-modal" class="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                    <svg class="w-6 h-6 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Modal Content -->
+            <div class="p-6">
+                <div id="chicken-history-content">
+                    <!-- Production history will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="lg:ml-72 bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl border-t border-slate-200/50 dark:border-slate-700/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+                <div class="flex items-center space-x-4">
+                    <div class="w-8 h-8 bg-chicken-yellow-500 rounded-lg flex items-center justify-center">
+                        <span class="text-white text-sm">🐔</span>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white">AgriTech Pro</h3>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">Advanced Poultry Management System</p>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-6 pt-6 border-t border-slate-200/50 dark:border-slate-700/50 text-center">
+                <p class="text-xs text-slate-500 dark:text-slate-400">© 2024 AgriTech Pro. All rights reserved. 🐔 Production Analytics - Advanced Poultry Management System</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Interactive Features -->
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('darkMode', isDark);
+        });
+
+        // Load saved theme
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.documentElement.classList.add('dark');
+        }
+
+        // User Menu Toggle
+        const userMenuButton = document.getElementById('user-menu-button');
+        const userMenu = document.getElementById('user-menu');
+
+        userMenuButton.addEventListener('click', () => {
+            userMenu.classList.toggle('hidden');
+        });
+
+        // Close user menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!userMenuButton.contains(e.target) && !userMenu.contains(e.target)) {
+                userMenu.classList.add('hidden');
+            }
+        });
+
+        // Sidebar Toggle
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const sidebar = document.getElementById('sidebar');
+
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('-translate-x-full');
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth < 1024 && !sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
+                sidebar.classList.add('-translate-x-full');
+            }
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 1024) {
+                sidebar.classList.remove('-translate-x-full');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+            }
+        });
+
+        // Chicken Production History Functions
+        function viewChickenProduction(chickenId) {
+            // Show loading state
+            document.getElementById('chicken-info').textContent = 'Loading...';
+            document.getElementById('chicken-history-content').innerHTML = '<div class="text-center py-8"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-chicken-yellow-500 mx-auto"></div></div>';
+            
+            // Fetch chicken production history
+            fetch(`/admin/farm/chicken-production-history/${chickenId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert('Error: ' + data.error);
+                        return;
+                    }
+                    
+                    const chicken = data.chicken;
+                    const productions = data.productions;
+                    
+                    // Update header info
+                    document.getElementById('chicken-info').textContent = `${chicken.chicken_id} - ${chicken.batch_name || 'N/A'} (${chicken.chicken_type})`;
+                    
+                    // Create content
+                    const content = document.getElementById('chicken-history-content');
+                    
+                    if (productions.length === 0) {
+                        content.innerHTML = `
+                            <div class="text-center py-8">
+                                <div class="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <span class="text-2xl">📊</span>
+                                </div>
+                                <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">No Production Records</h3>
+                                <p class="text-slate-600 dark:text-slate-400">This chicken has no production records yet.</p>
+                            </div>
+                        `;
+                    } else {
+                        content.innerHTML = `
+                            <div class="space-y-6">
+                                <!-- Chicken Overview -->
+                                <div class="bg-slate-50 dark:bg-slate-700 rounded-xl p-6 border border-slate-200 dark:border-slate-600">
+                                    <h4 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center">
+                                        <span class="mr-2">🐔</span>
+                                        Chicken Overview
+                                    </h4>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                        <div>
+                                            <label class="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Chicken ID</label>
+                                            <span class="text-slate-900 dark:text-white font-mono">${chicken.chicken_id}</span>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Batch Name</label>
+                                            <span class="text-slate-900 dark:text-white">${chicken.batch_name || 'N/A'}</span>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Breed</label>
+                                            <span class="text-slate-900 dark:text-white">${chicken.breed_name || 'N/A'}</span>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Category</label>
+                                            <span class="text-slate-900 dark:text-white capitalize">${chicken.chicken_type}</span>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Gender</label>
+                                            <span class="text-slate-900 dark:text-white">${chicken.gender || 'N/A'}</span>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Status</label>
+                                            <span class="px-2 py-1 rounded-full text-xs font-medium ${chicken.current_status === 'active' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'}">
+                                                ${chicken.current_status.title()}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Production History -->
+                                <div class="bg-slate-50 dark:bg-slate-700 rounded-xl p-6 border border-slate-200 dark:border-slate-600">
+                                    <h4 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center">
+                                        <span class="mr-2">📊</span>
+                                        Production History (${productions.length} records)
+                                    </h4>
+                                    <div class="space-y-4">
+                                        ${productions.map(production => `
+                                            <div class="bg-white dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-600">
+                                                <div class="flex items-center justify-between mb-3">
+                                                    <div class="flex items-center space-x-3">
+                                                        <span class="px-3 py-1 rounded-full text-sm font-medium ${production.production_type === 'eggs' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'}">
+                                                            ${production.production_type === 'eggs' ? '🥚 Eggs' : '🍗 Meat'}
+                                                        </span>
+                                                        <span class="text-slate-900 dark:text-white font-semibold">${production.quantity} ${production.production_type === 'eggs' ? 'eggs' : 'chickens'}</span>
+                                                    </div>
+                                                    <span class="text-sm text-slate-600 dark:text-slate-400">${production.production_date_str} at ${production.production_time_str}</span>
+                                                </div>
+                                                
+                                                ${production.production_type === 'meat' && production.meat_details && production.meat_details.length > 0 ? `
+                                                <div class="mt-3 pt-3 border-t border-slate-200 dark:border-slate-600">
+                                                    <h6 class="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Weight Details:</h6>
+                                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                        ${production.meat_details.map(detail => `
+                                                            <div class="bg-slate-50 dark:bg-slate-700 rounded-lg p-3">
+                                                                <div class="text-sm font-medium text-slate-900 dark:text-white">Chicken ${detail.chicken_number}</div>
+                                                                <div class="text-xs text-slate-600 dark:text-slate-400">
+                                                                    Alive: ${detail.alive_weight}kg | Dead: ${detail.dead_weight}kg
+                                                                </div>
+                                                            </div>
+                                                        `).join('')}
+                                                    </div>
+                                                </div>
+                                                ` : ''}
+                                                
+                                                ${production.notes ? `
+                                                <div class="mt-3 pt-3 border-t border-slate-200 dark:border-slate-600">
+                                                    <p class="text-sm text-slate-700 dark:text-slate-300"><strong>Notes:</strong> ${production.notes}</p>
+                                                </div>
+                                                ` : ''}
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    // Show modal
+                    document.getElementById('chicken-history-modal').classList.remove('hidden');
+                    document.body.style.overflow = 'hidden';
+                })
+                .catch(error => {
+                    console.error('Error fetching chicken production history:', error);
+                    alert('Error fetching chicken production history');
+                });
+        }
+
+        // Chicken History Modal Event Listeners
+        const chickenHistoryModal = document.getElementById('chicken-history-modal');
+        const closeChickenHistoryModal = document.getElementById('close-chicken-history-modal');
+
+        closeChickenHistoryModal.addEventListener('click', closeChickenHistoryModalFunc);
+
+        function closeChickenHistoryModalFunc() {
+            chickenHistoryModal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close chicken history modal when clicking outside
+        chickenHistoryModal.addEventListener('click', (e) => {
+            if (e.target === chickenHistoryModal) {
+                closeChickenHistoryModalFunc();
+            }
+        });
+
+        // Filter Functions
+        function applyFilters() {
+            const singleDate = document.getElementById('single-date-filter').value;
+            const startDate = document.getElementById('start-date-filter').value;
+            const endDate = document.getElementById('end-date-filter').value;
+            const monthYear = document.getElementById('month-year-filter').value;
+            
+            let filterStatus = '';
+            
+            if (singleDate) {
+                filterStatus = `Filtered by date: ${singleDate}`;
+                loadFilteredData('single', singleDate);
+            } else if (startDate && endDate) {
+                filterStatus = `Filtered by range: ${startDate} to ${endDate}`;
+                loadFilteredData('range', {start: startDate, end: endDate});
+            } else if (monthYear) {
+                filterStatus = `Filtered by month: ${monthYear}`;
+                loadFilteredData('month', monthYear);
+            } else {
+                filterStatus = 'No filters applied';
+                loadAllData();
+            }
+            
+            document.getElementById('filter-status').textContent = filterStatus;
+        }
+
+        function clearFilters() {
+            document.getElementById('single-date-filter').value = '';
+            document.getElementById('start-date-filter').value = '';
+            document.getElementById('end-date-filter').value = '';
+            document.getElementById('month-year-filter').value = '';
+            document.getElementById('filter-status').textContent = 'No filters applied';
+            loadAllData();
+        }
+
+        function loadFilteredData(filterType, filterValue) {
+            // Show loading state
+            showLoadingState();
+            
+            // Simulate API call (replace with actual API endpoint)
+            setTimeout(() => {
+                updateAnalysisData();
+                hideLoadingState();
+            }, 1000);
+        }
+
+        function loadAllData() {
+            // Reset to original data
+            updateAnalysisData();
+        }
+
+        function showLoadingState() {
+            document.getElementById('total-eggs-display').textContent = 'Loading...';
+            document.getElementById('total-meat-display').textContent = 'Loading...';
+        }
+
+        function hideLoadingState() {
+            // Data will be updated by updateAnalysisData()
+        }
+
+        function updateAnalysisData() {
+            // Update eggs analysis
+            updateEggsAnalysis();
+            
+            // Update meat analysis
+            updateMeatAnalysis();
+        }
+
+        function updateEggsAnalysis() {
+            // Calculate peak collection time (mock data - replace with real calculation)
+            const peakTime = '06:00 - 08:00';
+            document.getElementById('peak-collection-time').textContent = peakTime;
+            
+            // Calculate average eggs per collection (mock data - replace with real calculation)
+            const avgEggs = Math.round({{ stats.total_eggs }} / Math.max(1, {{ chickens|length }}));
+            document.getElementById('avg-eggs-per-collection').textContent = `${avgEggs} eggs`;
+            
+            // Update category analysis
+            updateEggsCategoryAnalysis();
+        }
+
+        function updateMeatAnalysis() {
+            // Calculate average weights (mock data - replace with real calculation)
+            const avgAliveWeight = '2.5 kg';
+            const avgDeadWeight = '2.1 kg';
+            const weightLoss = '16%';
+            
+            document.getElementById('avg-alive-weight').textContent = avgAliveWeight;
+            document.getElementById('avg-dead-weight').textContent = avgDeadWeight;
+            document.getElementById('weight-loss-percentage').textContent = weightLoss;
+            
+            // Update category analysis
+            updateMeatCategoryAnalysis();
+        }
+
+        function updateEggsCategoryAnalysis() {
+            const container = document.getElementById('eggs-category-analysis');
+            
+            // Calculate category totals
+            const categories = {};
+            {% for chicken in chickens %}
+                const type = '{{ chicken.chicken_type }}';
+                const eggs = {{ chicken.total_eggs or 0 }};
+                if (!categories[type]) categories[type] = 0;
+                categories[type] += eggs;
+            {% endfor %}
+            
+            let html = '';
+            for (const [category, count] of Object.entries(categories)) {
+                html += `
+                    <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700 rounded-lg">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                                <span class="text-blue-600 dark:text-blue-400 text-sm">🥚</span>
+                            </div>
+                            <div>
+                                <p class="font-medium text-slate-900 dark:text-white capitalize">${category}</p>
+                                <p class="text-sm text-slate-600 dark:text-slate-400">Egg production</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">${count}</p>
+                            <p class="text-sm text-slate-600 dark:text-slate-400">eggs</p>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = html;
+        }
+
+        function updateMeatCategoryAnalysis() {
+            const container = document.getElementById('meat-category-analysis');
+            
+            // Calculate category totals
+            const categories = {};
+            {% for chicken in chickens %}
+                const type = '{{ chicken.chicken_type }}';
+                const meat = {{ chicken.total_meat_production or 0 }};
+                if (!categories[type]) categories[type] = 0;
+                categories[type] += meat;
+            {% endfor %}
+            
+            let html = '';
+            for (const [category, count] of Object.entries(categories)) {
+                html += `
+                    <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700 rounded-lg">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center">
+                                <span class="text-red-600 dark:text-red-400 text-sm">🍗</span>
+                            </div>
+                            <div>
+                                <p class="font-medium text-slate-900 dark:text-white capitalize">${category}</p>
+                                <p class="text-sm text-slate-600 dark:text-slate-400">Meat production</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-2xl font-bold text-red-600 dark:text-red-400">${count}</p>
+                            <p class="text-sm text-slate-600 dark:text-slate-400">chickens</p>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = html;
+        }
+
+        // Initialize analysis on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateAnalysisData();
+        });
+    </script>
+</body>
+</html>

@@ -191,7 +191,7 @@
                         </div>
                         <div class="ml-3 sm:ml-4">
                             <p class="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Team Members</p>
-                            <p class="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white">8</p>
+                            <p id="team-members-count" class="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white">Loading...</p>
                         </div>
                     </div>
                 </div>
@@ -204,7 +204,7 @@
                         </div>
                         <div class="ml-3 sm:ml-4">
                             <p class="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Active Tasks</p>
-                            <p class="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white">12</p>
+                            <p id="active-tasks-count" class="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white">Loading...</p>
                         </div>
                     </div>
                 </div>
@@ -217,7 +217,7 @@
                         </div>
                         <div class="ml-3 sm:ml-4">
                             <p class="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Completed Today</p>
-                            <p class="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white">5</p>
+                            <p id="completed-today-count" class="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white">Loading...</p>
                         </div>
                     </div>
                 </div>
@@ -230,7 +230,7 @@
                         </div>
                         <div class="ml-3 sm:ml-4">
                             <p class="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Performance</p>
-                            <p class="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white">85%</p>
+                            <p id="team-performance-count" class="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white">Loading...</p>
                         </div>
                     </div>
                 </div>
@@ -280,71 +280,39 @@
 
             <!-- Team Overview -->
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700 mb-8">
-                <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Team Overview</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div class="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                        <div class="flex items-center mb-2">
-                            <span class="text-blue-600 dark:text-blue-400 text-lg mr-2">👤</span>
-                            <span class="font-medium text-gray-800 dark:text-white">Bob Wilson</span>
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-semibold text-gray-800 dark:text-white">Team Overview</h3>
+                    <button id="refresh-team-btn" class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors">
+                        🔄 Refresh
+                    </button>
+                </div>
+                <div id="team-overview-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="flex items-center justify-center p-8">
+                        <div class="text-center">
+                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+                            <p class="text-gray-600 dark:text-gray-400">Loading team members...</p>
                         </div>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">Employee • Active</p>
-                        <p class="text-xs text-blue-600 dark:text-blue-400">3 tasks completed today</p>
-                    </div>
-                    
-                    <div class="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
-                        <div class="flex items-center mb-2">
-                            <span class="text-green-600 dark:text-green-400 text-lg mr-2">👤</span>
-                            <span class="font-medium text-gray-800 dark:text-white">Sarah Johnson</span>
-                        </div>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">Vet • Active</p>
-                        <p class="text-xs text-green-600 dark:text-green-400">Health check completed</p>
-                    </div>
-                    
-                    <div class="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
-                        <div class="flex items-center mb-2">
-                            <span class="text-purple-600 dark:text-purple-400 text-lg mr-2">👤</span>
-                            <span class="font-medium text-gray-800 dark:text-white">Mike Tech</span>
-                        </div>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">IT • Active</p>
-                        <p class="text-xs text-purple-600 dark:text-purple-400">System maintenance</p>
                     </div>
                 </div>
             </div>
 
             <!-- Recent Activity -->
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-700">
-                <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Recent Team Activity</h3>
-                <div class="space-y-4">
-                    <div class="flex items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                        <div class="w-10 h-10 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mr-4">
-                            <span class="text-green-600 dark:text-green-400">✅</span>
-                        </div>
-                        <div class="flex-1">
-                            <p class="text-sm font-medium text-gray-800 dark:text-white">Bob Wilson completed feeding task</p>
-                            <p class="text-sm text-gray-600 dark:text-gray-400">15 minutes ago</p>
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                        <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mr-4">
-                            <span class="text-blue-600 dark:text-blue-400">📋</span>
-                        </div>
-                        <div class="flex-1">
-                            <p class="text-sm font-medium text-gray-800 dark:text-white">New task assigned - Health monitoring</p>
-                            <p class="text-sm text-gray-600 dark:text-gray-400">1 hour ago</p>
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-semibold text-gray-800 dark:text-white">Recent Team Activity</h3>
+                    <button id="refresh-activity-btn" class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors">
+                        🔄 Refresh
+                    </button>
+                </div>
+                <div id="recent-activity-container" class="space-y-4">
+                    <div class="flex items-center justify-center p-8">
+                        <div class="text-center">
+                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+                            <p class="text-gray-600 dark:text-gray-400">Loading recent activity...</p>
                         </div>
                     </div>
-                    
-                    <div class="flex items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                        <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mr-4">
-                            <span class="text-purple-600 dark:text-purple-400">👤</span>
-                        </div>
-                        <div class="flex-1">
-                            <p class="text-sm font-medium text-gray-800 dark:text-white">Sarah Johnson logged in</p>
-                            <p class="text-sm text-gray-600 dark:text-gray-400">2 hours ago</p>
-                        </div>
-                    </div>
-                </div>        </div>
+                </div>
+            </div>
     </div>
 
     <!-- Footer -->
@@ -470,8 +438,207 @@
         updateTime();
         setInterval(updateTime, 1000);
 
+        // Manager Dashboard Data Loading
+        async function loadDashboardStats() {
+            try {
+                const response = await fetch('/api/manager/dashboard/stats');
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('team-members-count').textContent = data.stats.team_members;
+                    document.getElementById('active-tasks-count').textContent = data.stats.active_tasks;
+                    document.getElementById('completed-today-count').textContent = data.stats.completed_today;
+                    document.getElementById('team-performance-count').textContent = data.stats.team_performance + '%';
+                } else {
+                    console.error('Failed to load dashboard stats:', data.message);
+                }
+            } catch (error) {
+                console.error('Error loading dashboard stats:', error);
+            }
+        }
+
+        async function loadTeamMembers() {
+            try {
+                const response = await fetch('/api/manager/team/list');
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayTeamMembers(data.team_members);
+                } else {
+                    console.error('Failed to load team members:', data.message);
+                    document.getElementById('team-overview-container').innerHTML = `
+                        <div class="col-span-full text-center p-8">
+                            <p class="text-gray-600 dark:text-gray-400">Failed to load team members</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading team members:', error);
+                document.getElementById('team-overview-container').innerHTML = `
+                    <div class="col-span-full text-center p-8">
+                        <p class="text-gray-600 dark:text-gray-400">Error loading team members</p>
+                    </div>
+                `;
+            }
+        }
+
+        function displayTeamMembers(teamMembers) {
+            const container = document.getElementById('team-overview-container');
+            
+            if (teamMembers.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center p-8">
+                        <p class="text-gray-600 dark:text-gray-400">No team members found</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const roleColors = {
+                'employee': 'blue',
+                'vet': 'green',
+                'it': 'purple',
+                'administrator': 'red'
+            };
+
+            const roleIcons = {
+                'employee': '👤',
+                'vet': '🩺',
+                'it': '💻',
+                'administrator': '👑'
+            };
+
+            container.innerHTML = teamMembers.map(member => {
+                const color = roleColors[member.role] || 'gray';
+                const icon = roleIcons[member.role] || '👤';
+                
+                return `
+                    <div class="p-4 bg-${color}-50 dark:bg-${color}-900/20 rounded-lg border border-${color}-200 dark:border-${color}-800">
+                        <div class="flex items-center mb-2">
+                            <span class="text-${color}-600 dark:text-${color}-400 text-lg mr-2">${icon}</span>
+                            <span class="font-medium text-gray-800 dark:text-white">${member.name}</span>
+                        </div>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">${member.role.charAt(0).toUpperCase() + member.role.slice(1)} • ${member.status.charAt(0).toUpperCase() + member.status.slice(1)}</p>
+                        <p class="text-xs text-${color}-600 dark:text-${color}-400">${member.email}</p>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function loadRecentActivity() {
+            try {
+                const response = await fetch('/api/manager/activity/recent');
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayRecentActivity(data.activities);
+                } else {
+                    console.error('Failed to load recent activity:', data.message);
+                    document.getElementById('recent-activity-container').innerHTML = `
+                        <div class="text-center p-8">
+                            <p class="text-gray-600 dark:text-gray-400">Failed to load recent activity</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading recent activity:', error);
+                document.getElementById('recent-activity-container').innerHTML = `
+                    <div class="text-center p-8">
+                        <p class="text-gray-600 dark:text-gray-400">Error loading recent activity</p>
+                    </div>
+                `;
+            }
+        }
+
+        function displayRecentActivity(activities) {
+            const container = document.getElementById('recent-activity-container');
+            
+            if (activities.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center p-8">
+                        <p class="text-gray-600 dark:text-gray-400">No recent activity found</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const activityIcons = {
+                'LOGIN': '🔐',
+                'LOGOUT': '🚪',
+                'PIG_REGISTRATION': '🐷',
+                'COW_REGISTRATION': '🐄',
+                'CHICKEN_REGISTRATION': '🐔',
+                'HEALTH_CHECK': '🩺',
+                'FEEDING': '🌾',
+                'CLEANING': '🧹',
+                'VACCINATION': '💉',
+                'BREEDING': '💕',
+                'FARROWING': '👶',
+                'SLAUGHTER': '🔪',
+                'SALE': '💰',
+                'WEIGHT_RECORD': '⚖️',
+                'MILK_PRODUCTION': '🥛',
+                'EGG_PRODUCTION': '🥚',
+                'MEAT_PRODUCTION': '🥩'
+            };
+
+            const activityColors = {
+                'LOGIN': 'green',
+                'LOGOUT': 'gray',
+                'PIG_REGISTRATION': 'pink',
+                'COW_REGISTRATION': 'brown',
+                'CHICKEN_REGISTRATION': 'yellow',
+                'HEALTH_CHECK': 'blue',
+                'FEEDING': 'green',
+                'CLEANING': 'purple',
+                'VACCINATION': 'red',
+                'BREEDING': 'pink',
+                'FARROWING': 'blue',
+                'SLAUGHTER': 'red',
+                'SALE': 'green',
+                'WEIGHT_RECORD': 'yellow',
+                'MILK_PRODUCTION': 'blue',
+                'EGG_PRODUCTION': 'yellow',
+                'MEAT_PRODUCTION': 'red'
+            };
+
+            container.innerHTML = activities.map(activity => {
+                const icon = activityIcons[activity.activity_type] || '📋';
+                const color = activityColors[activity.activity_type] || 'gray';
+                const timeAgo = getTimeAgo(activity.created_at);
+                
+                return `
+                    <div class="flex items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <div class="w-10 h-10 bg-${color}-100 dark:bg-${color}-900 rounded-full flex items-center justify-center mr-4">
+                            <span class="text-${color}-600 dark:text-${color}-400">${icon}</span>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-800 dark:text-white">${activity.description}</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">${activity.employee_name || 'System'} • ${timeAgo}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getTimeAgo(dateString) {
+            const now = new Date();
+            const activityDate = new Date(dateString);
+            const diffInSeconds = Math.floor((now - activityDate) / 1000);
+            
+            if (diffInSeconds < 60) return 'Just now';
+            if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+            if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+            return `${Math.floor(diffInSeconds / 86400)} days ago`;
+        }
+
         // Add some interactive animations
         document.addEventListener('DOMContentLoaded', function() {
+            // Load dashboard data
+            loadDashboardStats();
+            loadTeamMembers();
+            loadRecentActivity();
+
             // Animate stats cards on load
             const statsCards = document.querySelectorAll('.grid > div');
             statsCards.forEach((card, index) => {
@@ -485,6 +652,10 @@
                 }, index * 100);
             });
 
+            // Refresh buttons
+            document.getElementById('refresh-team-btn').addEventListener('click', loadTeamMembers);
+            document.getElementById('refresh-activity-btn').addEventListener('click', loadRecentActivity);
+
             // Check if accessed via admin route and show admin preview banner
             if (window.location.pathname.includes('/admin/access/')) {
                 const adminBanner = document.getElementById('admin-preview-banner');
@@ -497,3 +668,4 @@
         });
 </body>
 </html>
+

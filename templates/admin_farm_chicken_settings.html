@@ -1,0 +1,2498 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚙️ Chicken Settings - AgriTech Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'chicken-yellow': {
+                            50: '#fefce8',
+                            100: '#fef3c7',
+                            200: '#fde68a',
+                            300: '#fcd34d',
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309',
+                            800: '#92400e',
+                            900: '#78350f',
+                        },
+                        'chicken-orange': {
+                            50: '#fff7ed',
+                            100: '#ffedd5',
+                            200: '#fed7aa',
+                            300: '#fdba74',
+                            400: '#fb923c',
+                            500: '#f97316',
+                            600: '#ea580c',
+                            700: '#c2410c',
+                            800: '#9a3412',
+                            900: '#7c2d12',
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.6s ease-in-out',
+                        'slide-up': 'slideUp 0.4s ease-out',
+                        'slide-down': 'slideDown 0.4s ease-out',
+                        'bounce-gentle': 'bounceGentle 2s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'wiggle': 'wiggle 1s ease-in-out infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes bounceGentle {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        @keyframes wiggle {
+            0%, 7% { transform: rotateZ(0); }
+            15% { transform: rotateZ(-15deg); }
+            20% { transform: rotateZ(10deg); }
+            25% { transform: rotateZ(-10deg); }
+            30% { transform: rotateZ(6deg); }
+            35% { transform: rotateZ(-4deg); }
+            40%, 100% { transform: rotateZ(0); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes glow {
+            from { box-shadow: 0 0 20px rgba(245, 158, 11, 0.3); }
+            to { box-shadow: 0 0 30px rgba(245, 158, 11, 0.6), 0 0 40px rgba(245, 158, 11, 0.3); }
+        }
+
+        .glass-effect {
+            backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .dark .glass-effect {
+            background: rgba(17, 24, 39, 0.85);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+        }
+
+        .sidebar {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-hover:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .chicken-pattern {
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(245, 158, 11, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(217, 119, 6, 0.1) 0%, transparent 50%);
+        }
+
+        .floating-emoji {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .wiggle-emoji {
+            animation: wiggle 2s ease-in-out infinite;
+        }
+
+        .glow-effect {
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 transition-colors duration-300 font-inter chicken-pattern">
+    <!-- Modern Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 glass-effect border-b border-slate-200/50 dark:border-slate-700/50">
+        <div class="flex items-center justify-between px-4 sm:px-6 lg:px-8 h-16">
+            <!-- Left Section: Mobile Menu + Logo -->
+            <div class="flex items-center space-x-4">
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="lg:hidden p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200">
+                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+                
+                <!-- AgriTech Logo -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 gradient-bg rounded-xl flex items-center justify-center shadow-lg">
+                        <span class="text-white text-lg">⚙️</span>
+                    </div>
+                    <div class="hidden sm:block">
+                        <h1 class="text-xl font-bold text-gradient">AgriTech Pro</h1>
+                        <p class="text-xs text-slate-600 dark:text-slate-400">Chicken Settings</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Section: Notifications, Theme Toggle, User Profile -->
+            <div class="flex items-center space-x-3">
+                <!-- Notifications -->
+                <button class="relative p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200">
+                    <span class="floating-emoji text-lg">🔔</span>
+                    <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
+                </button>
+                
+                <!-- Theme Toggle -->
+                <button id="theme-toggle" class="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200">
+                    <svg id="sun-icon" class="w-5 h-5 text-slate-600 dark:text-slate-300 hidden" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>
+                    </svg>
+                    <svg id="moon-icon" class="w-5 h-5 text-slate-600 dark:text-slate-300" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                    </svg>
+                </button>
+                
+                <!-- User Profile -->
+                <div class="relative">
+                    <button id="user-dropdown-btn" class="flex items-center space-x-3 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200">
+                        <div class="w-8 h-8 gradient-bg rounded-full flex items-center justify-center shadow-md">
+                            <span class="text-white font-semibold text-sm">{{ user.name.split()[0][0] + user.name.split()[-1][0] if user.name.split()|length > 1 else user.name[0] }}</span>
+                        </div>
+                        <div class="hidden sm:block text-left">
+                            <div class="text-sm font-semibold text-slate-900 dark:text-white">{{ user.name }}</div>
+                            <div class="text-xs text-slate-600 dark:text-slate-400">{{ user.role.title() }}</div>
+                        </div>
+                        <svg class="w-4 h-4 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    
+                    <!-- Dropdown Menu -->
+                    <div id="user-dropdown" class="absolute right-0 mt-2 w-64 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 hidden animate-slide-down">
+                        <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 gradient-bg rounded-full flex items-center justify-center">
+                                    <span class="text-white font-semibold">{{ user.name.split()[0][0] + user.name.split()[-1][0] if user.name.split()|length > 1 else user.name[0] }}</span>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold text-slate-900 dark:text-white">{{ user.name }}</div>
+                                    <div class="text-xs text-slate-600 dark:text-slate-400">{{ user.email }}</div>
+                                    <div class="text-xs text-chicken-yellow-600 dark:text-chicken-yellow-400 font-medium">{{ user.role.title() }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="py-2">
+                            <a href="/profile" class="flex items-center px-6 py-3 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                                <i class="fas fa-user w-4 h-4 mr-3"></i>
+                                My Profile
+                            </a>
+                            <a href="/settings" class="flex items-center px-6 py-3 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                                <i class="fas fa-cog w-4 h-4 mr-3"></i>
+                                Account Settings
+                            </a>
+                            <a href="/app-settings" class="flex items-center px-6 py-3 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                                <i class="fas fa-sliders-h w-4 h-4 mr-3"></i>
+                                App Settings
+                            </a>
+                            <hr class="my-2 border-slate-200 dark:border-slate-700">
+                            <button id="logout-btn" class="w-full flex items-center px-6 py-3 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+                                <i class="fas fa-sign-out-alt w-4 h-4 mr-3"></i>
+                                Sign Out
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Modern Collapsible Sidebar -->
+    <aside id="sidebar" class="fixed left-0 top-16 h-[calc(100vh-4rem)] w-72 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-r border-slate-200/50 dark:border-slate-700/50 z-40 transform -translate-x-full lg:translate-x-0 transition-all duration-300 ease-out sidebar">
+        <div class="flex flex-col h-full">
+            <!-- Sidebar Header -->
+            <div class="flex items-center justify-between p-6 border-b border-slate-200/50 dark:border-slate-700/50">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 gradient-bg rounded-xl flex items-center justify-center shadow-lg">
+                        <span class="text-white text-lg">🐔</span>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900 dark:text-white">Chicken Farm</h2>
+                        <p class="text-xs text-slate-600 dark:text-slate-400">Settings & Stages</p>
+                    </div>
+                </div>
+                <button id="close-sidebar" class="lg:hidden p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200">
+                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Navigation Menu -->
+            <nav class="flex-1 p-4 space-y-1">
+                <!-- Dashboard -->
+                <a href="/admin/dashboard" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                    <span class="text-lg mr-3">🏠</span>
+                    <span class="font-medium">Dashboard</span>
+                </a>
+                
+                <!-- Registration of Chicken -->
+                <button id="chicken-registration-btn" class="w-full flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                    <span class="text-lg mr-3">📝</span>
+                    <span class="font-medium">Registration of Chicken</span>
+                </button>
+                
+                <!-- Flock Management -->
+                <a href="/admin/farm/chicken-flock-management" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                    <span class="text-lg mr-3">👥</span>
+                    <span class="font-medium">Batch or Flock Management</span>
+                </a>
+                
+                <!-- Health of Chicken -->
+                <a href="/admin/farm/chicken-health" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                    <span class="text-lg mr-3">🏥</span>
+                    <span class="font-medium">Health of Chicken</span>
+                </a>
+                
+                <!-- Upcoming Medications (Sub-item under Health) -->
+                <a href="/admin/farm/chicken-upcoming-medications" class="flex items-center px-8 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all duration-200 ml-4 border-l-2 border-slate-200 dark:border-slate-700">
+                    <span class="text-sm mr-3">💊</span>
+                    <span class="text-sm font-medium">Upcoming Medications</span>
+                </a>
+                
+                <!-- Weight Check (Sub-item under Health) -->
+                <a href="/admin/farm/chicken-weight-check" class="flex items-center px-8 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all duration-200 ml-4 border-l-2 border-slate-200 dark:border-slate-700">
+                    <span class="text-sm mr-3">⚖️</span>
+                    <span class="text-sm font-medium">Weight Check</span>
+                </a>
+                
+                <!-- Health Analytics (Sub-item under Health) -->
+                <a href="/admin/farm/chicken-health-analytics" class="flex items-center px-8 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all duration-200 ml-4 border-l-2 border-slate-200 dark:border-slate-700">
+                    <span class="text-sm mr-3">📊</span>
+                    <span class="text-sm font-medium">Health Analytics</span>
+                </a>
+                
+                <!-- Production of Chicken -->
+                <a href="/admin/farm/chicken-production" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                    <span class="text-lg mr-3">🥚</span>
+                    <span class="font-medium">Production of Chicken</span>
+                </a>
+                
+                <!-- Reporting & Analytics -->
+                <a href="/admin/farm/chicken-analytics" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                    <span class="text-lg mr-3">📊</span>
+                    <span class="font-medium">Reporting & Analytics</span>
+                </a>
+                
+                <!-- Alerts & Notifications -->
+                <a href="/admin/farm/chicken-alerts" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                    <span class="text-lg mr-3">🔔</span>
+                    <span class="font-medium">Alerts & Notifications</span>
+                </a>
+                
+                <!-- Chicken Settings (Active) -->
+                <a href="/admin/farm/chicken-settings" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 bg-chicken-yellow-50 dark:bg-chicken-yellow-900/20 rounded-xl border-l-4 border-chicken-yellow-500 transition-all duration-200 hover:bg-chicken-yellow-100 dark:hover:bg-chicken-yellow-900/30">
+                    <span class="text-lg mr-3">⚙️</span>
+                    <span class="font-medium">Chicken Settings</span>
+                </a>
+                
+                <!-- Development Stages (Sub-item under Chicken Settings) -->
+                <a href="/admin/farm/chicken-settings#stages" class="flex items-center px-8 py-2 text-slate-600 dark:text-slate-400 bg-chicken-yellow-50 dark:bg-chicken-yellow-900/20 rounded-lg border-l-4 border-chicken-yellow-500 transition-all duration-200 hover:bg-chicken-yellow-100 dark:hover:bg-chicken-yellow-900/30 ml-4">
+                    <span class="text-sm mr-3">📋</span>
+                    <span class="text-sm font-medium">Development Stages</span>
+                </a>
+                
+                <!-- Medications (Sub-item under Chicken Settings) -->
+                <a href="/admin/farm/chicken-settings#medications" class="flex items-center px-8 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all duration-200 ml-4 border-l-2 border-slate-200 dark:border-slate-700">
+                    <span class="text-sm mr-3">💊</span>
+                    <span class="text-sm font-medium">Medications</span>
+                </a>
+                
+                <!-- Weight Management (Sub-item under Chicken Settings) -->
+                <a href="/admin/farm/chicken-settings#weight" class="flex items-center px-8 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all duration-200 ml-4 border-l-2 border-slate-200 dark:border-slate-700">
+                    <span class="text-sm mr-3">⚖️</span>
+                    <span class="text-sm font-medium">Weight Management</span>
+                </a>
+            </nav>
+            
+            <!-- Sidebar Footer -->
+            <div class="p-4 border-t border-slate-200/50 dark:border-slate-700/50">
+                <div class="text-center">
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">AgriTech Pro v2.0</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">⚙️ Chicken Settings</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="pt-16 lg:pl-72 min-h-screen bg-slate-50 dark:bg-slate-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+            <!-- Page Header -->
+            <div class="mb-8 animate-fade-in">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-16 h-16 gradient-bg rounded-2xl flex items-center justify-center shadow-lg glow-effect">
+                            <span class="text-white text-2xl wiggle-emoji">⚙️</span>
+                        </div>
+                        <div>
+                            <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">Chicken Settings</h1>
+                            <p class="text-slate-600 dark:text-slate-400">Manage chicken stages and development phases</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 sm:mt-0 flex space-x-3">
+                        <button class="px-4 py-2 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-200 shadow-lg hover:shadow-xl border border-slate-200 dark:border-slate-700">
+                            <i class="fas fa-download w-4 h-4 inline mr-2"></i>
+                            Export Settings
+                        </button>
+                        <button id="add-stage-btn" class="px-4 py-2 bg-chicken-yellow-600 hover:bg-chicken-yellow-700 text-white rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl">
+                            <i class="fas fa-plus w-4 h-4 inline mr-2"></i>
+                            Add Stage
+                        </button>
+                        <button id="add-medication-btn" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl">
+                            <i class="fas fa-pills w-4 h-4 inline mr-2"></i>
+                            Add Medication
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="mb-8">
+                <div class="border-b border-slate-200 dark:border-slate-700">
+                    <nav class="-mb-px flex space-x-8">
+                        <button id="stages-tab" class="tab-button active py-2 px-1 border-b-2 border-chicken-yellow-500 font-medium text-sm text-chicken-yellow-600 dark:text-chicken-yellow-400">
+                            <span class="text-lg mr-2">📋</span>Development Stages
+                        </button>
+                        <button id="medications-tab" class="tab-button py-2 px-1 border-b-2 border-transparent font-medium text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 hover:border-slate-300 dark:hover:border-slate-600">
+                            <span class="text-lg mr-2">💊</span>Medications
+                        </button>
+                        <button id="weight-tab" class="tab-button py-2 px-1 border-b-2 border-transparent font-medium text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 hover:border-slate-300 dark:hover:border-slate-600">
+                            <span class="text-lg mr-2">⚖️</span>Weight Management
+                        </button>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Tab Content -->
+            <div id="stages-content" class="tab-content">
+                <!-- Existing Stages by Category -->
+                <div class="space-y-8">
+                    <!-- Broiler Stages -->
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700">
+                        <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-xl flex items-center justify-center">
+                                    <span class="text-xl">🥩</span>
+                                </div>
+                                <div>
+                                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">Broiler Stages</h2>
+                                    <p class="text-sm text-slate-600 dark:text-slate-400">{{ stages_by_category.broiler|length }} stages defined</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            {% if stages_by_category.broiler %}
+                                <div class="space-y-4">
+                                    {% for stage in stages_by_category.broiler %}
+                                    <div class="bg-slate-50 dark:bg-slate-700 rounded-xl p-4 border border-slate-200 dark:border-slate-600">
+                                        <div class="flex items-center justify-between mb-3">
+                                            <div class="flex items-center space-x-3">
+                                                <span class="text-lg">🥩</span>
+                                                <div>
+                                                    <h3 class="font-semibold text-slate-900 dark:text-white">{{ stage.stage_name }}</h3>
+                                                    <p class="text-sm text-slate-600 dark:text-slate-400">Days {{ stage.start_day }} - {{ stage.end_day }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center space-x-2">
+                                                <span class="px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 text-sm font-medium rounded-full">
+                                                    {{ (stage.end_day - stage.start_day + 1) }} days
+                                                </span>
+                                                <div class="flex space-x-1">
+                                                    <button onclick="editStage({{ stage.id }}, '{{ stage.category }}', '{{ stage.stage_name }}', {{ stage.start_day }}, {{ stage.end_day }}, '{{ stage.description or '' }}')" 
+                                                            class="p-2 text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg transition-colors" 
+                                                            title="Edit Stage">
+                                                        <i class="fas fa-edit w-4 h-4"></i>
+                                                    </button>
+                                                    <button onclick="deleteStage({{ stage.id }}, '{{ stage.stage_name }}')" 
+                                                            class="p-2 text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors" 
+                                                            title="Delete Stage">
+                                                        <i class="fas fa-trash w-4 h-4"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% if stage.description %}
+                                        <p class="text-sm text-slate-600 dark:text-slate-400">{{ stage.description }}</p>
+                                        {% endif %}
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="text-center py-12">
+                                    <div class="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <span class="text-2xl">🥩</span>
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">No Broiler Stages</h3>
+                                    <p class="text-slate-600 dark:text-slate-400">Add stages for broiler chicken development</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Kienyeji Stages -->
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700">
+                        <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-orange-100 dark:bg-orange-900/30 rounded-xl flex items-center justify-center">
+                                    <span class="text-xl">🐔</span>
+                                </div>
+                                <div>
+                                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">Kienyeji Stages</h2>
+                                    <p class="text-sm text-slate-600 dark:text-slate-400">{{ stages_by_category.kienyeji|length }} stages defined</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            {% if stages_by_category.kienyeji %}
+                                <div class="space-y-4">
+                                    {% for stage in stages_by_category.kienyeji %}
+                                    <div class="bg-slate-50 dark:bg-slate-700 rounded-xl p-4 border border-slate-200 dark:border-slate-600">
+                                        <div class="flex items-center justify-between mb-3">
+                                            <div class="flex items-center space-x-3">
+                                                <span class="text-lg">🐔</span>
+                                                <div>
+                                                    <h3 class="font-semibold text-slate-900 dark:text-white">{{ stage.stage_name }}</h3>
+                                                    <p class="text-sm text-slate-600 dark:text-slate-400">Days {{ stage.start_day }} - {{ stage.end_day }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center space-x-2">
+                                                <span class="px-3 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-200 text-sm font-medium rounded-full">
+                                                    {{ (stage.end_day - stage.start_day + 1) }} days
+                                                </span>
+                                                <div class="flex space-x-1">
+                                                    <button onclick="editStage({{ stage.id }}, '{{ stage.category }}', '{{ stage.stage_name }}', {{ stage.start_day }}, {{ stage.end_day }}, '{{ stage.description or '' }}')" 
+                                                            class="p-2 text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg transition-colors" 
+                                                            title="Edit Stage">
+                                                        <i class="fas fa-edit w-4 h-4"></i>
+                                                    </button>
+                                                    <button onclick="deleteStage({{ stage.id }}, '{{ stage.stage_name }}')" 
+                                                            class="p-2 text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors" 
+                                                            title="Delete Stage">
+                                                        <i class="fas fa-trash w-4 h-4"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% if stage.description %}
+                                        <p class="text-sm text-slate-600 dark:text-slate-400">{{ stage.description }}</p>
+                                        {% endif %}
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="text-center py-12">
+                                    <div class="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <span class="text-2xl">🐔</span>
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">No Kienyeji Stages</h3>
+                                    <p class="text-slate-600 dark:text-slate-400">Add stages for kienyeji chicken development</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Layer Stages -->
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700">
+                        <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-yellow-100 dark:bg-yellow-900/30 rounded-xl flex items-center justify-center">
+                                    <span class="text-xl">🥚</span>
+                                </div>
+                                <div>
+                                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">Layer Stages</h2>
+                                    <p class="text-sm text-slate-600 dark:text-slate-400">{{ stages_by_category.layer|length }} stages defined</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            {% if stages_by_category.layer %}
+                                <div class="space-y-4">
+                                    {% for stage in stages_by_category.layer %}
+                                    <div class="bg-slate-50 dark:bg-slate-700 rounded-xl p-4 border border-slate-200 dark:border-slate-600">
+                                        <div class="flex items-center justify-between mb-3">
+                                            <div class="flex items-center space-x-3">
+                                                <span class="text-lg">🥚</span>
+                                                <div>
+                                                    <h3 class="font-semibold text-slate-900 dark:text-white">{{ stage.stage_name }}</h3>
+                                                    <p class="text-sm text-slate-600 dark:text-slate-400">Days {{ stage.start_day }} - {{ stage.end_day }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center space-x-2">
+                                                <span class="px-3 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200 text-sm font-medium rounded-full">
+                                                    {{ (stage.end_day - stage.start_day + 1) }} days
+                                                </span>
+                                                <div class="flex space-x-1">
+                                                    <button onclick="editStage({{ stage.id }}, '{{ stage.category }}', '{{ stage.stage_name }}', {{ stage.start_day }}, {{ stage.end_day }}, '{{ stage.description or '' }}')" 
+                                                            class="p-2 text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg transition-colors" 
+                                                            title="Edit Stage">
+                                                        <i class="fas fa-edit w-4 h-4"></i>
+                                                    </button>
+                                                    <button onclick="deleteStage({{ stage.id }}, '{{ stage.stage_name }}')" 
+                                                            class="p-2 text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors" 
+                                                            title="Delete Stage">
+                                                        <i class="fas fa-trash w-4 h-4"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% if stage.description %}
+                                        <p class="text-sm text-slate-600 dark:text-slate-400">{{ stage.description }}</p>
+                                        {% endif %}
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="text-center py-12">
+                                    <div class="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <span class="text-2xl">🥚</span>
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">No Layer Stages</h3>
+                                    <p class="text-slate-600 dark:text-slate-400">Add stages for layer chicken development</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="medications-content" class="tab-content hidden">
+                <!-- Medications by Category -->
+                <div class="space-y-8">
+                    <!-- Broiler Medications -->
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700">
+                        <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-xl flex items-center justify-center">
+                                    <span class="text-xl">💊</span>
+                                </div>
+                                <div>
+                                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">Broiler Medications</h2>
+                                    <p class="text-sm text-slate-600 dark:text-slate-400">{{ medications_by_category.broiler|length }} medications defined</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            {% if medications_by_category.broiler %}
+                                <div class="space-y-4">
+                                    {% for medication in medications_by_category.broiler %}
+                                    <div class="bg-slate-50 dark:bg-slate-700 rounded-xl p-4 border border-slate-200 dark:border-slate-600">
+                                        <div class="flex items-center justify-between mb-3">
+                                            <div class="flex items-center space-x-3">
+                                                <span class="text-lg">💊</span>
+                                                <div>
+                                                    <h3 class="font-semibold text-slate-900 dark:text-white">{{ medication.medication_name }}</h3>
+                                                    <p class="text-sm text-slate-600 dark:text-slate-400">Days {{ medication.start_day }} - {{ medication.end_day }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center space-x-2">
+                                                <span class="px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 text-sm font-medium rounded-full">
+                                                    {{ (medication.end_day - medication.start_day + 1) }} days
+                                                </span>
+                                                <div class="flex space-x-1">
+                                                    <button onclick="editMedication({{ medication.id }}, '{{ medication.category }}', '{{ medication.medication_name }}', {{ medication.start_day }}, {{ medication.end_day }}, '{{ medication.purpose or '' }}', '{{ medication.image_filename or '' }}')" 
+                                                            class="p-2 text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg transition-colors" 
+                                                            title="Edit Medication">
+                                                        <i class="fas fa-edit w-4 h-4"></i>
+                                                    </button>
+                                                    <button onclick="deleteMedication({{ medication.id }}, '{{ medication.medication_name }}')" 
+                                                            class="p-2 text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors" 
+                                                            title="Delete Medication">
+                                                        <i class="fas fa-trash w-4 h-4"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% if medication.purpose %}
+                                        <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">{{ medication.purpose }}</p>
+                                        {% endif %}
+                                        {% if medication.image_filename %}
+                                        <div class="flex items-center space-x-3">
+                                            <img src="/static/uploads/medications/{{ medication.image_filename }}" alt="{{ medication.medication_name }}" class="w-16 h-16 object-cover rounded-lg border border-slate-200 dark:border-slate-600">
+                                            <div>
+                                                <p class="text-sm font-medium text-slate-900 dark:text-white">Medication Image</p>
+                                                <p class="text-xs text-slate-500 dark:text-slate-400">Click to view full size</p>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="text-center py-12">
+                                    <div class="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <span class="text-2xl">💊</span>
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">No Broiler Medications</h3>
+                                    <p class="text-slate-600 dark:text-slate-400">Add medications for broiler chicken care</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Kienyeji Medications -->
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700">
+                        <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-orange-100 dark:bg-orange-900/30 rounded-xl flex items-center justify-center">
+                                    <span class="text-xl">💊</span>
+                                </div>
+                                <div>
+                                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">Kienyeji Medications</h2>
+                                    <p class="text-sm text-slate-600 dark:text-slate-400">{{ medications_by_category.kienyeji|length }} medications defined</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            {% if medications_by_category.kienyeji %}
+                                <div class="space-y-4">
+                                    {% for medication in medications_by_category.kienyeji %}
+                                    <div class="bg-slate-50 dark:bg-slate-700 rounded-xl p-4 border border-slate-200 dark:border-slate-600">
+                                        <div class="flex items-center justify-between mb-3">
+                                            <div class="flex items-center space-x-3">
+                                                <span class="text-lg">💊</span>
+                                                <div>
+                                                    <h3 class="font-semibold text-slate-900 dark:text-white">{{ medication.medication_name }}</h3>
+                                                    <p class="text-sm text-slate-600 dark:text-slate-400">Days {{ medication.start_day }} - {{ medication.end_day }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center space-x-2">
+                                                <span class="px-3 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-200 text-sm font-medium rounded-full">
+                                                    {{ (medication.end_day - medication.start_day + 1) }} days
+                                                </span>
+                                                <div class="flex space-x-1">
+                                                    <button onclick="editMedication({{ medication.id }}, '{{ medication.category }}', '{{ medication.medication_name }}', {{ medication.start_day }}, {{ medication.end_day }}, '{{ medication.purpose or '' }}', '{{ medication.image_filename or '' }}')" 
+                                                            class="p-2 text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg transition-colors" 
+                                                            title="Edit Medication">
+                                                        <i class="fas fa-edit w-4 h-4"></i>
+                                                    </button>
+                                                    <button onclick="deleteMedication({{ medication.id }}, '{{ medication.medication_name }}')" 
+                                                            class="p-2 text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors" 
+                                                            title="Delete Medication">
+                                                        <i class="fas fa-trash w-4 h-4"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% if medication.purpose %}
+                                        <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">{{ medication.purpose }}</p>
+                                        {% endif %}
+                                        {% if medication.image_filename %}
+                                        <div class="flex items-center space-x-3">
+                                            <img src="/static/uploads/medications/{{ medication.image_filename }}" alt="{{ medication.medication_name }}" alt="{{ medication.medication_name }}" class="w-16 h-16 object-cover rounded-lg border border-slate-200 dark:border-slate-600">
+                                            <div>
+                                                <p class="text-sm font-medium text-slate-900 dark:text-white">Medication Image</p>
+                                                <p class="text-xs text-slate-500 dark:text-slate-400">Click to view full size</p>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="text-center py-12">
+                                    <div class="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <span class="text-2xl">💊</span>
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">No Kienyeji Medications</h3>
+                                    <p class="text-slate-600 dark:text-slate-400">Add medications for kienyeji chicken care</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Layer Medications -->
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700">
+                        <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-yellow-100 dark:bg-yellow-900/30 rounded-xl flex items-center justify-center">
+                                    <span class="text-xl">💊</span>
+                                </div>
+                                <div>
+                                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">Layer Medications</h2>
+                                    <p class="text-sm text-slate-600 dark:text-slate-400">{{ medications_by_category.layer|length }} medications defined</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            {% if medications_by_category.layer %}
+                                <div class="space-y-4">
+                                    {% for medication in medications_by_category.layer %}
+                                    <div class="bg-slate-50 dark:bg-slate-700 rounded-xl p-4 border border-slate-200 dark:border-slate-600">
+                                        <div class="flex items-center justify-between mb-3">
+                                            <div class="flex items-center space-x-3">
+                                                <span class="text-lg">💊</span>
+                                                <div>
+                                                    <h3 class="font-semibold text-slate-900 dark:text-white">{{ medication.medication_name }}</h3>
+                                                    <p class="text-sm text-slate-600 dark:text-slate-400">Days {{ medication.start_day }} - {{ medication.end_day }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center space-x-2">
+                                                <span class="px-3 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200 text-sm font-medium rounded-full">
+                                                    {{ (medication.end_day - medication.start_day + 1) }} days
+                                                </span>
+                                                <div class="flex space-x-1">
+                                                    <button onclick="editMedication({{ medication.id }}, '{{ medication.category }}', '{{ medication.medication_name }}', {{ medication.start_day }}, {{ medication.end_day }}, '{{ medication.purpose or '' }}', '{{ medication.image_filename or '' }}')" 
+                                                            class="p-2 text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg transition-colors" 
+                                                            title="Edit Medication">
+                                                        <i class="fas fa-edit w-4 h-4"></i>
+                                                    </button>
+                                                    <button onclick="deleteMedication({{ medication.id }}, '{{ medication.medication_name }}')" 
+                                                            class="p-2 text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors" 
+                                                            title="Delete Medication">
+                                                        <i class="fas fa-trash w-4 h-4"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% if medication.purpose %}
+                                        <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">{{ medication.purpose }}</p>
+                                        {% endif %}
+                                        {% if medication.image_filename %}
+                                        <div class="flex items-center space-x-3">
+                                            <img src="/static/uploads/medications/{{ medication.image_filename }}" alt="{{ medication.medication_name }}" class="w-16 h-16 object-cover rounded-lg border border-slate-200 dark:border-slate-600">
+                                            <div>
+                                                <p class="text-sm font-medium text-slate-900 dark:text-white">Medication Image</p>
+                                                <p class="text-xs text-slate-500 dark:text-slate-400">Click to view full size</p>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="text-center py-12">
+                                    <div class="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <span class="text-2xl">💊</span>
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">No Layer Medications</h3>
+                                    <p class="text-slate-600 dark:text-slate-400">Add medications for layer chicken care</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weight Management Content -->
+            <div id="weight-content" class="tab-content hidden">
+                <!-- Add Weight Standard Button -->
+                <div class="mb-6">
+                    <button id="add-weight-btn" class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl transition-colors shadow-lg hover:shadow-xl">
+                        <span class="mr-2">⚖️</span>Add Weight Standard
+                    </button>
+                </div>
+
+                <!-- Weight Standards by Category -->
+                <div class="space-y-8">
+                    <!-- Broiler Weight Standards -->
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700">
+                        <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-xl flex items-center justify-center">
+                                    <span class="text-xl">🥩</span>
+                                </div>
+                                <div>
+                                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">Broiler Weight Standards</h2>
+                                    <p class="text-sm text-slate-600 dark:text-slate-400">Weight targets for broiler chickens</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div id="broiler-weight-standards">
+                                {% if weight_standards_by_category.broiler %}
+                                    <div class="space-y-4">
+                                        {% for weight_standard in weight_standards_by_category.broiler %}
+                                        <div class="bg-slate-50 dark:bg-slate-700 rounded-xl p-4 border border-slate-200 dark:border-slate-600">
+                                            <div class="flex items-center justify-between mb-3">
+                                                <div class="flex items-center space-x-3">
+                                                    <span class="text-lg">⚖️</span>
+                                                    <div>
+                                                        <h3 class="font-semibold text-slate-900 dark:text-white">{{ weight_standard.age_days }} days</h3>
+                                                        <p class="text-sm text-slate-600 dark:text-slate-400">Expected weight: {{ "%.3f"|format(weight_standard.expected_weight) }} kg</p>
+                                                    </div>
+                                                </div>
+                                                <div class="flex items-center space-x-2">
+                                                    <span class="px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 text-sm font-medium rounded-full">
+                                                        {{ "%.3f"|format(weight_standard.expected_weight) }} kg
+                                                    </span>
+                                                    <div class="flex space-x-1">
+                                                        <button onclick="editWeightStandard({{ weight_standard.id }}, '{{ weight_standard.category }}', {{ weight_standard.age_days }}, {{ weight_standard.expected_weight }}, '{{ weight_standard.description or '' }}')" 
+                                                                class="p-2 text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg transition-colors" 
+                                                                title="Edit Weight Standard">
+                                                            <i class="fas fa-edit w-4 h-4"></i>
+                                                        </button>
+                                                        <button onclick="deleteWeightStandard({{ weight_standard.id }}, '{{ weight_standard.age_days }} days')" 
+                                                                class="p-2 text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors" 
+                                                                title="Delete Weight Standard">
+                                                            <i class="fas fa-trash w-4 h-4"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% if weight_standard.description %}
+                                            <p class="text-sm text-slate-600 dark:text-slate-400">{{ weight_standard.description }}</p>
+                                            {% endif %}
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <div class="text-center py-12">
+                                        <div class="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                                            <span class="text-2xl">⚖️</span>
+                                        </div>
+                                        <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">No Weight Standards</h3>
+                                        <p class="text-slate-600 dark:text-slate-400">Add weight standards for broiler chickens</p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Kienyeji Weight Standards -->
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700">
+                        <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center">
+                                    <span class="text-xl">🐔</span>
+                                </div>
+                                <div>
+                                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">Kienyeji Weight Standards</h2>
+                                    <p class="text-sm text-slate-600 dark:text-slate-400">Weight targets for kienyeji chickens</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div id="kienyeji-weight-standards">
+                                {% if weight_standards_by_category.kienyeji %}
+                                    <div class="space-y-4">
+                                        {% for weight_standard in weight_standards_by_category.kienyeji %}
+                                        <div class="bg-slate-50 dark:bg-slate-700 rounded-xl p-4 border border-slate-200 dark:border-slate-600">
+                                            <div class="flex items-center justify-between mb-3">
+                                                <div class="flex items-center space-x-3">
+                                                    <span class="text-lg">⚖️</span>
+                                                    <div>
+                                                        <h3 class="font-semibold text-slate-900 dark:text-white">{{ weight_standard.age_days }} days</h3>
+                                                        <p class="text-sm text-slate-600 dark:text-slate-400">Expected weight: {{ "%.3f"|format(weight_standard.expected_weight) }} kg</p>
+                                                    </div>
+                                                </div>
+                                                <div class="flex items-center space-x-2">
+                                                    <span class="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 text-sm font-medium rounded-full">
+                                                        {{ "%.3f"|format(weight_standard.expected_weight) }} kg
+                                                    </span>
+                                                    <div class="flex space-x-1">
+                                                        <button onclick="editWeightStandard({{ weight_standard.id }}, '{{ weight_standard.category }}', {{ weight_standard.age_days }}, {{ weight_standard.expected_weight }}, '{{ weight_standard.description or '' }}')" 
+                                                                class="p-2 text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg transition-colors" 
+                                                                title="Edit Weight Standard">
+                                                            <i class="fas fa-edit w-4 h-4"></i>
+                                                        </button>
+                                                        <button onclick="deleteWeightStandard({{ weight_standard.id }}, '{{ weight_standard.age_days }} days')" 
+                                                                class="p-2 text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors" 
+                                                                title="Delete Weight Standard">
+                                                            <i class="fas fa-trash w-4 h-4"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% if weight_standard.description %}
+                                            <p class="text-sm text-slate-600 dark:text-slate-400">{{ weight_standard.description }}</p>
+                                            {% endif %}
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <div class="text-center py-12">
+                                        <div class="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                                            <span class="text-2xl">⚖️</span>
+                                        </div>
+                                        <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">No Weight Standards</h3>
+                                        <p class="text-slate-600 dark:text-slate-400">Add weight standards for kienyeji chickens</p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Layer Weight Standards -->
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700">
+                        <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
+                                    <span class="text-xl">🥚</span>
+                                </div>
+                                <div>
+                                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">Layer Weight Standards</h2>
+                                    <p class="text-sm text-slate-600 dark:text-slate-400">Weight targets for layer chickens</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div id="layer-weight-standards">
+                                {% if weight_standards_by_category.layer %}
+                                    <div class="space-y-4">
+                                        {% for weight_standard in weight_standards_by_category.layer %}
+                                        <div class="bg-slate-50 dark:bg-slate-700 rounded-xl p-4 border border-slate-200 dark:border-slate-600">
+                                            <div class="flex items-center justify-between mb-3">
+                                                <div class="flex items-center space-x-3">
+                                                    <span class="text-lg">⚖️</span>
+                                                    <div>
+                                                        <h3 class="font-semibold text-slate-900 dark:text-white">{{ weight_standard.age_days }} days</h3>
+                                                        <p class="text-sm text-slate-600 dark:text-slate-400">Expected weight: {{ "%.3f"|format(weight_standard.expected_weight) }} kg</p>
+                                                    </div>
+                                                </div>
+                                                <div class="flex items-center space-x-2">
+                                                    <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 text-sm font-medium rounded-full">
+                                                        {{ "%.3f"|format(weight_standard.expected_weight) }} kg
+                                                    </span>
+                                                    <div class="flex space-x-1">
+                                                        <button onclick="editWeightStandard({{ weight_standard.id }}, '{{ weight_standard.category }}', {{ weight_standard.age_days }}, {{ weight_standard.expected_weight }}, '{{ weight_standard.description or '' }}')" 
+                                                                class="p-2 text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg transition-colors" 
+                                                                title="Edit Weight Standard">
+                                                            <i class="fas fa-edit w-4 h-4"></i>
+                                                        </button>
+                                                        <button onclick="deleteWeightStandard({{ weight_standard.id }}, '{{ weight_standard.age_days }} days')" 
+                                                                class="p-2 text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors" 
+                                                                title="Delete Weight Standard">
+                                                            <i class="fas fa-trash w-4 h-4"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% if weight_standard.description %}
+                                            <p class="text-sm text-slate-600 dark:text-slate-400">{{ weight_standard.description }}</p>
+                                            {% endif %}
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <div class="text-center py-12">
+                                        <div class="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                                            <span class="text-2xl">⚖️</span>
+                                        </div>
+                                        <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">No Weight Standards</h3>
+                                        <p class="text-slate-600 dark:text-slate-400">Add weight standards for layer chickens</p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Stage Modal -->
+            <div id="add-stage-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-slide-up">
+                    <!-- Modal Header -->
+                    <div class="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-700">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-chicken-yellow-500 rounded-xl flex items-center justify-center">
+                                <span class="text-white text-lg">📋</span>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-slate-900 dark:text-white">Add Chicken Stage</h3>
+                                <p class="text-sm text-slate-600 dark:text-slate-400">Define development stages for chicken categories</p>
+                            </div>
+                        </div>
+                        <button id="close-stage-modal" class="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                            <svg class="w-6 h-6 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Modal Body -->
+                    <form id="stage-form" class="p-6 space-y-6">
+                        <!-- Category Selection -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                <span class="text-lg mr-2">📋</span>Chicken Category
+                            </label>
+                            <select id="category" name="category" required
+                                    class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-chicken-yellow-500 focus:border-chicken-yellow-500 dark:bg-slate-700 dark:text-white">
+                                <option value="">Select Category</option>
+                                <option value="broiler">🥩 Broiler</option>
+                                <option value="kienyeji">🐔 Kienyeji</option>
+                                <option value="layer">🥚 Layer</option>
+                            </select>
+                        </div>
+
+                        <!-- Stage Name -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                <span class="text-lg mr-2">📝</span>Stage Name
+                            </label>
+                            <input type="text" id="stage_name" name="stage_name" required
+                                   class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-chicken-yellow-500 focus:border-chicken-yellow-500 dark:bg-slate-700 dark:text-white"
+                                   placeholder="Enter stage name (e.g., Starter, Grower, Finisher)">
+                        </div>
+
+                        <!-- Day Range -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                    <span class="text-lg mr-2">📅</span>Start Day
+                                </label>
+                                <input type="number" id="start_day" name="start_day" min="0" required
+                                       class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-chicken-yellow-500 focus:border-chicken-yellow-500 dark:bg-slate-700 dark:text-white"
+                                       placeholder="Day 0">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                    <span class="text-lg mr-2">📅</span>End Day
+                                </label>
+                                <input type="number" id="end_day" name="end_day" min="1" required
+                                       class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-chicken-yellow-500 focus:border-chicken-yellow-500 dark:bg-slate-700 dark:text-white"
+                                       placeholder="Day 42">
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                <span class="text-lg mr-2">📄</span>Stage Description
+                            </label>
+                            <textarea id="description" name="description" rows="4"
+                                      class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-chicken-yellow-500 focus:border-chicken-yellow-500 dark:bg-slate-700 dark:text-white"
+                                      placeholder="Describe the stage characteristics, feeding requirements, and care instructions..."></textarea>
+                        </div>
+
+                        <!-- Modal Footer -->
+                        <div class="flex justify-end space-x-3 pt-6 border-t border-slate-200 dark:border-slate-700">
+                            <button type="button" id="cancel-stage" 
+                                    class="px-6 py-3 text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors">
+                                Cancel
+                            </button>
+                            <button type="submit" 
+                                    class="px-6 py-3 bg-chicken-yellow-600 hover:bg-chicken-yellow-700 text-white rounded-xl transition-colors shadow-lg hover:shadow-xl">
+                                <span class="mr-2">📋</span>Add Stage
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Edit Stage Modal -->
+            <div id="edit-stage-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-slide-up">
+                    <!-- Modal Header -->
+                    <div class="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-700">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center">
+                                <span class="text-white text-lg">✏️</span>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-slate-900 dark:text-white">Edit Chicken Stage</h3>
+                                <p class="text-sm text-slate-600 dark:text-slate-400">Modify stage details and settings</p>
+                            </div>
+                        </div>
+                        <button id="close-edit-modal" class="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                            <svg class="w-6 h-6 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Modal Body -->
+                    <form id="edit-stage-form" class="p-6 space-y-6">
+                        <input type="hidden" id="edit-stage-id" name="stage_id">
+                        
+                        <!-- Category Selection -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                <span class="text-lg mr-2">📋</span>Chicken Category
+                            </label>
+                            <select id="edit-category" name="category" required
+                                    class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-chicken-yellow-500 focus:border-chicken-yellow-500 dark:bg-slate-700 dark:text-white">
+                                <option value="">Select Category</option>
+                                <option value="broiler">🥩 Broiler</option>
+                                <option value="kienyeji">🐔 Kienyeji</option>
+                                <option value="layer">🥚 Layer</option>
+                            </select>
+                        </div>
+
+                        <!-- Stage Name -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                <span class="text-lg mr-2">📝</span>Stage Name
+                            </label>
+                            <input type="text" id="edit-stage_name" name="stage_name" required
+                                   class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-chicken-yellow-500 focus:border-chicken-yellow-500 dark:bg-slate-700 dark:text-white"
+                                   placeholder="Enter stage name">
+                        </div>
+
+                        <!-- Day Range -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                    <span class="text-lg mr-2">📅</span>Start Day
+                                </label>
+                                <input type="number" id="edit-start_day" name="start_day" min="0" required
+                                       class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-chicken-yellow-500 focus:border-chicken-yellow-500 dark:bg-slate-700 dark:text-white"
+                                       placeholder="Day 0">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                    <span class="text-lg mr-2">📅</span>End Day
+                                </label>
+                                <input type="number" id="edit-end_day" name="end_day" min="1" required
+                                       class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-chicken-yellow-500 focus:border-chicken-yellow-500 dark:bg-slate-700 dark:text-white"
+                                       placeholder="Day 42">
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                <span class="text-lg mr-2">📄</span>Stage Description
+                            </label>
+                            <textarea id="edit-description" name="description" rows="4"
+                                      class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-chicken-yellow-500 focus:border-chicken-yellow-500 dark:bg-slate-700 dark:text-white"
+                                      placeholder="Describe the stage characteristics, feeding requirements, and care instructions..."></textarea>
+                        </div>
+
+                        <!-- Modal Footer -->
+                        <div class="flex justify-end space-x-3 pt-6 border-t border-slate-200 dark:border-slate-700">
+                            <button type="button" id="cancel-edit" 
+                                    class="px-6 py-3 text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors">
+                                Cancel
+                            </button>
+                            <button type="submit" 
+                                    class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-colors shadow-lg hover:shadow-xl">
+                                <span class="mr-2">✏️</span>Update Stage
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Delete Confirmation Modal -->
+            <div id="delete-confirmation-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-md w-full animate-slide-up">
+                    <div class="p-6">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-exclamation-triangle text-red-600 dark:text-red-400 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-900 dark:text-white">Delete Stage</h3>
+                                <p class="text-sm text-slate-600 dark:text-slate-400">This action cannot be undone</p>
+                            </div>
+                        </div>
+                        <p class="text-slate-700 dark:text-slate-300 mb-6">
+                            Are you sure you want to delete the stage "<span id="delete-stage-name" class="font-semibold"></span>"? 
+                            This will permanently remove the stage from the system.
+                        </p>
+                        <div class="flex justify-end space-x-3">
+                            <button id="cancel-delete" 
+                                    class="px-4 py-2 text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg transition-colors">
+                                Cancel
+                            </button>
+                            <button id="confirm-delete" 
+                                    class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors">
+                                <i class="fas fa-trash mr-2"></i>Delete Stage
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Medication Modal -->
+            <div id="add-medication-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-slide-up">
+                    <!-- Modal Header -->
+                    <div class="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-700">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center">
+                                <span class="text-white text-lg">💊</span>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-slate-900 dark:text-white">Add Chicken Medication</h3>
+                                <p class="text-sm text-slate-600 dark:text-slate-400">Define medication schedules for chicken categories</p>
+                            </div>
+                        </div>
+                        <button id="close-medication-modal" class="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                            <svg class="w-6 h-6 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Modal Body -->
+                    <form id="medication-form" class="p-6 space-y-6" enctype="multipart/form-data">
+                        <!-- Category Selection -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                <span class="text-lg mr-2">📋</span>Chicken Category
+                            </label>
+                            <select id="medication-category" name="category" required
+                                    class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:text-white">
+                                <option value="">Select Category</option>
+                                <option value="broiler">🥩 Broiler</option>
+                                <option value="kienyeji">🐔 Kienyeji</option>
+                                <option value="layer">🥚 Layer</option>
+                            </select>
+                        </div>
+
+                        <!-- Medication Name -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                <span class="text-lg mr-2">💊</span>Medication Name
+                            </label>
+                            <input type="text" id="medication_name" name="medication_name" required
+                                   class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:text-white"
+                                   placeholder="Enter medication name (e.g., Antibiotic, Vaccine, Vitamin)">
+                        </div>
+
+                        <!-- Day Range -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                    <span class="text-lg mr-2">📅</span>Start Day
+                                </label>
+                                <input type="number" id="medication-start_day" name="start_day" min="0" required
+                                       class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:text-white"
+                                       placeholder="Day 0">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                    <span class="text-lg mr-2">📅</span>End Day
+                                </label>
+                                <input type="number" id="medication-end_day" name="end_day" min="1" required
+                                       class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:text-white"
+                                       placeholder="Day 7">
+                            </div>
+                        </div>
+
+                        <!-- Purpose -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                <span class="text-lg mr-2">🎯</span>Purpose of Medication
+                            </label>
+                            <textarea id="medication-purpose" name="purpose" rows="3"
+                                      class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:text-white"
+                                      placeholder="Describe the purpose and benefits of this medication..."></textarea>
+                        </div>
+
+                        <!-- Medication Image -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                <span class="text-lg mr-2">📷</span>Medication Image
+                            </label>
+                            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl hover:border-blue-400 transition-colors">
+                                <div class="space-y-1 text-center">
+                                    <svg class="mx-auto h-12 w-12 text-slate-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                    <div class="flex text-sm text-slate-600 dark:text-slate-400">
+                                        <label for="medication_image" class="relative cursor-pointer bg-white dark:bg-slate-800 rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
+                                            <span>Upload medication image</span>
+                                            <input id="medication_image" name="medication_image" type="file" class="sr-only" accept="image/*">
+                                        </label>
+                                        <p class="pl-1">or drag and drop</p>
+                                    </div>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400">PNG, JPG, GIF up to 10MB</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal Footer -->
+                        <div class="flex justify-end space-x-3 pt-6 border-t border-slate-200 dark:border-slate-700">
+                            <button type="button" id="cancel-medication" 
+                                    class="px-6 py-3 text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors">
+                                Cancel
+                            </button>
+                            <button type="submit" 
+                                    class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-colors shadow-lg hover:shadow-xl">
+                                <span class="mr-2">💊</span>Add Medication
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Edit Medication Modal -->
+            <div id="edit-medication-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-slide-up">
+                    <!-- Modal Header -->
+                    <div class="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-700">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center">
+                                <span class="text-white text-lg">✏️</span>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-slate-900 dark:text-white">Edit Medication</h3>
+                                <p class="text-sm text-slate-600 dark:text-slate-400">Modify medication details and settings</p>
+                            </div>
+                        </div>
+                        <button id="close-edit-medication-modal" class="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                            <svg class="w-6 h-6 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Modal Body -->
+                    <form id="edit-medication-form" class="p-6 space-y-6" enctype="multipart/form-data">
+                        <input type="hidden" id="edit-medication-id" name="medication_id">
+                        
+                        <!-- Category Selection -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                <span class="text-lg mr-2">📋</span>Chicken Category
+                            </label>
+                            <select id="edit-medication-category" name="category" required
+                                    class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:text-white">
+                                <option value="">Select Category</option>
+                                <option value="broiler">🥩 Broiler</option>
+                                <option value="kienyeji">🐔 Kienyeji</option>
+                                <option value="layer">🥚 Layer</option>
+                            </select>
+                        </div>
+
+                        <!-- Medication Name -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                <span class="text-lg mr-2">💊</span>Medication Name
+                            </label>
+                            <input type="text" id="edit-medication_name" name="medication_name" required
+                                   class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:text-white"
+                                   placeholder="Enter medication name">
+                        </div>
+
+                        <!-- Day Range -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                    <span class="text-lg mr-2">📅</span>Start Day
+                                </label>
+                                <input type="number" id="edit-medication-start_day" name="start_day" min="0" required
+                                       class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:text-white"
+                                       placeholder="Day 0">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                    <span class="text-lg mr-2">📅</span>End Day
+                                </label>
+                                <input type="number" id="edit-medication-end_day" name="end_day" min="1" required
+                                       class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:text-white"
+                                       placeholder="Day 7">
+                            </div>
+                        </div>
+
+                        <!-- Purpose -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                <span class="text-lg mr-2">🎯</span>Purpose of Medication
+                            </label>
+                            <textarea id="edit-medication-purpose" name="purpose" rows="3"
+                                      class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:text-white"
+                                      placeholder="Describe the purpose and benefits of this medication..."></textarea>
+                        </div>
+
+                        <!-- Current Image Display -->
+                        <div id="current-image-display" class="hidden">
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                <span class="text-lg mr-2">📷</span>Current Image
+                            </label>
+                            <div class="flex items-center space-x-4">
+                                <img id="current-medication-image" src="" alt="Current medication" class="w-20 h-20 object-cover rounded-lg border border-slate-200 dark:border-slate-600">
+                                <div>
+                                    <p class="text-sm text-slate-600 dark:text-slate-400">Current medication image</p>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400">Upload new image to replace</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- New Medication Image -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                <span class="text-lg mr-2">📷</span>New Medication Image (Optional)
+                            </label>
+                            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl hover:border-blue-400 transition-colors">
+                                <div class="space-y-1 text-center">
+                                    <svg class="mx-auto h-12 w-12 text-slate-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                    <div class="flex text-sm text-slate-600 dark:text-slate-400">
+                                        <label for="edit-medication_image" class="relative cursor-pointer bg-white dark:bg-slate-800 rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
+                                            <span>Upload new image</span>
+                                            <input id="edit-medication_image" name="medication_image" type="file" class="sr-only" accept="image/*">
+                                        </label>
+                                        <p class="pl-1">or drag and drop</p>
+                                    </div>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400">PNG, JPG, GIF up to 10MB</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal Footer -->
+                        <div class="flex justify-end space-x-3 pt-6 border-t border-slate-200 dark:border-slate-700">
+                            <button type="button" id="cancel-edit-medication" 
+                                    class="px-6 py-3 text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors">
+                                Cancel
+                            </button>
+                            <button type="submit" 
+                                    class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-colors shadow-lg hover:shadow-xl">
+                                <span class="mr-2">✏️</span>Update Medication
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Delete Medication Confirmation Modal -->
+            <div id="delete-medication-confirmation-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-md w-full animate-slide-up">
+                    <div class="p-6">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-exclamation-triangle text-red-600 dark:text-red-400 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-900 dark:text-white">Delete Medication</h3>
+                                <p class="text-sm text-slate-600 dark:text-slate-400">This action cannot be undone</p>
+                            </div>
+                        </div>
+                        <p class="text-slate-700 dark:text-slate-300 mb-6">
+                            Are you sure you want to delete the medication "<span id="delete-medication-name" class="font-semibold"></span>"? 
+                            This will permanently remove the medication from the system.
+                        </p>
+                        <div class="flex justify-end space-x-3">
+                            <button id="cancel-delete-medication" 
+                                    class="px-4 py-2 text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg transition-colors">
+                                Cancel
+                            </button>
+                            <button id="confirm-delete-medication" 
+                                    class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors">
+                                <i class="fas fa-trash mr-2"></i>Delete Medication
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Modern Footer -->
+    <footer class="bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-t border-slate-200/50 dark:border-slate-700/50 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center space-x-3 mb-4 md:mb-0">
+                    <div class="w-10 h-10 gradient-bg rounded-xl flex items-center justify-center shadow-lg">
+                        <span class="text-white text-lg">⚙️</span>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold text-slate-900 dark:text-white">AgriTech Pro</p>
+                        <p class="text-xs text-slate-600 dark:text-slate-400">Chicken Settings & Stages</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <a href="/privacy" class="text-sm text-slate-600 dark:text-slate-400 hover:text-chicken-yellow-600 dark:hover:text-chicken-yellow-400 transition-colors">Privacy Policy</a>
+                    <a href="/terms" class="text-sm text-slate-600 dark:text-slate-400 hover:text-chicken-yellow-600 dark:hover:text-chicken-yellow-400 transition-colors">Terms of Service</a>
+                    <a href="/support" class="text-sm text-slate-600 dark:text-slate-400 hover:text-chicken-yellow-600 dark:hover:text-chicken-yellow-400 transition-colors">Support</a>
+                </div>
+            </div>
+            <div class="mt-6 pt-6 border-t border-slate-200/50 dark:border-slate-700/50 text-center">
+                <p class="text-xs text-slate-500 dark:text-slate-400">© 2024 AgriTech Pro. All rights reserved. ⚙️ Chicken Settings & Stage Management</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Add Weight Standard Modal -->
+    <div id="add-weight-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-slide-up">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-700">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center">
+                        <span class="text-white text-lg">⚖️</span>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white">Add Weight Standard</h3>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">Define weight targets for chicken categories</p>
+                    </div>
+                </div>
+                <button id="close-weight-modal" class="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                    <svg class="w-6 h-6 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <form id="weight-form" class="p-6 space-y-6">
+                <!-- Category Selection -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        <span class="text-lg mr-2">📋</span>Chicken Category
+                    </label>
+                    <select id="weight-category" name="category" required
+                            class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-slate-700 dark:text-white">
+                        <option value="">Select Category</option>
+                        <option value="broiler">🥩 Broiler</option>
+                        <option value="kienyeji">🐔 Kienyeji</option>
+                        <option value="layer">🥚 Layer</option>
+                    </select>
+                </div>
+
+                <!-- Age in Days -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        <span class="text-lg mr-2">📅</span>Age in Days
+                    </label>
+                    <input type="number" id="age-days" name="age_days" min="0" required
+                           class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-slate-700 dark:text-white"
+                           placeholder="Enter age in days (e.g., 30, 60, 90)">
+                </div>
+
+                <!-- Expected Weight -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        <span class="text-lg mr-2">⚖️</span>Expected Weight (kg)
+                    </label>
+                    <input type="number" id="expected-weight" name="expected_weight" min="0" step="0.001" required
+                           class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-slate-700 dark:text-white"
+                           placeholder="Enter expected weight in kg (e.g., 1.500, 2.250)">
+                </div>
+
+                <!-- Description -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        <span class="text-lg mr-2">📝</span>Description (Optional)
+                    </label>
+                    <textarea id="weight-description" name="description" rows="3"
+                              class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-slate-700 dark:text-white"
+                              placeholder="Add any notes about this weight standard..."></textarea>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="flex justify-end space-x-3 pt-6 border-t border-slate-200 dark:border-slate-700">
+                    <button type="button" id="cancel-weight" 
+                            class="px-6 py-3 text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit" 
+                            class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl transition-colors shadow-lg hover:shadow-xl">
+                        <span class="mr-2">⚖️</span>Add Weight Standard
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Modern Theme Toggle with Smooth Transitions
+        const themeToggle = document.getElementById('theme-toggle');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+        
+        // Check for saved theme preference or default to light mode
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.classList.toggle('dark', currentTheme === 'dark');
+        updateThemeIcon();
+        
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            updateThemeIcon();
+        });
+        
+        function updateThemeIcon() {
+            const isDark = document.documentElement.classList.contains('dark');
+            sunIcon.classList.toggle('hidden', isDark);
+            moonIcon.classList.toggle('hidden', !isDark);
+        }
+
+        // Enhanced User Dropdown with Better UX
+        const userDropdownBtn = document.getElementById('user-dropdown-btn');
+        const userDropdown = document.getElementById('user-dropdown');
+        
+        userDropdownBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            userDropdown.classList.toggle('hidden');
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!userDropdownBtn.contains(e.target) && !userDropdown.contains(e.target)) {
+                userDropdown.classList.add('hidden');
+            }
+        });
+
+        // Enhanced Mobile Sidebar with Better Animations
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const closeSidebarBtn = document.getElementById('close-sidebar');
+        const sidebar = document.getElementById('sidebar');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            sidebar.classList.remove('-translate-x-full');
+            sidebar.classList.add('animate-slide-up');
+        });
+        
+        closeSidebarBtn.addEventListener('click', () => {
+            sidebar.classList.add('-translate-x-full');
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth < 1024) {
+                if (!sidebar.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                    sidebar.classList.add('-translate-x-full');
+                }
+            }
+        });
+
+        // Logout functionality with better error handling
+        document.getElementById('logout-btn').addEventListener('click', async function() {
+            try {
+                const response = await fetch('/api/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    window.location.href = data.redirect;
+                }
+            } catch (error) {
+                console.error('Logout error:', error);
+                // Redirect anyway
+                window.location.href = '/';
+            }
+        });
+
+        // Stage Modal Functionality
+        const addStageBtn = document.getElementById('add-stage-btn');
+        const stageModal = document.getElementById('add-stage-modal');
+        const closeStageBtn = document.getElementById('close-stage-modal');
+        const cancelStageBtn = document.getElementById('cancel-stage');
+        const stageForm = document.getElementById('stage-form');
+
+        // Open stage modal
+        if (addStageBtn && stageModal) {
+            addStageBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                console.log('Stage button clicked');
+                stageModal.classList.remove('hidden');
+                stageModal.classList.add('flex');
+            });
+        }
+
+        // Close modal functions
+        function closeStageModal() {
+            stageModal.classList.add('hidden');
+            stageModal.classList.remove('flex');
+            stageForm.reset();
+        }
+
+        closeStageBtn.addEventListener('click', closeStageModal);
+        cancelStageBtn.addEventListener('click', closeStageModal);
+
+        // Close modal when clicking outside
+        stageModal.addEventListener('click', (e) => {
+            if (e.target === stageModal) {
+                closeStageModal();
+            }
+        });
+
+        // Form submission
+        stageForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(stageForm);
+            
+            // Show loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="mr-2">⏳</span>Adding Stage...';
+            submitBtn.disabled = true;
+            
+            try {
+                // Submit to backend
+                const response = await fetch('/admin/farm/chicken-stage', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Show success message
+                    alert(`✅ ${result.message}`);
+                    
+                    // Close modal and reload page
+                    closeStageModal();
+                    window.location.reload();
+                } else {
+                    // Show error message
+                    alert(`❌ Error: ${result.message}`);
+                }
+            } catch (error) {
+                console.error('Stage creation error:', error);
+                alert('❌ Error: Failed to add stage. Please try again.');
+            } finally {
+                // Reset button state
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Edit Stage Modal Functionality
+        const editStageModal = document.getElementById('edit-stage-modal');
+        const closeEditBtn = document.getElementById('close-edit-modal');
+        const cancelEditBtn = document.getElementById('cancel-edit');
+        const editStageForm = document.getElementById('edit-stage-form');
+
+        // Close edit modal functions
+        function closeEditModal() {
+            editStageModal.classList.add('hidden');
+            editStageModal.classList.remove('flex');
+            editStageForm.reset();
+        }
+
+        closeEditBtn.addEventListener('click', closeEditModal);
+        cancelEditBtn.addEventListener('click', closeEditModal);
+
+        // Close edit modal when clicking outside
+        editStageModal.addEventListener('click', (e) => {
+            if (e.target === editStageModal) {
+                closeEditModal();
+            }
+        });
+
+        // Edit stage function
+        window.editStage = function(stageId, category, stageName, startDay, endDay, description) {
+            // Populate form with existing data
+            document.getElementById('edit-stage-id').value = stageId;
+            document.getElementById('edit-category').value = category;
+            document.getElementById('edit-stage_name').value = stageName;
+            document.getElementById('edit-start_day').value = startDay;
+            document.getElementById('edit-end_day').value = endDay;
+            document.getElementById('edit-description').value = description || '';
+            
+            // Show modal
+            editStageModal.classList.remove('hidden');
+            editStageModal.classList.add('flex');
+        };
+
+        // Edit form submission
+        editStageForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const stageId = document.getElementById('edit-stage-id').value;
+            const formData = new FormData(editStageForm);
+            
+            // Show loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="mr-2">⏳</span>Updating Stage...';
+            submitBtn.disabled = true;
+            
+            try {
+                // Submit to backend
+                const response = await fetch(`/admin/farm/chicken-stage/${stageId}`, {
+                    method: 'PUT',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Show success message
+                    alert(`✅ ${result.message}`);
+                    
+                    // Close modal and reload page
+                    closeEditModal();
+                    window.location.reload();
+                } else {
+                    // Show error message
+                    alert(`❌ Error: ${result.message}`);
+                }
+            } catch (error) {
+                console.error('Stage update error:', error);
+                alert('❌ Error: Failed to update stage. Please try again.');
+            } finally {
+                // Reset button state
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Delete Stage Functionality
+        const deleteModal = document.getElementById('delete-confirmation-modal');
+        const cancelDeleteBtn = document.getElementById('cancel-delete');
+        const confirmDeleteBtn = document.getElementById('confirm-delete');
+        let stageToDelete = null;
+
+        // Close delete modal functions
+        function closeDeleteModal() {
+            deleteModal.classList.add('hidden');
+            deleteModal.classList.remove('flex');
+            stageToDelete = null;
+        }
+
+        cancelDeleteBtn.addEventListener('click', closeDeleteModal);
+
+        // Close delete modal when clicking outside
+        deleteModal.addEventListener('click', (e) => {
+            if (e.target === deleteModal) {
+                closeDeleteModal();
+            }
+        });
+
+        // Delete stage function
+        window.deleteStage = function(stageId, stageName) {
+            stageToDelete = stageId;
+            document.getElementById('delete-stage-name').textContent = stageName;
+            
+            // Show modal
+            deleteModal.classList.remove('hidden');
+            deleteModal.classList.add('flex');
+        };
+
+        // Confirm delete
+        confirmDeleteBtn.addEventListener('click', async function() {
+            if (!stageToDelete) return;
+            
+            // Show loading state
+            const originalText = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Deleting...';
+            this.disabled = true;
+            
+            try {
+                // Submit to backend
+                const response = await fetch(`/admin/farm/chicken-stage/${stageToDelete}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Show success message
+                    alert(`✅ ${result.message}`);
+                    
+                    // Close modal and reload page
+                    closeDeleteModal();
+                    window.location.reload();
+                } else {
+                    // Show error message
+                    alert(`❌ Error: ${result.message}`);
+                }
+            } catch (error) {
+                console.error('Stage deletion error:', error);
+                alert('❌ Error: Failed to delete stage. Please try again.');
+            } finally {
+                // Reset button state
+                this.innerHTML = originalText;
+                this.disabled = false;
+            }
+        });
+
+        // Medication Modal Functionality
+        const medicationModal = document.getElementById('add-medication-modal');
+        const closeMedicationBtn = document.getElementById('close-medication-modal');
+        const cancelMedicationBtn = document.getElementById('cancel-medication');
+        const medicationForm = document.getElementById('medication-form');
+
+        // Close medication modal functions
+        function closeMedicationModal() {
+            medicationModal.classList.add('hidden');
+            medicationModal.classList.remove('flex');
+            medicationForm.reset();
+        }
+
+        closeMedicationBtn.addEventListener('click', closeMedicationModal);
+        cancelMedicationBtn.addEventListener('click', closeMedicationModal);
+
+        // Close medication modal when clicking outside
+        medicationModal.addEventListener('click', (e) => {
+            if (e.target === medicationModal) {
+                closeMedicationModal();
+            }
+        });
+
+        // Medication form submission
+        medicationForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(medicationForm);
+            
+            // Show loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="mr-2">⏳</span>Adding Medication...';
+            submitBtn.disabled = true;
+            
+            try {
+                // Submit to backend
+                const response = await fetch('/admin/farm/chicken-medication', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Show success message
+                    alert(`✅ ${result.message}`);
+                    
+                    // Close modal and reload page
+                    closeMedicationModal();
+                    window.location.reload();
+                } else {
+                    // Show error message
+                    alert(`❌ Error: ${result.message}`);
+                }
+            } catch (error) {
+                console.error('Medication creation error:', error);
+                alert('❌ Error: Failed to add medication. Please try again.');
+            } finally {
+                // Reset button state
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Edit Medication Modal Functionality
+        const editMedicationModal = document.getElementById('edit-medication-modal');
+        const closeEditMedicationBtn = document.getElementById('close-edit-medication-modal');
+        const cancelEditMedicationBtn = document.getElementById('cancel-edit-medication');
+        const editMedicationForm = document.getElementById('edit-medication-form');
+
+        // Close edit medication modal functions
+        function closeEditMedicationModal() {
+            editMedicationModal.classList.add('hidden');
+            editMedicationModal.classList.remove('flex');
+            editMedicationForm.reset();
+            document.getElementById('current-image-display').classList.add('hidden');
+        }
+
+        closeEditMedicationBtn.addEventListener('click', closeEditMedicationModal);
+        cancelEditMedicationBtn.addEventListener('click', closeEditMedicationModal);
+
+        // Close edit medication modal when clicking outside
+        editMedicationModal.addEventListener('click', (e) => {
+            if (e.target === editMedicationModal) {
+                closeEditMedicationModal();
+            }
+        });
+
+        // Edit medication function
+        window.editMedication = function(medicationId, category, medicationName, startDay, endDay, purpose, imageFilename) {
+            // Populate form with existing data
+            document.getElementById('edit-medication-id').value = medicationId;
+            document.getElementById('edit-medication-category').value = category;
+            document.getElementById('edit-medication_name').value = medicationName;
+            document.getElementById('edit-medication-start_day').value = startDay;
+            document.getElementById('edit-medication-end_day').value = endDay;
+            document.getElementById('edit-medication-purpose').value = purpose || '';
+            
+            // Show current image if exists
+            if (imageFilename) {
+                document.getElementById('current-medication-image').src = `/static/uploads/medications/${imageFilename}`;
+                document.getElementById('current-image-display').classList.remove('hidden');
+            } else {
+                document.getElementById('current-image-display').classList.add('hidden');
+            }
+            
+            // Show modal
+            editMedicationModal.classList.remove('hidden');
+            editMedicationModal.classList.add('flex');
+        };
+
+        // Edit medication form submission
+        editMedicationForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const medicationId = document.getElementById('edit-medication-id').value;
+            const formData = new FormData(editMedicationForm);
+            
+            // Show loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="mr-2">⏳</span>Updating Medication...';
+            submitBtn.disabled = true;
+            
+            try {
+                // Submit to backend
+                const response = await fetch(`/admin/farm/chicken-medication/${medicationId}`, {
+                    method: 'PUT',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Show success message
+                    alert(`✅ ${result.message}`);
+                    
+                    // Close modal and reload page
+                    closeEditMedicationModal();
+                    window.location.reload();
+                } else {
+                    // Show error message
+                    alert(`❌ Error: ${result.message}`);
+                }
+            } catch (error) {
+                console.error('Medication update error:', error);
+                alert('❌ Error: Failed to update medication. Please try again.');
+            } finally {
+                // Reset button state
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Delete Medication Functionality
+        const deleteMedicationModal = document.getElementById('delete-medication-confirmation-modal');
+        const cancelDeleteMedicationBtn = document.getElementById('cancel-delete-medication');
+        const confirmDeleteMedicationBtn = document.getElementById('confirm-delete-medication');
+        let medicationToDelete = null;
+
+        // Close delete medication modal functions
+        function closeDeleteMedicationModal() {
+            deleteMedicationModal.classList.add('hidden');
+            deleteMedicationModal.classList.remove('flex');
+            medicationToDelete = null;
+        }
+
+        cancelDeleteMedicationBtn.addEventListener('click', closeDeleteMedicationModal);
+
+        // Close delete medication modal when clicking outside
+        deleteMedicationModal.addEventListener('click', (e) => {
+            if (e.target === deleteMedicationModal) {
+                closeDeleteMedicationModal();
+            }
+        });
+
+        // Delete medication function
+        window.deleteMedication = function(medicationId, medicationName) {
+            medicationToDelete = medicationId;
+            document.getElementById('delete-medication-name').textContent = medicationName;
+            
+            // Show modal
+            deleteMedicationModal.classList.remove('hidden');
+            deleteMedicationModal.classList.add('flex');
+        };
+
+        // Confirm delete medication
+        confirmDeleteMedicationBtn.addEventListener('click', async function() {
+            if (!medicationToDelete) return;
+            
+            // Show loading state
+            const originalText = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Deleting...';
+            this.disabled = true;
+            
+            try {
+                // Submit to backend
+                const response = await fetch(`/admin/farm/chicken-medication/${medicationToDelete}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Show success message
+                    alert(`✅ ${result.message}`);
+                    
+                    // Close modal and reload page
+                    closeDeleteMedicationModal();
+                    window.location.reload();
+                } else {
+                    // Show error message
+                    alert(`❌ Error: ${result.message}`);
+                }
+            } catch (error) {
+                console.error('Medication deletion error:', error);
+                alert('❌ Error: Failed to delete medication. Please try again.');
+            } finally {
+                // Reset button state
+                this.innerHTML = originalText;
+                this.disabled = false;
+            }
+        });
+
+        // Tab Switching Functionality
+        const stagesTab = document.getElementById('stages-tab');
+        const medicationsTab = document.getElementById('medications-tab');
+        const weightTab = document.getElementById('weight-tab');
+        const stagesContent = document.getElementById('stages-content');
+        const medicationsContent = document.getElementById('medications-content');
+        const weightContent = document.getElementById('weight-content');
+
+        // Tab switching functions
+        function switchToStages() {
+            if (stagesTab && medicationsTab && weightTab && stagesContent && medicationsContent && weightContent) {
+                // Update tab appearance
+                stagesTab.classList.add('active', 'border-chicken-yellow-500', 'text-chicken-yellow-600', 'dark:text-chicken-yellow-400');
+                stagesTab.classList.remove('border-transparent', 'text-slate-500', 'dark:text-slate-400');
+                
+                medicationsTab.classList.remove('active', 'border-blue-500', 'text-blue-600', 'dark:text-blue-400');
+                medicationsTab.classList.add('border-transparent', 'text-slate-500', 'dark:text-slate-400');
+                
+                weightTab.classList.remove('active', 'border-green-500', 'text-green-600', 'dark:text-green-400');
+                weightTab.classList.add('border-transparent', 'text-slate-500', 'dark:text-slate-400');
+                
+                // Show/hide content
+                stagesContent.classList.remove('hidden');
+                medicationsContent.classList.add('hidden');
+                weightContent.classList.add('hidden');
+                
+                // Update button visibility
+                if (addStageBtn) addStageBtn.classList.remove('hidden');
+                const addMedicationBtn = document.getElementById('add-medication-btn');
+                if (addMedicationBtn) addMedicationBtn.classList.add('hidden');
+            }
+        }
+
+        function switchToMedications() {
+            if (stagesTab && medicationsTab && weightTab && stagesContent && medicationsContent && weightContent) {
+                // Update tab appearance
+                medicationsTab.classList.add('active', 'border-blue-500', 'text-blue-600', 'dark:text-blue-400');
+                medicationsTab.classList.remove('border-transparent', 'text-slate-500', 'dark:text-slate-400');
+                
+                stagesTab.classList.remove('active', 'border-chicken-yellow-500', 'text-chicken-yellow-600', 'dark:text-chicken-yellow-400');
+                stagesTab.classList.add('border-transparent', 'text-slate-500', 'dark:text-slate-400');
+                
+                weightTab.classList.remove('active', 'border-green-500', 'text-green-600', 'dark:text-green-400');
+                weightTab.classList.add('border-transparent', 'text-slate-500', 'dark:text-slate-400');
+                
+                // Show/hide content
+                medicationsContent.classList.remove('hidden');
+                stagesContent.classList.add('hidden');
+                weightContent.classList.add('hidden');
+                
+                // Update button visibility
+                const addMedicationBtn = document.getElementById('add-medication-btn');
+                if (addMedicationBtn) addMedicationBtn.classList.remove('hidden');
+                if (addStageBtn) addStageBtn.classList.add('hidden');
+            }
+        }
+
+        function switchToWeight() {
+            if (stagesTab && medicationsTab && weightTab && stagesContent && medicationsContent && weightContent) {
+                // Update tab appearance
+                weightTab.classList.add('active', 'border-green-500', 'text-green-600', 'dark:text-green-400');
+                weightTab.classList.remove('border-transparent', 'text-slate-500', 'dark:text-slate-400');
+                
+                stagesTab.classList.remove('active', 'border-chicken-yellow-500', 'text-chicken-yellow-600', 'dark:text-chicken-yellow-400');
+                stagesTab.classList.add('border-transparent', 'text-slate-500', 'dark:text-slate-400');
+                
+                medicationsTab.classList.remove('active', 'border-blue-500', 'text-blue-600', 'dark:text-blue-400');
+                medicationsTab.classList.add('border-transparent', 'text-slate-500', 'dark:text-slate-400');
+                
+                // Show/hide content
+                weightContent.classList.remove('hidden');
+                stagesContent.classList.add('hidden');
+                medicationsContent.classList.add('hidden');
+                
+                // Update button visibility
+                if (addStageBtn) addStageBtn.classList.add('hidden');
+                const addMedicationBtn = document.getElementById('add-medication-btn');
+                if (addMedicationBtn) addMedicationBtn.classList.add('hidden');
+            }
+        }
+
+        // Fix medication button visibility on page load
+        function updateButtonVisibility() {
+            if (stagesContent.classList.contains('hidden')) {
+                // Medications tab is active
+                if (addMedicationBtn) addMedicationBtn.classList.remove('hidden');
+                if (addStageBtn) addStageBtn.classList.add('hidden');
+            } else {
+                // Stages tab is active
+                if (addStageBtn) addStageBtn.classList.remove('hidden');
+                if (addMedicationBtn) addMedicationBtn.classList.add('hidden');
+            }
+        }
+
+        // Tab click event listeners
+        stagesTab.addEventListener('click', switchToStages);
+        medicationsTab.addEventListener('click', switchToMedications);
+        weightTab.addEventListener('click', switchToWeight);
+
+        // Sub-link click event listeners
+        document.querySelectorAll('a[href*="#stages"]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                switchToStages();
+            });
+        });
+
+        document.querySelectorAll('a[href*="#medications"]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                switchToMedications();
+            });
+        });
+
+        document.querySelectorAll('a[href*="#weight"]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                switchToWeight();
+            });
+        });
+
+        // Initialize with stages tab active
+        switchToStages();
+
+        // Weight Management Functions
+        function addWeightStandard(category) {
+            // Open the weight modal
+            const weightModal = document.getElementById('add-weight-modal');
+            if (weightModal) {
+                weightModal.classList.remove('hidden');
+                weightModal.classList.add('flex');
+                
+                // Pre-select category if provided
+                if (category) {
+                    const categorySelect = document.getElementById('weight-category');
+                    if (categorySelect) {
+                        categorySelect.value = category;
+                    }
+                }
+            }
+        }
+
+        // Weight Modal Functionality
+        const weightModal = document.getElementById('add-weight-modal');
+        const closeWeightBtn = document.getElementById('close-weight-modal');
+        const cancelWeightBtn = document.getElementById('cancel-weight');
+        const weightForm = document.getElementById('weight-form');
+        const addWeightBtn = document.getElementById('add-weight-btn');
+
+        // Open weight modal
+        if (addWeightBtn && weightModal) {
+            addWeightBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                console.log('Weight button clicked');
+                weightModal.classList.remove('hidden');
+                weightModal.classList.add('flex');
+            });
+        }
+
+        // Close modal functions
+        function closeWeightModal() {
+            if (weightModal) {
+                weightModal.classList.add('hidden');
+                weightModal.classList.remove('flex');
+                weightForm.reset();
+            }
+        }
+
+        if (closeWeightBtn) closeWeightBtn.addEventListener('click', closeWeightModal);
+        if (cancelWeightBtn) cancelWeightBtn.addEventListener('click', closeWeightModal);
+        if (weightModal) {
+            weightModal.addEventListener('click', (e) => {
+                if (e.target === weightModal) {
+                    closeWeightModal();
+                }
+            });
+        }
+
+        // Weight form submission
+        if (weightForm) {
+            weightForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const formData = new FormData(weightForm);
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<span class="mr-2">⏳</span>Adding...';
+                submitBtn.disabled = true;
+                
+                try {
+                    const response = await fetch('/admin/farm/chicken-weight-standard', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        alert(`✅ ${result.message}`);
+                        closeWeightModal();
+                        // Refresh the weight standards display
+                        loadWeightStandards();
+                    } else {
+                        alert(`❌ Error: ${result.message}`);
+                    }
+                } catch (error) {
+                    console.error('Weight standard error:', error);
+                    alert('❌ Error: Failed to add weight standard. Please try again.');
+                } finally {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            });
+        }
+
+        // Load weight standards - refresh the page to show new data
+        function loadWeightStandards() {
+            console.log('Refreshing weight standards...');
+            // Reload the page to show the new weight standard
+            window.location.reload(); 
+        }
+
+        // Edit Weight Standard
+        function editWeightStandard(id, category, ageDays, expectedWeight, description) {
+            // Pre-fill the form with existing data
+            const weightModal = document.getElementById('add-weight-modal');
+            const form = document.getElementById('weight-form');
+            
+            if (weightModal && form) {
+                // Set form values
+                document.getElementById('weight-category').value = category;
+                document.getElementById('age-days').value = ageDays;
+                document.getElementById('expected-weight').value = expectedWeight;
+                document.getElementById('weight-description').value = description;
+                
+                // Change form title and submit button
+                const modalTitle = weightModal.querySelector('h3');
+                const submitBtn = form.querySelector('button[type="submit"]');
+                
+                if (modalTitle) modalTitle.textContent = 'Edit Weight Standard';
+                if (submitBtn) {
+                    submitBtn.innerHTML = '<span class="mr-2">⚖️</span>Update Weight Standard';
+                }
+                
+                // Open modal
+                weightModal.classList.remove('hidden');
+                weightModal.classList.add('flex');
+            }
+        }
+
+        // Delete Weight Standard
+        function deleteWeightStandard(id, ageDays) {
+            if (confirm(`Are you sure you want to delete the weight standard for ${ageDays}?`)) {
+                // This will be implemented when backend is ready
+                alert('Delete functionality will be implemented soon!');
+            }
+        }
+
+        // Initialize medication button event listener
+        const addMedicationBtn = document.getElementById('add-medication-btn');
+        if (addMedicationBtn) {
+            addMedicationBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('Medication button clicked');
+                const medicationModal = document.getElementById('add-medication-modal');
+                if (medicationModal) {
+                    medicationModal.classList.remove('hidden');
+                    medicationModal.classList.add('flex');
+                }
+            });
+        }
+
+        // Enhanced Animations and Interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ensure all navigation links work
+            const navLinks = document.querySelectorAll('a[href]');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    // Let the browser handle navigation
+                    console.log('Navigation link clicked:', this.href);
+                });
+            });
+
+            // Staggered animation for dashboard cards
+            const cards = document.querySelectorAll('.card-hover');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+
+            // Add floating animation to emojis
+            const emojis = document.querySelectorAll('.floating-emoji, .wiggle-emoji');
+            emojis.forEach(emoji => {
+                emoji.addEventListener('mouseenter', () => {
+                    emoji.style.animation = 'bounceGentle 0.5s ease-in-out';
+                });
+                
+                emoji.addEventListener('mouseleave', () => {
+                    emoji.style.animation = 'float 3s ease-in-out infinite';
+                });
+            });
+        });
+
+        // Responsive behavior for sidebar
+        function handleResize() {
+            if (window.innerWidth >= 1024) {
+                sidebar.classList.remove('-translate-x-full');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+            }
+        }
+
+        window.addEventListener('resize', handleResize);
+        handleResize(); // Call on load
+
+        // Add smooth scrolling for better UX
+        document.documentElement.style.scrollBehavior = 'smooth';
+    </script>
+</body>
+</html>

@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐔 {{ chicken.chicken_id }} - Chicken Analytics - AgriTech Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'chicken-yellow': {
+                            50: '#fefce8', 100: '#fef3c7', 200: '#fde68a', 300: '#fcd34d', 400: '#fbbf24', 500: '#f59e0b', 600: '#d97706', 700: '#b45309', 800: '#92400e', 900: '#78350f',
+                        },
+                        'chicken-orange': {
+                            50: '#fff7ed', 100: '#ffedd5', 200: '#fed7aa', 300: '#fdba74', 400: '#fb923c', 500: '#f97316', 600: '#ea580c', 700: '#c2410c', 800: '#9a3412', 900: '#7c2d12',
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.6s ease-in-out',
+                        'slide-up': 'slideUp 0.4s ease-out',
+                        'slide-down': 'slideDown 0.4s ease-out',
+                        'bounce-gentle': 'bounceGentle 2s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'wiggle': 'wiggle 1s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        slideDown: {
+                            '0%': { transform: 'translateY(-20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        bounceGentle: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-5px)' },
+                        },
+                        wiggle: {
+                            '0%, 100%': { transform: 'rotate(-3deg)' },
+                            '50%': { transform: 'rotate(3deg)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .sidebar-link-active {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #92400e;
+        }
+        .dark .sidebar-link-active {
+            background: linear-gradient(135deg, #78350f 0%, #92400e 100%);
+            color: #fef3c7;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 font-inter">
+    <!-- Header -->
+    <header class="bg-white dark:bg-slate-800 shadow-lg border-b border-slate-200 dark:border-slate-700 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo and Title -->
+                <div class="flex items-center space-x-4">
+                    <div class="w-10 h-10 bg-chicken-yellow-500 rounded-xl flex items-center justify-center">
+                        <span class="text-white text-xl">🐔</span>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-slate-900 dark:text-white">Chicken Analytics</h1>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">{{ chicken.chicken_id }}</p>
+                    </div>
+                </div>
+
+                <!-- User Menu -->
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-chicken-yellow-500 rounded-full flex items-center justify-center">
+                            <span class="text-white text-sm font-semibold">{{ user.name[0] }}</span>
+                        </div>
+                        <div class="hidden md:block">
+                            <p class="text-sm font-medium text-slate-900 dark:text-white">{{ user.name }}</p>
+                            <p class="text-xs text-slate-600 dark:text-slate-400">{{ user.role.title() }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white dark:bg-slate-800 shadow-lg min-h-screen border-r border-slate-200 dark:border-slate-700">
+            <div class="p-6">
+                <!-- Navigation Links -->
+                <nav class="space-y-2">
+                    <!-- Back to Analytics -->
+                    <a href="/admin/farm/chicken-health-analytics" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                        <span class="text-lg mr-3">←</span>
+                        <span class="font-medium">Back to Analytics</span>
+                    </a>
+
+                    <!-- Health of Chicken -->
+                    <a href="/admin/farm/chicken-health" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                        <span class="text-lg mr-3">🏥</span>
+                        <span class="font-medium">Health of Chicken</span>
+                    </a>
+                    
+                    <!-- Upcoming Medications (Sub-item under Health) -->
+                    <a href="/admin/farm/chicken-upcoming-medications" class="flex items-center px-8 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all duration-200 ml-4 border-l-2 border-slate-200 dark:border-slate-700">
+                        <span class="text-sm mr-3">💊</span>
+                        <span class="text-sm font-medium">Upcoming Medications</span>
+                    </a>
+                    
+                    <!-- Weight Check (Sub-item under Health) -->
+                    <a href="/admin/farm/chicken-weight-check" class="flex items-center px-8 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all duration-200 ml-4 border-l-2 border-slate-200 dark:border-slate-700">
+                        <span class="text-sm mr-3">⚖️</span>
+                        <span class="text-sm font-medium">Weight Check</span>
+                    </a>
+                    
+                    <!-- Health Analytics (Sub-item under Health) -->
+                    <a href="/admin/farm/chicken-health-analytics" class="flex items-center px-8 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all duration-200 ml-4 border-l-2 border-slate-200 dark:border-slate-700">
+                        <span class="text-sm mr-3">📊</span>
+                        <span class="text-sm font-medium">Health Analytics</span>
+                    </a>
+
+                    <!-- Chicken Settings -->
+                    <a href="/admin/farm/chicken-settings" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                        <span class="text-lg mr-3">⚙️</span>
+                        <span class="font-medium">Chicken Settings</span>
+                    </a>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-8">
+            <!-- Chicken Header -->
+            <div class="mb-8">
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border-2 border-chicken-yellow-200 dark:border-chicken-yellow-700">
+                    <div class="p-6">
+                        <div class="flex items-start justify-between mb-6">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-16 h-16 bg-chicken-yellow-100 dark:bg-chicken-yellow-900/30 rounded-2xl flex items-center justify-center border-2 border-chicken-yellow-200 dark:border-chicken-yellow-700">
+                                    <span class="text-3xl">🐔</span>
+                                </div>
+                                <div>
+                                    <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">{{ chicken.chicken_id }}</h1>
+                                    <div class="flex items-center space-x-4 text-sm text-slate-600 dark:text-slate-400">
+                                        <span class="flex items-center">
+                                            <span class="mr-1">📋</span>
+                                            {{ chicken.batch_name }}
+                                        </span>
+                                        <span class="flex items-center">
+                                            <span class="mr-1">🏷️</span>
+                                            {{ chicken.chicken_type.title() }}
+                                        </span>
+                                        <span class="flex items-center">
+                                            <span class="mr-1">👤</span>
+                                            {{ chicken.gender.title() }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-2xl font-bold text-chicken-yellow-600 dark:text-chicken-yellow-400 mb-1">{{ chicken.age_days }} days</div>
+                                <div class="text-sm text-slate-600 dark:text-slate-400">Age</div>
+                            </div>
+                        </div>
+
+                        <!-- Chicken Details Grid -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="bg-slate-50 dark:bg-slate-700 rounded-xl p-4">
+                                <h3 class="font-semibold text-slate-900 dark:text-white mb-2">📊 Basic Info</h3>
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex justify-between">
+                                        <span class="text-slate-600 dark:text-slate-400">Breed:</span>
+                                        <span class="font-medium text-slate-900 dark:text-white">{{ chicken.breed_name }}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-slate-600 dark:text-slate-400">Source:</span>
+                                        <span class="font-medium text-slate-900 dark:text-white">{{ chicken.source }}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-slate-600 dark:text-slate-400">Coop:</span>
+                                        <span class="font-medium text-slate-900 dark:text-white">#{{ chicken.coop_number }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-50 dark:bg-slate-700 rounded-xl p-4">
+                                <h3 class="font-semibold text-slate-900 dark:text-white mb-2">📅 Timeline</h3>
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex justify-between">
+                                        <span class="text-slate-600 dark:text-slate-400">Hatch Date:</span>
+                                        <span class="font-medium text-slate-900 dark:text-white">{{ chicken.hatch_date.strftime('%Y-%m-%d') }}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-slate-600 dark:text-slate-400">Registered:</span>
+                                        <span class="font-medium text-slate-900 dark:text-white">{{ chicken.registration_date.strftime('%Y-%m-%d') }}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-slate-600 dark:text-slate-400">Status:</span>
+                                        <span class="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 text-xs font-medium rounded-full">
+                                            {{ chicken.current_status.title() }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-50 dark:bg-slate-700 rounded-xl p-4">
+                                <h3 class="font-semibold text-slate-900 dark:text-white mb-2">📈 Statistics</h3>
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex justify-between">
+                                        <span class="text-slate-600 dark:text-slate-400">Quantity:</span>
+                                        <span class="font-medium text-slate-900 dark:text-white">{{ chicken.quantity }}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-slate-600 dark:text-slate-400">Medical Records:</span>
+                                        <span class="font-medium text-slate-900 dark:text-white">{{ medical_journey|length }}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-slate-600 dark:text-slate-400">Weight Records:</span>
+                                        <span class="font-medium text-slate-900 dark:text-white">{{ weight_journey|length }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs Navigation -->
+            <div class="mb-8">
+                <div class="border-b border-slate-200 dark:border-slate-700">
+                    <nav class="-mb-px flex space-x-8">
+                        <button id="medical-tab" class="tab-button active py-2 px-1 border-b-2 border-chicken-yellow-500 font-medium text-sm text-chicken-yellow-600 dark:text-chicken-yellow-400">
+                            <span class="text-lg mr-2">💊</span>Medical Journey
+                        </button>
+                        <button id="weight-tab" class="tab-button py-2 px-1 border-b-2 border-transparent font-medium text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 hover:border-slate-300 dark:hover:border-slate-600">
+                            <span class="text-lg mr-2">⚖️</span>Weight Journey
+                        </button>
+                        <button id="upcoming-tab" class="tab-button py-2 px-1 border-b-2 border-transparent font-medium text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 hover:border-slate-300 dark:hover:border-slate-600">
+                            <span class="text-lg mr-2">📅</span>Upcoming Tasks
+                        </button>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Medical Journey Content -->
+            <div id="medical-content" class="tab-content">
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border-2 border-chicken-yellow-200 dark:border-chicken-yellow-700">
+                    <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-chicken-yellow-100 dark:bg-chicken-yellow-900/30 rounded-xl flex items-center justify-center border-2 border-chicken-yellow-200 dark:border-chicken-yellow-700">
+                                <span class="text-xl">💊</span>
+                            </div>
+                            <div>
+                                <h2 class="text-xl font-bold text-slate-900 dark:text-white">Medical Journey</h2>
+                                <p class="text-sm text-slate-600 dark:text-slate-400">{{ medical_journey|length }} medication(s) administered</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        {% if medical_journey %}
+                        <div class="space-y-3">
+                            <div class="flex items-center space-x-3 mb-4">
+                                <div class="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                                    <span class="text-lg">💊</span>
+                                </div>
+                                <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Medical Records</h3>
+                            </div>
+                            
+                            {% for record in medical_journey %}
+                            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-4 border border-blue-200 dark:border-blue-700 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="w-12 h-12 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-xl flex items-center justify-center shadow-lg">
+                                            <span class="text-white text-lg">💊</span>
+                                        </div>
+                                        <div>
+                                            <div class="flex items-center space-x-2 mb-1">
+                                                <h4 class="font-semibold text-slate-900 dark:text-white">{{ record.medication_name }}</h4>
+                                                <span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200">
+                                                    {{ record.status.title() }}
+                                                </span>
+                                            </div>
+                                            <p class="text-sm text-slate-600 dark:text-slate-400">{{ record.purpose }}</p>
+                                            <div class="flex items-center space-x-4 mt-2 text-sm">
+                                                <span class="flex items-center space-x-1">
+                                                    <span class="text-blue-600 dark:text-blue-400">📅</span>
+                                                    <span class="text-slate-600 dark:text-slate-400">Period:</span>
+                                                    <span class="font-medium text-slate-900 dark:text-white">Days {{ record.start_day }}-{{ record.end_day }}</span>
+                                                </span>
+                                                <span class="flex items-center space-x-1">
+                                                    <span class="text-indigo-600 dark:text-indigo-400">🏷️</span>
+                                                    <span class="text-slate-600 dark:text-slate-400">Category:</span>
+                                                    <span class="font-medium text-slate-900 dark:text-white">{{ record.category.title() }}</span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-sm font-medium text-slate-900 dark:text-white mb-1">{{ record.checked_at.strftime('%Y-%m-%d') }}</div>
+                                        <div class="text-xs text-slate-500 dark:text-slate-400">Completed</div>
+                                    </div>
+                                </div>
+                                {% if record.notes %}
+                                <div class="mt-3 p-3 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-600">
+                                    <p class="text-sm text-slate-600 dark:text-slate-400 italic">📝 {{ record.notes }}</p>
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="text-center py-12">
+                            <div class="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <span class="text-2xl">💊</span>
+                            </div>
+                            <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">No Medical Records</h3>
+                            <p class="text-slate-600 dark:text-slate-400">No medications have been administered to this chicken yet.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weight Journey Content -->
+            <div id="weight-content" class="tab-content hidden">
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border-2 border-chicken-yellow-200 dark:border-chicken-yellow-700">
+                    <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-chicken-yellow-100 dark:bg-chicken-yellow-900/30 rounded-xl flex items-center justify-center border-2 border-chicken-yellow-200 dark:border-chicken-yellow-700">
+                                <span class="text-xl">⚖️</span>
+                            </div>
+                            <div>
+                                <h2 class="text-xl font-bold text-slate-900 dark:text-white">Weight Journey Analytics</h2>
+                                <p class="text-sm text-slate-600 dark:text-slate-400">{{ weight_journey|length }} weight check(s) recorded</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        {% if weight_journey %}
+                        <!-- Weight Analytics Chart -->
+                        <div class="mb-8">
+                            <div class="bg-gradient-to-br from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-2xl p-6 border border-green-200 dark:border-green-700">
+                                <div class="flex items-center justify-between mb-6">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center animate-pulse-slow">
+                                            <span class="text-white text-xl">📈</span>
+                                        </div>
+                                        <div>
+                                            <h3 class="text-lg font-bold text-slate-900 dark:text-white">Weight Progress Chart</h3>
+                                            <p class="text-sm text-slate-600 dark:text-slate-400">Actual vs Expected Weight Over Time</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-4">
+                                        <div class="flex items-center space-x-2">
+                                            <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+                                            <span class="text-sm text-slate-600 dark:text-slate-400">Expected</span>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                            <span class="text-sm text-slate-600 dark:text-slate-400">Actual</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Chart Container -->
+                                <div class="relative h-64 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-600 overflow-hidden">
+                                    <canvas id="weightChart" class="w-full h-full"></canvas>
+                                </div>
+                                
+                                <!-- Chart Stats -->
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                                    <div class="bg-white dark:bg-slate-700 rounded-xl p-4 border border-slate-200 dark:border-slate-600">
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <span class="text-lg">📊</span>
+                                            <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Average Performance</span>
+                                        </div>
+                                        <div class="text-2xl font-bold text-slate-900 dark:text-white">
+                                            {% set avg_percentage = (weight_journey | map(attribute='weight_percentage') | list | sum / weight_journey|length) if weight_journey else 0 %}
+                                            {{ "%.1f"|format(avg_percentage) }}%
+                                        </div>
+                                    </div>
+                                    <div class="bg-white dark:bg-slate-700 rounded-xl p-4 border border-slate-200 dark:border-slate-600">
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <span class="text-lg">🎯</span>
+                                            <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Best Performance</span>
+                                        </div>
+                                        <div class="text-2xl font-bold text-slate-900 dark:text-white">
+                                            {% set best_percentage = (weight_journey | map(attribute='weight_percentage') | list | max) if weight_journey else 0 %}
+                                            {{ "%.1f"|format(best_percentage) }}%
+                                        </div>
+                                    </div>
+                                    <div class="bg-white dark:bg-slate-700 rounded-xl p-4 border border-slate-200 dark:border-slate-600">
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <span class="text-lg">📈</span>
+                                            <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Total Checks</span>
+                                        </div>
+                                        <div class="text-2xl font-bold text-slate-900 dark:text-white">{{ weight_journey|length }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Weight Records List -->
+                        <div class="space-y-3">
+                            <div class="flex items-center space-x-3 mb-4">
+                                <div class="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                                    <span class="text-lg">📋</span>
+                                </div>
+                                <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Weight Records</h3>
+                            </div>
+                            
+                            {% for record in weight_journey %}
+                            <div class="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-700 dark:to-slate-600 rounded-xl p-4 border border-slate-200 dark:border-slate-600 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="w-12 h-12 bg-gradient-to-br from-green-400 to-blue-500 rounded-xl flex items-center justify-center shadow-lg">
+                                            <span class="text-white text-lg">⚖️</span>
+                                        </div>
+                                        <div>
+                                            <div class="flex items-center space-x-2 mb-1">
+                                                <h4 class="font-semibold text-slate-900 dark:text-white">{{ record.standard_age }} days standard</h4>
+                                                <span class="px-2 py-1 text-xs font-medium rounded-full
+                                                    {% if record.weight_category == 'healthy' %}bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200
+                                                    {% elif record.weight_category == 'underweight' %}bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200
+                                                    {% else %}bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200{% endif %}">
+                                                    {{ record.weight_category.title() }}
+                                                </span>
+                                            </div>
+                                            <p class="text-sm text-slate-600 dark:text-slate-400">{{ record.standard_description or 'Weight check completed' }}</p>
+                                            <div class="flex items-center space-x-4 mt-2 text-sm">
+                                                <span class="flex items-center space-x-1">
+                                                    <span class="text-blue-600 dark:text-blue-400">📊</span>
+                                                    <span class="text-slate-600 dark:text-slate-400">Expected:</span>
+                                                    <span class="font-medium text-slate-900 dark:text-white">{{ "%.3f"|format(record.expected_weight) }} kg</span>
+                                                </span>
+                                                <span class="flex items-center space-x-1">
+                                                    <span class="text-green-600 dark:text-green-400">📈</span>
+                                                    <span class="text-slate-600 dark:text-slate-400">Actual:</span>
+                                                    <span class="font-bold text-slate-900 dark:text-white">{{ "%.3f"|format(record.actual_weight) }} kg</span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-sm font-medium text-slate-900 dark:text-white mb-1">{{ record.checked_at.strftime('%Y-%m-%d') }}</div>
+                                        <div class="text-2xl font-bold 
+                                            {% if record.weight_category == 'healthy' %}text-green-600 dark:text-green-400
+                                            {% elif record.weight_category == 'underweight' %}text-yellow-600 dark:text-yellow-400
+                                            {% else %}text-red-600 dark:text-red-400{% endif %}">
+                                            {{ record.weight_percentage|round(1) }}%
+                                        </div>
+                                        <div class="text-xs text-slate-500 dark:text-slate-400">of expected</div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="text-center py-16">
+                            <div class="w-20 h-20 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-600 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce-gentle">
+                                <span class="text-3xl">⚖️</span>
+                            </div>
+                            <h3 class="text-xl font-semibold text-slate-900 dark:text-white mb-3">No Weight Records</h3>
+                            <p class="text-slate-600 dark:text-slate-400 mb-6">No weight checks have been recorded for this chicken yet.</p>
+                            <a href="/admin/farm/chicken-weight-check" class="inline-flex items-center px-6 py-3 bg-chicken-yellow-600 hover:bg-chicken-yellow-700 text-white rounded-xl transition-colors shadow-lg hover:shadow-xl">
+                                <span class="mr-2">⚖️</span>
+                                Start Weight Tracking
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upcoming Tasks Content -->
+            <div id="upcoming-content" class="tab-content hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Upcoming Medications -->
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border-2 border-blue-200 dark:border-blue-700">
+                        <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center border-2 border-blue-200 dark:border-blue-700">
+                                    <span class="text-xl">💊</span>
+                                </div>
+                                <div>
+                                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">Upcoming Medications</h2>
+                                    <p class="text-sm text-slate-600 dark:text-slate-400">{{ upcoming_medications|length }} medication(s) scheduled</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            {% if upcoming_medications %}
+                            <div class="space-y-3">
+                                {% for medication in upcoming_medications %}
+                                <div class="bg-slate-50 dark:bg-slate-700 rounded-xl p-3 border border-slate-200 dark:border-slate-600">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <h3 class="font-semibold text-slate-900 dark:text-white">{{ medication.medication_name }}</h3>
+                                            <p class="text-sm text-slate-600 dark:text-slate-400">Days {{ medication.start_day }}-{{ medication.end_day }}</p>
+                                        </div>
+                                        <span class="px-2 py-1 text-xs font-medium rounded-full
+                                            {% if medication.status == 'current' %}bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200
+                                            {% elif medication.status == 'upcoming' %}bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200
+                                            {% else %}bg-gray-100 dark:bg-gray-900/30 text-gray-800 dark:text-gray-200{% endif %}">
+                                            {{ medication.status.title() }}
+                                        </span>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            <div class="text-center py-8">
+                                <div class="w-12 h-12 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <span class="text-xl">💊</span>
+                                </div>
+                                <p class="text-slate-600 dark:text-slate-400">No upcoming medications</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Upcoming Weight Checks -->
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border-2 border-green-200 dark:border-green-700">
+                        <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center border-2 border-green-200 dark:border-green-700">
+                                    <span class="text-xl">⚖️</span>
+                                </div>
+                                <div>
+                                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">Upcoming Weight Checks</h2>
+                                    <p class="text-sm text-slate-600 dark:text-slate-400">{{ upcoming_weight_checks|length }} check(s) scheduled</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            {% if upcoming_weight_checks %}
+                            <div class="space-y-3">
+                                {% for check in upcoming_weight_checks %}
+                                <div class="bg-slate-50 dark:bg-slate-700 rounded-xl p-3 border border-slate-200 dark:border-slate-600">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <h3 class="font-semibold text-slate-900 dark:text-white">{{ check.age_days }} days</h3>
+                                            <p class="text-sm text-slate-600 dark:text-slate-400">Expected: {{ "%.3f"|format(check.expected_weight) }} kg</p>
+                                        </div>
+                                        <span class="px-2 py-1 text-xs font-medium rounded-full
+                                            {% if check.status == 'ready' %}bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200
+                                            {% else %}bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200{% endif %}">
+                                            {{ check.status.title() }}
+                                        </span>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            <div class="text-center py-8">
+                                <div class="w-12 h-12 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <span class="text-xl">⚖️</span>
+                                </div>
+                                <p class="text-slate-600 dark:text-slate-400">No upcoming weight checks</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-chicken-yellow-500 rounded-lg flex items-center justify-center">
+                        <span class="text-white text-sm">🐔</span>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-slate-900 dark:text-white">AgriTech Pro</p>
+                        <p class="text-xs text-slate-600 dark:text-slate-400">Chicken Management System</p>
+                    </div>
+                </div>
+                <div class="text-sm text-slate-600 dark:text-slate-400">
+                    © 2024 AgriTech Pro. All rights reserved.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        // Weight Chart Data
+        const weightData = {
+            labels: [
+                {% for record in weight_journey %}
+                '{{ record.checked_at.strftime("%Y-%m-%d") }}'{% if not loop.last %},{% endif %}
+                {% endfor %}
+            ],
+            expected: [
+                {% for record in weight_journey %}
+                {{ record.expected_weight }}{% if not loop.last %},{% endif %}
+                {% endfor %}
+            ],
+            actual: [
+                {% for record in weight_journey %}
+                {{ record.actual_weight }}{% if not loop.last %},{% endif %}
+                {% endfor %}
+            ]
+        };
+
+        // Initialize Weight Chart
+        function initWeightChart() {
+            const ctx = document.getElementById('weightChart');
+            if (!ctx || weightData.labels.length === 0) return;
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: weightData.labels,
+                    datasets: [{
+                        label: 'Expected Weight (kg)',
+                        data: weightData.expected,
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#3b82f6',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }, {
+                        label: 'Actual Weight (kg)',
+                        data: weightData.actual,
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#10b981',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            borderColor: '#374151',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            displayColors: true,
+                            callbacks: {
+                                title: function(context) {
+                                    return '📅 ' + context[0].label;
+                                },
+                                label: function(context) {
+                                    const label = context.dataset.label;
+                                    const value = context.parsed.y.toFixed(3);
+                                    const icon = label.includes('Expected') ? '📊' : '📈';
+                                    return `${icon} ${label}: ${value} kg`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: 'rgba(148, 163, 184, 0.1)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: '#64748b',
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: 'rgba(148, 163, 184, 0.1)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: '#64748b',
+                                font: {
+                                    size: 12
+                                },
+                                callback: function(value) {
+                                    return value.toFixed(2) + ' kg';
+                                }
+                            }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    },
+                    animation: {
+                        duration: 2000,
+                        easing: 'easeInOutQuart'
+                    }
+                }
+            });
+        }
+
+        // Tab switching functionality
+        const medicalTab = document.getElementById('medical-tab');
+        const weightTab = document.getElementById('weight-tab');
+        const upcomingTab = document.getElementById('upcoming-tab');
+        const medicalContent = document.getElementById('medical-content');
+        const weightContent = document.getElementById('weight-content');
+        const upcomingContent = document.getElementById('upcoming-content');
+
+        function switchToMedical() {
+            // Update tab appearance
+            medicalTab.classList.add('active', 'border-chicken-yellow-500', 'text-chicken-yellow-600', 'dark:text-chicken-yellow-400');
+            medicalTab.classList.remove('border-transparent', 'text-slate-500', 'dark:text-slate-400');
+            
+            weightTab.classList.remove('active', 'border-green-500', 'text-green-600', 'dark:text-green-400');
+            weightTab.classList.add('border-transparent', 'text-slate-500', 'dark:text-slate-400');
+            
+            upcomingTab.classList.remove('active', 'border-blue-500', 'text-blue-600', 'dark:text-blue-400');
+            upcomingTab.classList.add('border-transparent', 'text-slate-500', 'dark:text-slate-400');
+            
+            // Show/hide content
+            medicalContent.classList.remove('hidden');
+            weightContent.classList.add('hidden');
+            upcomingContent.classList.add('hidden');
+        }
+
+        function switchToWeight() {
+            // Update tab appearance
+            weightTab.classList.add('active', 'border-green-500', 'text-green-600', 'dark:text-green-400');
+            weightTab.classList.remove('border-transparent', 'text-slate-500', 'dark:text-slate-400');
+            
+            medicalTab.classList.remove('active', 'border-chicken-yellow-500', 'text-chicken-yellow-600', 'dark:text-chicken-yellow-400');
+            medicalTab.classList.add('border-transparent', 'text-slate-500', 'dark:text-slate-400');
+            
+            upcomingTab.classList.remove('active', 'border-blue-500', 'text-blue-600', 'dark:text-blue-400');
+            upcomingTab.classList.add('border-transparent', 'text-slate-500', 'dark:text-slate-400');
+            
+            // Show/hide content
+            weightContent.classList.remove('hidden');
+            medicalContent.classList.add('hidden');
+            upcomingContent.classList.add('hidden');
+            
+            // Initialize weight chart when weight tab is shown
+            setTimeout(() => {
+                initWeightChart();
+            }, 100);
+        }
+
+        function switchToUpcoming() {
+            // Update tab appearance
+            upcomingTab.classList.add('active', 'border-blue-500', 'text-blue-600', 'dark:text-blue-400');
+            upcomingTab.classList.remove('border-transparent', 'text-slate-500', 'dark:text-slate-400');
+            
+            medicalTab.classList.remove('active', 'border-chicken-yellow-500', 'text-chicken-yellow-600', 'dark:text-chicken-yellow-400');
+            medicalTab.classList.add('border-transparent', 'text-slate-500', 'dark:text-slate-400');
+            
+            weightTab.classList.remove('active', 'border-green-500', 'text-green-600', 'dark:text-green-400');
+            weightTab.classList.add('border-transparent', 'text-slate-500', 'dark:text-slate-400');
+            
+            // Show/hide content
+            upcomingContent.classList.remove('hidden');
+            medicalContent.classList.add('hidden');
+            weightContent.classList.add('hidden');
+        }
+
+        // Tab click event listeners
+        medicalTab.addEventListener('click', switchToMedical);
+        weightTab.addEventListener('click', switchToWeight);
+        upcomingTab.addEventListener('click', switchToUpcoming);
+
+        // Initialize with medical tab active
+        switchToMedical();
+    </script>
+</body>
+</html>

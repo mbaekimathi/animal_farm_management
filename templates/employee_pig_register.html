@@ -1,0 +1,1030 @@
+{% extends 'base_employee.html' %}
+
+{% block title %}Pig Registration - Smart Animal Farming{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Custom styling for pig registration */
+    .pig-register-sidebar {
+        background: linear-gradient(135deg, #fdf2f8 0%, #f3e8ff 50%, #dbeafe 100%);
+    }
+    
+    .dark .pig-register-sidebar {
+        background: linear-gradient(135deg, #1f2937 0%, #312e81 50%, #1e3a8a 100%);
+    }
+    
+    .pig-register-nav-item {
+        transition: all 0.3s ease;
+    }
+    
+    .pig-register-nav-item:hover {
+        transform: translateX(8px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* Registration form styling */
+    .registration-card {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
+    }
+    
+    .dark .registration-card {
+        background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+        border-color: #374151;
+    }
+    
+    .registration-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Form input styling */
+    .form-input {
+        transition: all 0.3s ease;
+    }
+    
+    .form-input:focus {
+        transform: scale(1.02);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    /* Status badges */
+    .status-badge {
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+    
+    /* Responsive improvements */
+    @media (max-width: 1024px) {
+        #pig-register-sidebar {
+            z-index: 50;
+        }
+        
+        #pig-register-sidebar-overlay {
+            z-index: 45;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        #pig-register-sidebar {
+            width: 100vw;
+            max-width: 320px;
+        }
+        
+        .mobile-full-width {
+            width: 100vw;
+            margin-left: 0;
+        }
+        
+        .mobile-padding {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Custom Pig Registration Sidebar -->
+<aside id="pig-register-sidebar" class="fixed left-0 top-0 h-full w-72 pig-register-sidebar shadow-2xl z-50 transform -translate-x-full lg:translate-x-0 transition-all duration-300 ease-in-out border-r border-gray-200 dark:border-gray-700">
+    <div class="flex flex-col h-full">
+        <!-- Sidebar Header -->
+        <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-gradient-to-br from-pink-500 to-purple-600 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-piggy-bank text-white text-sm"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-white">Pig Registration</h2>
+                    <p class="text-xs text-gray-600 dark:text-gray-400">Registration Portal</p>
+                </div>
+            </div>
+            <button id="close-pig-register-sidebar" class="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                <svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Pig Registration Navigation -->
+        <nav class="flex-1 p-4 space-y-2 overflow-y-auto nav-scroll">
+            <!-- Register New Pig -->
+            <button onclick="openPigRegistrationModal()" class="pig-register-nav-item group flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-green-500 hover:to-emerald-600 hover:text-white hover:shadow-lg hover:scale-105 transition-all duration-300 transform bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg">
+                <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-white/20 group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-plus text-sm"></i>
+                </div>
+                <span class="font-medium">Register New Pig</span>
+            </button>
+
+            <!-- View All Pigs -->
+            <a href="/employee/pig-management/pigs" class="pig-register-nav-item group flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-500 hover:to-cyan-600 hover:text-white hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
+                <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-600 text-white group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-list text-sm"></i>
+                </div>
+                <span class="font-medium">View All Pigs</span>
+            </a>
+
+            <!-- View All Litters -->
+            <a href="/employee/pig-management/litters" class="pig-register-nav-item group flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-purple-500 hover:to-indigo-600 hover:text-white hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
+                <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-600 text-white group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-baby text-sm"></i>
+                </div>
+                <span class="font-medium">View All Litters</span>
+            </a>
+
+            <!-- Registration Statistics -->
+            <div class="bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-xl p-4 border border-yellow-200 dark:border-yellow-700">
+                <div class="flex items-center space-x-3 mb-2">
+                    <div class="w-8 h-8 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-chart-bar text-white text-sm"></i>
+                    </div>
+                    <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Today's Stats</h3>
+                </div>
+                <div class="space-y-1 text-xs text-gray-600 dark:text-gray-400">
+                    <div class="flex justify-between">
+                        <span>Registered:</span>
+                        <span class="font-medium text-green-600 dark:text-green-400" id="today-registered">0</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Pending:</span>
+                        <span class="font-medium text-yellow-600 dark:text-yellow-400" id="today-pending">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Back to Pig Management -->
+            <div class="pt-4 border-t border-gray-200 dark:border-gray-700 mt-4">
+                <a href="/employee/pig-management" class="pig-register-nav-item group flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-600 dark:text-gray-400 hover:bg-gradient-to-r hover:from-gray-500 hover:to-slate-600 hover:text-white hover:shadow-lg hover:scale-105 transition-all duration-300 transform">
+                    <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-gray-500 to-slate-600 text-white group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-arrow-left text-sm"></i>
+                    </div>
+                    <span class="font-medium">Back to Pig Management</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Sidebar Footer -->
+        <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+            <div class="text-center">
+                <p class="text-xs text-gray-500 dark:text-gray-400">Pig Registration System</p>
+                <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">v2.0.1</p>
+            </div>
+        </div>
+    </div>
+</aside>
+
+<!-- Sidebar Overlay for Mobile -->
+<div id="pig-register-sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-45 hidden lg:hidden"></div>
+
+<!-- Main Content -->
+<main class="pt-16 lg:ml-72 min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <!-- Page Header -->
+        <div class="mb-8">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-pink-500 via-purple-500 to-blue-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-piggy-bank text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Pig Registration Portal</h1>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Register and manage pig records with comprehensive tracking</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <button onclick="openPigRegistrationModal()" class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300 flex items-center space-x-2 hover:scale-105">
+                            <i class="fas fa-plus"></i>
+                            <span>Register New Pig</span>
+                        </button>
+                        <button onclick="refreshData()" class="bg-gradient-to-r from-blue-500 to-cyan-600 text-white px-4 py-3 rounded-xl hover:shadow-lg transition-all duration-300 flex items-center space-x-2 hover:scale-105">
+                            <i class="fas fa-sync-alt"></i>
+                            <span>Refresh</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Total Pigs -->
+            <div class="registration-card rounded-2xl p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Pigs</p>
+                        <p class="text-2xl font-bold text-gray-900 dark:text-white" id="total-pigs">0</p>
+                    </div>
+                    <div class="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-piggy-bank text-white text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-sm">
+                    <span class="text-green-600 dark:text-green-400 font-medium">+12%</span>
+                    <span class="text-gray-500 dark:text-gray-400 ml-2">from last month</span>
+                </div>
+            </div>
+
+            <!-- Active Pigs -->
+            <div class="registration-card rounded-2xl p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Active Pigs</p>
+                        <p class="text-2xl font-bold text-gray-900 dark:text-white" id="active-pigs">0</p>
+                    </div>
+                    <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-heartbeat text-white text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-sm">
+                    <span class="text-green-600 dark:text-green-400 font-medium">98%</span>
+                    <span class="text-gray-500 dark:text-gray-400 ml-2">health rate</span>
+                </div>
+            </div>
+
+            <!-- Breeding Pigs -->
+            <div class="registration-card rounded-2xl p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Breeding Pigs</p>
+                        <p class="text-2xl font-bold text-gray-900 dark:text-white" id="breeding-pigs">0</p>
+                    </div>
+                    <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-dna text-white text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-sm">
+                    <span class="text-purple-600 dark:text-purple-400 font-medium">15</span>
+                    <span class="text-gray-500 dark:text-gray-400 ml-2">pairs available</span>
+                </div>
+            </div>
+
+            <!-- Recent Registrations -->
+            <div class="registration-card rounded-2xl p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Today's Registrations</p>
+                        <p class="text-2xl font-bold text-gray-900 dark:text-white" id="today-registrations">0</p>
+                    </div>
+                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-calendar-day text-white text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-sm">
+                    <span class="text-blue-600 dark:text-blue-400 font-medium">+3</span>
+                    <span class="text-gray-500 dark:text-gray-400 ml-2">this week</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Registrations -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 mb-8">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-clock text-white"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Recent Registrations</h2>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Latest pig registrations in the system</p>
+                    </div>
+                </div>
+                <button onclick="refreshData()" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 font-medium text-sm flex items-center space-x-1">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>Refresh</span>
+                </button>
+            </div>
+            
+            <!-- Recent Registrations List -->
+            <div class="space-y-4" id="recent-registrations">
+                <!-- Sample Recent Registration -->
+                <div class="bg-gradient-to-r from-pink-50 to-purple-50 dark:from-pink-900/20 dark:to-purple-900/20 rounded-xl p-4 border border-pink-200 dark:border-pink-700">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-piggy-bank text-white"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">P001 - Yorkshire</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Registered 2 hours ago • Farm: Smart Animal Farm</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span class="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 px-3 py-1 rounded-full text-sm font-medium">Active</span>
+                            <button class="text-blue-600 hover:text-blue-800 dark:text-blue-400 font-medium text-sm">View Details</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sample Recent Registration -->
+                <div class="bg-gradient-to-r from-pink-50 to-purple-50 dark:from-pink-900/20 dark:to-purple-900/20 rounded-xl p-4 border border-pink-200 dark:border-pink-700">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-piggy-bank text-white"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">S002 - Duroc</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Registered 4 hours ago • Farm: Tech Mtaani Farm</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span class="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 px-3 py-1 rounded-full text-sm font-medium">Breeding</span>
+                            <button class="text-blue-600 hover:text-blue-800 dark:text-blue-400 font-medium text-sm">View Details</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sample Recent Registration -->
+                <div class="bg-gradient-to-r from-pink-50 to-purple-50 dark:from-pink-900/20 dark:to-purple-900/20 rounded-xl p-4 border border-pink-200 dark:border-pink-700">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-piggy-bank text-white"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">L001 - Hampshire</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Registered 6 hours ago • Farm: Pig Farm System</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span class="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 px-3 py-1 rounded-full text-sm font-medium">New Litter</span>
+                            <button class="text-blue-600 hover:text-blue-800 dark:text-blue-400 font-medium text-sm">View Details</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Register New Pig Card -->
+            <div class="registration-card rounded-2xl p-6 cursor-pointer hover:scale-105 transition-all duration-300" onclick="openPigRegistrationModal()">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-plus text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Register New Pig</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Add a new pig to the system</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View All Pigs Card -->
+            <div class="registration-card rounded-2xl p-6 cursor-pointer hover:scale-105 transition-all duration-300" onclick="window.location.href='/employee/pig-management/pigs'">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-list text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">View All Pigs</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Browse all registered pigs</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View Litters Card -->
+            <div class="registration-card rounded-2xl p-6 cursor-pointer hover:scale-105 transition-all duration-300" onclick="window.location.href='/employee/pig-management/litters'">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-baby text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">View Litters</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Manage pig litters and piglets</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Pig Registration Modal -->
+<div id="pigRegistrationModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden transform scale-95 opacity-0 transition-all duration-300">
+        <!-- Modal Header -->
+        <div class="px-4 sm:px-6 lg:px-8 py-4 sm:py-6 bg-gradient-to-r from-pink-500 to-purple-600 text-white">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-piggy-bank text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg sm:text-xl font-bold">Register New Pig</h3>
+                        <p class="text-sm text-pink-100">Fill in the details to register a new pig</p>
+                    </div>
+                </div>
+                <button onclick="closePigRegistrationModal()" class="text-white hover:text-pink-200 transition-colors">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="px-3 sm:px-6 lg:px-8 py-3 sm:py-6 lg:py-8 max-h-[60vh] overflow-y-auto">
+            <form id="pigRegistrationForm" class="space-y-4 sm:space-y-6">
+                <!-- Farm Selection -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 sm:mb-3">
+                        <i class="fas fa-building mr-2 text-blue-500"></i>
+                        Farm <span class="text-red-500">*</span>
+                    </label>
+                    <select id="farmSelect" name="farm_id" required class="w-full px-2 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-lg sm:rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-xs sm:text-base transition-all duration-200 form-input">
+                        <option value="">Select a farm</option>
+                    </select>
+                </div>
+
+                <!-- Pig Type -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 sm:mb-3">
+                        <i class="fas fa-tag mr-2 text-purple-500"></i>
+                        Type of Pig Registration <span class="text-red-500">*</span>
+                    </label>
+                    <select id="pigTypeSelect" name="pig_type" required class="w-full px-2 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-lg sm:rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-xs sm:text-base transition-all duration-200 form-input">
+                        <option value="">Select pig type</option>
+                        <option value="grown_pig">Grown Pig</option>
+                        <option value="piglet">Piglet</option>
+                        <option value="litter">Litter</option>
+                        <option value="batch">Batch</option>
+                    </select>
+                </div>
+
+                <!-- Generated Tag ID -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Generated Tag ID
+                    </label>
+                    <div class="flex items-center space-x-3">
+                        <input type="text" id="tagIdDisplay" readonly placeholder="Select pig type to generate tag ID" class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 dark:text-white font-mono text-lg font-bold form-input">
+                        <button type="button" onclick="generateNewTagId()" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors">
+                            <i class="fas fa-sync-alt mr-2"></i>Regenerate
+                        </button>
+                    </div>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        Format: P001 (Grown), S001 (Piglet), L001 (Litter), B001 (Batch)
+                    </p>
+                </div>
+
+                <!-- Pig Source Selection -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Pig Source <span class="text-red-500">*</span>
+                    </label>
+                    <div class="flex space-x-4">
+                        <label class="flex items-center">
+                            <input type="radio" name="pig_source" value="born" class="mr-2" checked>
+                            <span class="text-sm text-gray-700 dark:text-gray-300">Born on Farm</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="pig_source" value="purchased" class="mr-2">
+                            <span class="text-sm text-gray-700 dark:text-gray-300">Purchased</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Date Fields -->
+                <div id="dateFields" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div id="birthDateField">
+                        <label for="birthDate" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Birth Date <span class="text-red-500">*</span>
+                        </label>
+                        <input type="date" id="birthDate" name="birth_date" required
+                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white form-input">
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Used to calculate age in days</p>
+                    </div>
+                    <div id="purchaseDateField" class="hidden">
+                        <label for="purchaseDate" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Purchase Date <span class="text-red-500">*</span>
+                        </label>
+                        <input type="date" id="purchaseDate" name="purchase_date" 
+                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white form-input">
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">When the pig was purchased</p>
+                    </div>
+                </div>
+
+                <!-- Conditional Fields for Grown Pigs -->
+                <div id="grownPigFields" class="hidden space-y-4 border-t border-gray-200 dark:border-gray-700 pt-4">
+                    <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300">Grown Pig Details</h4>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Breed <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="breed" name="breed" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white form-input" placeholder="e.g., Large White">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Gender <span class="text-red-500">*</span>
+                            </label>
+                            <select id="gender" name="gender" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white form-input">
+                                <option value="">Select gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Purpose <span class="text-red-500">*</span>
+                            </label>
+                            <select id="purpose" name="purpose" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white form-input">
+                                <option value="">Select purpose</option>
+                                <option value="breeding">Breeding</option>
+                                <option value="meat">Meat</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="px-3 sm:px-6 lg:px-8 py-3 sm:py-4 bg-gray-50 dark:bg-gray-700/50 rounded-b-xl sm:rounded-b-3xl">
+            <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 lg:space-x-6">
+                <button onclick="closePigRegistrationModal()" class="flex-1 sm:flex-none px-4 sm:px-6 py-2 sm:py-3 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 hover:shadow-md text-sm sm:text-base font-semibold">
+                    <i class="fas fa-times mr-2"></i>
+                    Cancel
+                </button>
+                <button onclick="submitPigRegistration()" class="flex-1 sm:flex-none px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl transition-all duration-200 hover:shadow-lg hover:scale-105 text-sm sm:text-base font-semibold">
+                    <i class="fas fa-save mr-2"></i>
+                    Register Pig
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success/Error Toast -->
+<div id="toast" class="fixed top-4 right-4 z-50 hidden">
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-4 max-w-sm">
+        <div class="flex items-center space-x-3">
+            <div id="toast-icon" class="text-xl"></div>
+            <div>
+                <p id="toast-message" class="text-sm font-medium"></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    let currentTagId = '';
+
+    // Pig Registration Modal Functions
+    function openPigRegistrationModal() {
+        const modal = document.getElementById('pigRegistrationModal');
+        modal.classList.remove('hidden');
+        
+        // Force a reflow to ensure the modal is visible before animation
+        modal.offsetHeight;
+        setTimeout(() => {
+            const modalContent = modal.querySelector('.bg-white\\/95, .bg-white');
+            if (modalContent) {
+                modalContent.classList.remove('scale-95', 'opacity-0');
+                modalContent.classList.add('scale-100', 'opacity-100');
+            }
+        }, 10);
+        
+        // Clear the tag ID display - it will be generated when pig type is selected
+        document.getElementById('tagIdDisplay').value = '';
+        
+        // Load farms
+        loadFarms();
+    }
+
+    function closePigRegistrationModal() {
+        const modal = document.getElementById('pigRegistrationModal');
+        const modalContent = modal.querySelector('.bg-white\\/95, .bg-white');
+        
+        if (modalContent) {
+            modalContent.classList.remove('scale-100', 'opacity-100');
+            modalContent.classList.add('scale-95', 'opacity-0');
+        }
+        
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            document.getElementById('pigRegistrationForm').reset();
+            document.getElementById('grownPigFields').classList.add('hidden');
+        }, 300);
+    }
+
+    // Load farms for dropdown
+    async function loadFarms() {
+        try {
+            const response = await fetch('/api/farm/list');
+            const data = await response.json();
+            
+            if (data.success) {
+                const farmSelect = document.getElementById('farmSelect');
+                farmSelect.innerHTML = '<option value="">Select a farm</option>';
+                
+                data.farms.forEach(farm => {
+                    const option = document.createElement('option');
+                    option.value = farm.id;
+                    option.textContent = farm.farm_name;
+                    farmSelect.appendChild(option);
+                });
+            }
+        } catch (error) {
+            console.error('Error loading farms:', error);
+            // Fallback: Add default farms if API fails
+            const farmSelect = document.getElementById('farmSelect');
+            farmSelect.innerHTML = '<option value="">Select a farm</option>';
+            
+            // Add default farms as fallback (using actual farms from database)
+            const defaultFarms = [
+                { id: 1, farm_name: 'Smart Animal Farm' },
+                { id: 2, farm_name: 'Tech Mtaani Farm' },
+                { id: 3, farm_name: 'Pig Farm System' }
+            ];
+            
+            defaultFarms.forEach(farm => {
+                const option = document.createElement('option');
+                option.value = farm.id;
+                option.textContent = farm.farm_name;
+                farmSelect.appendChild(option);
+            });
+            
+            showToast('Using available farms (API requires authentication)', 'warning');
+        }
+    }
+
+    // Generate tag ID based on pig type
+    function generateTagId(pigType) {
+        const prefixes = {
+            'grown_pig': 'P',
+            'piglet': 'S',
+            'litter': 'L',
+            'batch': 'B'
+        };
+        
+        const prefix = prefixes[pigType] || 'P';
+        const randomNumber = Math.floor(Math.random() * 999) + 1;
+        const paddedNumber = randomNumber.toString().padStart(3, '0');
+        
+        return prefix + paddedNumber;
+    }
+
+    function generateNewTagId() {
+        const pigType = document.getElementById('pigTypeSelect').value;
+        if (pigType) {
+            currentTagId = generateTagId(pigType);
+            document.getElementById('tagIdDisplay').value = currentTagId;
+        }
+    }
+
+    // Handle pig type change
+    document.addEventListener('DOMContentLoaded', function() {
+        const pigTypeSelect = document.getElementById('pigTypeSelect');
+        const grownPigFields = document.getElementById('grownPigFields');
+        const pigSourceRadios = document.querySelectorAll('input[name="pig_source"]');
+        const purchaseDateField = document.getElementById('purchaseDateField');
+        
+        if (pigTypeSelect) {
+            pigTypeSelect.addEventListener('change', function() {
+                const pigType = this.value;
+                
+                // Generate tag ID
+                if (pigType) {
+                    currentTagId = generateTagId(pigType);
+                    document.getElementById('tagIdDisplay').value = currentTagId;
+                }
+                
+                // Show/hide grown pig fields
+                if (pigType === 'grown_pig') {
+                    grownPigFields.classList.remove('hidden');
+                } else {
+                    grownPigFields.classList.add('hidden');
+                }
+            });
+        }
+        
+        // Handle pig source change
+        pigSourceRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.value === 'purchased') {
+                    purchaseDateField.classList.remove('hidden');
+                    document.getElementById('purchaseDate').required = true;
+                } else {
+                    purchaseDateField.classList.add('hidden');
+                    document.getElementById('purchaseDate').required = false;
+                }
+            });
+        });
+
+        // Load initial data
+        loadStats();
+        loadRecentRegistrations();
+    });
+
+    // Load statistics from database
+    async function loadStats() {
+        try {
+            const response = await fetch('/api/pig/registration-stats');
+            const data = await response.json();
+            
+            if (data.success) {
+                const stats = data.stats;
+                document.getElementById('total-pigs').textContent = stats.total_pigs;
+                document.getElementById('active-pigs').textContent = stats.active_pigs;
+                document.getElementById('breeding-pigs').textContent = stats.breeding_pigs;
+                document.getElementById('today-registrations').textContent = stats.today_registrations;
+                document.getElementById('today-registered').textContent = stats.today_registrations;
+                document.getElementById('today-pending').textContent = '0'; // No pending for now
+                
+                // Load recent registrations
+                loadRecentRegistrations(data.recent_pigs);
+            } else {
+                // Fallback to default values
+                document.getElementById('total-pigs').textContent = '0';
+                document.getElementById('active-pigs').textContent = '0';
+                document.getElementById('breeding-pigs').textContent = '0';
+                document.getElementById('today-registrations').textContent = '0';
+                document.getElementById('today-registered').textContent = '0';
+                document.getElementById('today-pending').textContent = '0';
+            }
+        } catch (error) {
+            console.error('Error loading stats:', error);
+            // Fallback to default values
+            document.getElementById('total-pigs').textContent = '0';
+            document.getElementById('active-pigs').textContent = '0';
+            document.getElementById('breeding-pigs').textContent = '0';
+            document.getElementById('today-registrations').textContent = '0';
+            document.getElementById('today-registered').textContent = '0';
+            document.getElementById('today-pending').textContent = '0';
+        }
+    }
+
+    // Load recent registrations from database
+    function loadRecentRegistrations(recentPigs = null) {
+        const container = document.getElementById('recent-registrations');
+        
+        if (recentPigs && recentPigs.length > 0) {
+            container.innerHTML = '';
+            
+            recentPigs.forEach(pig => {
+                const pigCard = document.createElement('div');
+                pigCard.className = 'bg-gradient-to-r from-pink-50 to-purple-50 dark:from-pink-900/20 dark:to-purple-900/20 rounded-xl p-4 border border-pink-200 dark:border-pink-700';
+                
+                const statusBadge = getStatusBadge(pig.status, pig.pig_type);
+                const timeAgo = getTimeAgo(pig.created_at);
+                
+                pigCard.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-piggy-bank text-white"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">${pig.tag_id} - ${pig.breed || 'Unknown Breed'}</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Registered ${timeAgo} • Farm: ${pig.farm_name || 'Unknown Farm'}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span class="${statusBadge.class}">${statusBadge.text}</span>
+                            <button class="text-blue-600 hover:text-blue-800 dark:text-blue-400 font-medium text-sm">View Details</button>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(pigCard);
+            });
+        } else {
+            // Show no data message
+            container.innerHTML = `
+                <div class="text-center py-8">
+                    <div class="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-piggy-bank text-gray-400 text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">No Recent Registrations</h3>
+                    <p class="text-gray-500 dark:text-gray-400">No pigs have been registered recently.</p>
+                </div>
+            `;
+        }
+    }
+
+    // Helper function to get status badge
+    function getStatusBadge(status, pigType) {
+        if (status === 'active') {
+            return { class: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 px-3 py-1 rounded-full text-sm font-medium', text: 'Active' };
+        } else if (pigType === 'grown_pig') {
+            return { class: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 px-3 py-1 rounded-full text-sm font-medium', text: 'Breeding' };
+        } else if (pigType === 'litter') {
+            return { class: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 px-3 py-1 rounded-full text-sm font-medium', text: 'New Litter' };
+        } else {
+            return { class: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200 px-3 py-1 rounded-full text-sm font-medium', text: status };
+        }
+    }
+
+    // Helper function to get time ago
+    function getTimeAgo(dateString) {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffInHours = Math.floor((now - date) / (1000 * 60 * 60));
+        
+        if (diffInHours < 1) {
+            return 'just now';
+        } else if (diffInHours < 24) {
+            return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+        } else {
+            const diffInDays = Math.floor(diffInHours / 24);
+            return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
+        }
+    }
+
+    // Refresh data
+    async function refreshData() {
+        await loadStats();
+        showToast('Data refreshed successfully', 'success');
+    }
+
+    // Submit pig registration
+    async function submitPigRegistration() {
+        const form = document.getElementById('pigRegistrationForm');
+        const formData = new FormData(form);
+        
+        // Validate required fields
+        const farmId = formData.get('farm_id');
+        const pigType = formData.get('pig_type');
+        const pigSource = formData.get('pig_source');
+        
+        if (!farmId || !pigType || !pigSource) {
+            showToast('Please fill in all required fields', 'error');
+            return;
+        }
+
+        // Validate pig source specific requirements
+        const birthDate = formData.get('birth_date');
+        const purchaseDate = formData.get('purchase_date');
+        
+        if (!birthDate) {
+            showToast('Birth date is required for all pigs', 'error');
+            return;
+        }
+        
+        if (pigSource === 'purchased' && !purchaseDate) {
+            showToast('Purchase date is required for purchased pigs', 'error');
+            return;
+        }
+
+        if (pigType === 'grown_pig') {
+            const breed = formData.get('breed');
+            const gender = formData.get('gender');
+            const purpose = formData.get('purpose');
+            
+            if (!breed || !gender || !purpose) {
+                showToast('Breed, gender, and purpose are required for grown pigs', 'error');
+                return;
+            }
+        }
+
+        // Prepare data for API (tag ID will be generated by server)
+        const data = {
+            farm_id: parseInt(farmId),
+            pig_type: pigType,
+            pig_source: pigSource,
+            breed: formData.get('breed') || null,
+            gender: formData.get('gender') || null,
+            purpose: formData.get('purpose') || null,
+            birth_date: birthDate,
+            purchase_date: purchaseDate || null
+        };
+
+        try {
+            const response = await fetch('/api/pig/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showToast(result.message, 'success');
+                closePigRegistrationModal();
+                // Refresh the page to show new pig
+                location.reload();
+            } else {
+                showToast(result.message, 'error');
+            }
+        } catch (error) {
+            console.error('Error registering pig:', error);
+            showToast('Error registering pig. Please try again.', 'error');
+        }
+    }
+
+    // Toast notification
+    function showToast(message, type = 'info') {
+        const toast = document.getElementById('toast');
+        const toastIcon = document.getElementById('toast-icon');
+        const toastMessage = document.getElementById('toast-message');
+        
+        // Set icon based on type
+        let icon = '';
+        let bgColor = '';
+        
+        switch (type) {
+            case 'success':
+                icon = '✅';
+                bgColor = 'bg-green-50 border-green-200 text-green-800';
+                break;
+            case 'error':
+                icon = '❌';
+                bgColor = 'bg-red-50 border-red-200 text-red-800';
+                break;
+            case 'warning':
+                icon = '⚠️';
+                bgColor = 'bg-yellow-50 border-yellow-200 text-yellow-800';
+                break;
+            default:
+                icon = 'ℹ️';
+                bgColor = 'bg-blue-50 border-blue-200 text-blue-800';
+        }
+        
+        toastIcon.textContent = icon;
+        toastMessage.textContent = message;
+        
+        // Update toast styling
+        const toastContent = toast.querySelector('div');
+        toastContent.className = `border rounded-lg shadow-lg p-4 max-w-sm ${bgColor}`;
+        
+        // Show toast
+        toast.classList.remove('hidden');
+        
+        // Hide after 5 seconds
+        setTimeout(() => {
+            toast.classList.add('hidden');
+        }, 5000);
+    }
+
+    // Pig Registration Sidebar Functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const pigRegisterSidebar = document.getElementById('pig-register-sidebar');
+        const pigRegisterSidebarOverlay = document.getElementById('pig-register-sidebar-overlay');
+        const closePigRegisterSidebar = document.getElementById('close-pig-register-sidebar');
+        
+        // Mobile menu toggle (if needed)
+        function togglePigRegisterSidebar() {
+            if (pigRegisterSidebar.classList.contains('-translate-x-full')) {
+                pigRegisterSidebar.classList.remove('-translate-x-full');
+                pigRegisterSidebarOverlay.classList.remove('hidden');
+            } else {
+                pigRegisterSidebar.classList.add('-translate-x-full');
+                pigRegisterSidebarOverlay.classList.add('hidden');
+            }
+        }
+        
+        // Close sidebar on mobile
+        if (closePigRegisterSidebar) {
+            closePigRegisterSidebar.addEventListener('click', () => {
+                pigRegisterSidebar.classList.add('-translate-x-full');
+                pigRegisterSidebarOverlay.classList.add('hidden');
+            });
+        }
+        
+        // Close sidebar when clicking overlay
+        if (pigRegisterSidebarOverlay) {
+            pigRegisterSidebarOverlay.addEventListener('click', () => {
+                pigRegisterSidebar.classList.add('-translate-x-full');
+                pigRegisterSidebarOverlay.classList.add('hidden');
+            });
+        }
+        
+        // Hide default sidebar and show pig register sidebar
+        const defaultSidebar = document.getElementById('sidebar');
+        if (defaultSidebar) {
+            defaultSidebar.style.display = 'none';
+        }
+        
+        // Show pig register sidebar on desktop, hide on mobile initially
+        if (pigRegisterSidebar) {
+            if (window.innerWidth >= 1024) {
+                pigRegisterSidebar.classList.remove('-translate-x-full');
+            } else {
+                pigRegisterSidebar.classList.add('-translate-x-full');
+            }
+        }
+        
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 1024) {
+                pigRegisterSidebar.classList.remove('-translate-x-full');
+                pigRegisterSidebarOverlay.classList.add('hidden');
+            } else {
+                pigRegisterSidebar.classList.add('-translate-x-full');
+            }
+        });
+        
+        console.log('Pig Registration page loaded with custom sidebar');
+    });
+</script>
+{% endblock %}

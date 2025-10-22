@@ -327,131 +327,18 @@
     <!-- Main Content -->
     <main class="pt-16 md:ml-72 min-h-screen">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-            <!-- Modern Page Header -->
-            <div class="relative mb-8 sm:mb-12">
-                <div class="absolute inset-0 bg-gradient-to-r from-red-500/10 via-pink-500/10 to-red-500/10 rounded-3xl"></div>
-                <div class="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl p-6 sm:p-8 border border-red-200/60 dark:border-red-700/60 shadow-xl">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between space-y-4 sm:space-y-0">
-                        <div class="flex items-center space-x-4">
-                            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-red-500 via-pink-500 to-red-600 rounded-2xl flex items-center justify-center shadow-lg animate-float">
-                                <i class="fas fa-heartbeat text-white text-2xl sm:text-3xl"></i>
-                            </div>
-                            <div>
-                                <h1 class="text-2xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-2">Health Management</h1>
-                                <p class="text-sm sm:text-lg text-gray-600 dark:text-gray-300 font-medium">Monitor pig health, vaccinations, and medical treatments</p>
-                                <div class="flex items-center mt-2">
-                                    <div class="w-2 h-2 bg-red-500 rounded-full animate-pulse mr-2"></div>
-                                    <span class="text-xs sm:text-sm text-red-600 dark:text-red-400 font-semibold">Live Health Monitoring</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
-                            <button onclick="refreshHealthData()" class="group px-4 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-200 hover:shadow-md">
-                                <i class="fas fa-sync-alt mr-2 group-hover:rotate-180 transition-transform duration-500"></i>
-                                Refresh
-                            </button>
-                            <button id="add-health-btn" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 font-semibold">
-                                <i class="fas fa-plus mr-2"></i>
-                                Add Health Record
-                            </button>
-                            <a href="/admin/farm-management" class="inline-flex items-center px-4 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl font-semibold">
-                                <i class="fas fa-arrow-left mr-2"></i>
-                                Back to Farm Management
-                            </a>
-                        </div>
+            <!-- Empty Content Area -->
+            <div class="flex items-center justify-center min-h-[60vh]">
+                <div class="text-center">
+                    <div class="w-24 h-24 mx-auto mb-6 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
+                        <i class="fas fa-heartbeat text-4xl text-gray-400 dark:text-gray-600"></i>
                     </div>
-                </div>
-            </div>
-
-            <!-- Stats Cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-700">
-                    <div class="flex items-center">
-                        <div class="p-2 sm:p-3 rounded-full bg-green-100 dark:bg-green-900">
-                            <span class="text-xl sm:text-2xl">🏥</span>
-                        </div>
-                        <div class="ml-3 sm:ml-4">
-                            <p class="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Healthy Pigs</p>
-                            <p class="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white">0</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-700">
-                    <div class="flex items-center">
-                        <div class="p-2 sm:p-3 rounded-full bg-yellow-100 dark:bg-yellow-900">
-                            <span class="text-xl sm:text-2xl">⚠️</span>
-                        </div>
-                        <div class="ml-3 sm:ml-4">
-                            <p class="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Under Treatment</p>
-                            <p class="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white">0</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-700">
-                    <div class="flex items-center">
-                        <div class="p-2 sm:p-3 rounded-full bg-red-100 dark:bg-red-900">
-                            <span class="text-xl sm:text-2xl">🚨</span>
-                        </div>
-                        <div class="ml-3 sm:ml-4">
-                            <p class="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Critical Cases</p>
-                            <p class="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white">0</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-700">
-                    <div class="flex items-center">
-                        <div class="p-2 sm:p-3 rounded-full bg-blue-100 dark:bg-blue-900">
-                            <span class="text-xl sm:text-2xl">💉</span>
-                        </div>
-                        <div class="ml-3 sm:ml-4">
-                            <p class="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Vaccinations Due</p>
-                            <p class="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white">0</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Health Records Table -->
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
-                <div class="p-6">
-                    <div class="flex items-center justify-between mb-6">
-                        <h2 class="text-lg font-bold text-gray-900 dark:text-white">Health Records</h2>
-                        <div class="flex items-center space-x-2">
-                            <input type="text" id="search-health" placeholder="Search health records..." class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-white">
-                            <button id="filter-health" class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
-                                Filter
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                            <thead class="bg-gray-50 dark:bg-gray-700">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Pig ID</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Health Status</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Last Checkup</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Vaccinations</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Treatments</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="health-records-body" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                <tr>
-                                    <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
-                                        No health records found
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Health Management</h2>
+                    <p class="text-gray-600 dark:text-gray-400">Content sections have been removed as requested.</p>
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
     <!-- Footer -->
     <footer class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 mt-auto">
@@ -567,37 +454,7 @@
             }
         });
 
-        // Health Management Functions
-        function refreshHealthData() {
-            // Add loading animation to refresh button
-            const refreshBtn = document.querySelector('button[onclick="refreshHealthData()"]');
-            if (refreshBtn) {
-                const icon = refreshBtn.querySelector('i');
-                icon.classList.add('animate-spin');
-                
-                // Simulate refresh delay
-                setTimeout(() => {
-                    icon.classList.remove('animate-spin');
-                    // TODO: Implement actual data refresh
-                    console.log('Health data refreshed');
-                }, 1000);
-            }
-        }
-
-        document.getElementById('add-health-btn').addEventListener('click', function() {
-            // TODO: Implement add health record modal
-            alert('Add health record functionality coming soon...');
-        });
-
-        document.getElementById('search-health').addEventListener('input', function() {
-            // TODO: Implement search functionality
-            console.log('Searching for:', this.value);
-        });
-
-        document.getElementById('filter-health').addEventListener('click', function() {
-            // TODO: Implement filter functionality
-            alert('Filter functionality coming soon...');
-        });
+        // Health Management Functions - Content sections removed
     </script>
 </body>
 </html>

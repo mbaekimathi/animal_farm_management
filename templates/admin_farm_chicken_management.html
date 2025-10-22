@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐔 Chicken Management - AgriTech Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'chicken-yellow': {
+                            50: '#fefce8',
+                            100: '#fef3c7',
+                            200: '#fde68a',
+                            300: '#fcd34d',
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309',
+                            800: '#92400e',
+                            900: '#78350f',
+                        },
+                        'chicken-orange': {
+                            50: '#fff7ed',
+                            100: '#ffedd5',
+                            200: '#fed7aa',
+                            300: '#fdba74',
+                            400: '#fb923c',
+                            500: '#f97316',
+                            600: '#ea580c',
+                            700: '#c2410c',
+                            800: '#9a3412',
+                            900: '#7c2d12',
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.6s ease-in-out',
+                        'slide-up': 'slideUp 0.4s ease-out',
+                        'slide-down': 'slideDown 0.4s ease-out',
+                        'bounce-gentle': 'bounceGentle 2s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'wiggle': 'wiggle 1s ease-in-out infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes bounceGentle {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        @keyframes wiggle {
+            0%, 7% { transform: rotateZ(0); }
+            15% { transform: rotateZ(-15deg); }
+            20% { transform: rotateZ(10deg); }
+            25% { transform: rotateZ(-10deg); }
+            30% { transform: rotateZ(6deg); }
+            35% { transform: rotateZ(-4deg); }
+            40%, 100% { transform: rotateZ(0); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes glow {
+            from { box-shadow: 0 0 20px rgba(245, 158, 11, 0.3); }
+            to { box-shadow: 0 0 30px rgba(245, 158, 11, 0.6), 0 0 40px rgba(245, 158, 11, 0.3); }
+        }
+
+        .glass-effect {
+            backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .dark .glass-effect {
+            background: rgba(17, 24, 39, 0.85);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+        }
+
+        .sidebar {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-hover:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(245, 158, 11, 0.1);
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .chicken-pattern {
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(245, 158, 11, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(217, 119, 6, 0.1) 0%, transparent 50%);
+        }
+
+        .floating-emoji {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .wiggle-emoji {
+            animation: wiggle 2s ease-in-out infinite;
+        }
+
+        .glow-effect {
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 transition-colors duration-300 font-inter chicken-pattern">
+    <!-- Modern Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 glass-effect border-b border-slate-200/50 dark:border-slate-700/50">
+        <div class="flex items-center justify-between px-4 sm:px-6 lg:px-8 h-16">
+            <!-- Left Section: Mobile Menu + Logo -->
+            <div class="flex items-center space-x-4">
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="lg:hidden p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200">
+                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+                
+                <!-- AgriTech Logo -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 gradient-bg rounded-xl flex items-center justify-center shadow-lg">
+                        <span class="text-white text-lg">🐔</span>
+                    </div>
+                    <div class="hidden sm:block">
+                        <h1 class="text-xl font-bold text-gradient">AgriTech Pro</h1>
+                        <p class="text-xs text-slate-600 dark:text-slate-400">Chicken Management</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Section: Notifications, Theme Toggle, User Profile -->
+            <div class="flex items-center space-x-3">
+                <!-- Notifications -->
+                <button class="relative p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200">
+                    <span class="floating-emoji text-lg">🔔</span>
+                    <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
+                </button>
+                
+                <!-- Theme Toggle -->
+                <button id="theme-toggle" class="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200">
+                    <svg id="sun-icon" class="w-5 h-5 text-slate-600 dark:text-slate-300 hidden" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>
+                    </svg>
+                    <svg id="moon-icon" class="w-5 h-5 text-slate-600 dark:text-slate-300" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                    </svg>
+                </button>
+                
+                <!-- User Profile -->
+                <div class="relative">
+                    <button id="user-dropdown-btn" class="flex items-center space-x-3 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200">
+                        <div class="w-8 h-8 gradient-bg rounded-full flex items-center justify-center shadow-md">
+                            <span class="text-white font-semibold text-sm">{{ user.name.split()[0][0] + user.name.split()[-1][0] if user.name.split()|length > 1 else user.name[0] }}</span>
+                        </div>
+                        <div class="hidden sm:block text-left">
+                            <div class="text-sm font-semibold text-slate-900 dark:text-white">{{ user.name }}</div>
+                            <div class="text-xs text-slate-600 dark:text-slate-400">{{ user.role.title() }}</div>
+                        </div>
+                        <svg class="w-4 h-4 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    
+                    <!-- Dropdown Menu -->
+                    <div id="user-dropdown" class="absolute right-0 mt-2 w-64 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 hidden animate-slide-down">
+                        <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 gradient-bg rounded-full flex items-center justify-center">
+                                    <span class="text-white font-semibold">{{ user.name.split()[0][0] + user.name.split()[-1][0] if user.name.split()|length > 1 else user.name[0] }}</span>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold text-slate-900 dark:text-white">{{ user.name }}</div>
+                                    <div class="text-xs text-slate-600 dark:text-slate-400">{{ user.email }}</div>
+                                    <div class="text-xs text-chicken-yellow-600 dark:text-chicken-yellow-400 font-medium">{{ user.role.title() }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="py-2">
+                            <a href="/profile" class="flex items-center px-6 py-3 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                                <i class="fas fa-user w-4 h-4 mr-3"></i>
+                                My Profile
+                            </a>
+                            <a href="/settings" class="flex items-center px-6 py-3 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                                <i class="fas fa-cog w-4 h-4 mr-3"></i>
+                                Account Settings
+                            </a>
+                            <a href="/app-settings" class="flex items-center px-6 py-3 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                                <i class="fas fa-sliders-h w-4 h-4 mr-3"></i>
+                                App Settings
+                            </a>
+                            <hr class="my-2 border-slate-200 dark:border-slate-700">
+                            <button id="logout-btn" class="w-full flex items-center px-6 py-3 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+                                <i class="fas fa-sign-out-alt w-4 h-4 mr-3"></i>
+                                Sign Out
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Modern Collapsible Sidebar -->
+    <aside id="sidebar" class="fixed left-0 top-16 h-[calc(100vh-4rem)] w-72 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-r border-slate-200/50 dark:border-slate-700/50 z-40 transform -translate-x-full lg:translate-x-0 transition-all duration-300 ease-out sidebar">
+        <div class="flex flex-col h-full">
+            <!-- Sidebar Header -->
+            <div class="flex items-center justify-between p-6 border-b border-slate-200/50 dark:border-slate-700/50">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 gradient-bg rounded-xl flex items-center justify-center shadow-lg">
+                        <span class="text-white text-lg">🐔</span>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900 dark:text-white">Chicken Farm</h2>
+                        <p class="text-xs text-slate-600 dark:text-slate-400">Poultry Management</p>
+                    </div>
+                </div>
+                <button id="close-sidebar" class="lg:hidden p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200">
+                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Navigation Menu -->
+            <nav class="flex-1 p-4 space-y-1">
+                <!-- Dashboard -->
+                <a href="/admin/dashboard" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                    <span class="text-lg mr-3">🏠</span>
+                    <span class="font-medium">Dashboard</span>
+                </a>
+                
+                <!-- Registration of Chicken -->
+                <button id="chicken-registration-btn" class="w-full flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                    <span class="text-lg mr-3">📝</span>
+                    <span class="font-medium">Registration of Chicken</span>
+                </button>
+                
+                <!-- Health of Chicken -->
+                <a href="/admin/farm/chicken-health" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                    <span class="text-lg mr-3">🏥</span>
+                    <span class="font-medium">Health of Chicken</span>
+                </a>
+                
+                <!-- Upcoming Medications (Sub-item under Health) -->
+                <a href="/admin/farm/chicken-upcoming-medications" class="flex items-center px-8 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all duration-200 ml-4 border-l-2 border-slate-200 dark:border-slate-700">
+                    <span class="text-sm mr-3">💊</span>
+                    <span class="text-sm font-medium">Upcoming Medications</span>
+                </a>
+                
+                <!-- Weight Check (Sub-item under Health) -->
+                <a href="/admin/farm/chicken-weight-check" class="flex items-center px-8 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all duration-200 ml-4 border-l-2 border-slate-200 dark:border-slate-700">
+                    <span class="text-sm mr-3">⚖️</span>
+                    <span class="text-sm font-medium">Weight Check</span>
+                </a>
+                
+                <!-- Health Analytics (Sub-item under Health) -->
+                <a href="/admin/farm/chicken-health-analytics" class="flex items-center px-8 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all duration-200 ml-4 border-l-2 border-slate-200 dark:border-slate-700">
+                    <span class="text-sm mr-3">📊</span>
+                    <span class="text-sm font-medium">Health Analytics</span>
+                </a>
+                
+                <!-- Batch or Flock Management -->
+                <a href="/admin/farm/chicken-flock-management" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                    <span class="text-lg mr-3">👥</span>
+                    <span class="font-medium">Batch or Flock Management</span>
+                </a>
+                
+                <!-- Production of Chicken -->
+                <a href="/admin/farm/chicken-production" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                    <span class="text-lg mr-3">🥚</span>
+                    <span class="font-medium">Production of Chicken</span>
+                </a>
+                
+                <!-- Reporting & Analytics -->
+                <a href="/admin/farm/chicken-analytics" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                    <span class="text-lg mr-3">📊</span>
+                    <span class="font-medium">Reporting & Analytics</span>
+                </a>
+                
+                <!-- Alerts & Notifications -->
+                <a href="/admin/farm/chicken-alerts" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                    <span class="text-lg mr-3">🔔</span>
+                    <span class="font-medium">Alerts & Notifications</span>
+                </a>
+                
+                <!-- Chicken Settings -->
+                <a href="/admin/farm/chicken-settings" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all duration-200 group">
+                    <span class="text-lg mr-3">⚙️</span>
+                    <span class="font-medium">Chicken Settings</span>
+                </a>
+            </nav>
+            
+            <!-- Sidebar Footer -->
+            <div class="p-4 border-t border-slate-200/50 dark:border-slate-700/50">
+                <div class="text-center">
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">AgriTech Pro v2.0</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">🐔 Chicken Farm Module</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="pt-16 lg:pl-72 min-h-screen bg-slate-50 dark:bg-slate-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+            <!-- Page Header -->
+            <div class="mb-8 animate-fade-in">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-16 h-16 gradient-bg rounded-2xl flex items-center justify-center shadow-lg glow-effect">
+                            <span class="text-white text-2xl wiggle-emoji">🐔</span>
+                        </div>
+                        <div>
+                            <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">Chicken Management System</h1>
+                            <p class="text-slate-600 dark:text-slate-400">Comprehensive poultry farming operations management</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 sm:mt-0 flex space-x-3">
+                        <button class="px-4 py-2 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-200 shadow-lg hover:shadow-xl border border-slate-200 dark:border-slate-700">
+                            <i class="fas fa-download w-4 h-4 inline mr-2"></i>
+                            Export Data
+                        </button>
+                        <button class="px-4 py-2 bg-chicken-yellow-600 hover:bg-chicken-yellow-700 text-white rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl">
+                            <i class="fas fa-plus w-4 h-4 inline mr-2"></i>
+                            Add Chicken
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coming Soon Section -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
+                <div class="p-8 text-center">
+                    <div class="w-24 h-24 bg-chicken-yellow-100 dark:bg-chicken-yellow-900/30 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce-gentle">
+                        <span class="text-4xl wiggle-emoji">🐔</span>
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-4">Chicken Management System</h2>
+                    <p class="text-lg text-slate-600 dark:text-slate-400 mb-6">Advanced poultry farming management is currently under development</p>
+                    
+                    <!-- Feature Preview Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                        <div class="bg-chicken-yellow-50 dark:bg-chicken-yellow-900/20 rounded-xl p-6 border border-chicken-yellow-200 dark:border-chicken-yellow-800">
+                            <div class="w-12 h-12 bg-chicken-yellow-500 rounded-xl flex items-center justify-center mx-auto mb-4">
+                                <span class="text-white text-xl">📊</span>
+                            </div>
+                            <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">Analytics Dashboard</h3>
+                            <p class="text-sm text-slate-600 dark:text-slate-400">Real-time poultry performance metrics</p>
+                        </div>
+                        
+                        <div class="bg-chicken-yellow-50 dark:bg-chicken-yellow-900/20 rounded-xl p-6 border border-chicken-yellow-200 dark:border-chicken-yellow-800">
+                            <div class="w-12 h-12 bg-chicken-yellow-500 rounded-xl flex items-center justify-center mx-auto mb-4">
+                                <span class="text-white text-xl">🏥</span>
+                            </div>
+                            <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">Health Monitoring</h3>
+                            <p class="text-sm text-slate-600 dark:text-slate-400">Comprehensive health tracking system</p>
+                        </div>
+                        
+                        <div class="bg-chicken-yellow-50 dark:bg-chicken-yellow-900/20 rounded-xl p-6 border border-chicken-yellow-200 dark:border-chicken-yellow-800">
+                            <div class="w-12 h-12 bg-chicken-yellow-500 rounded-xl flex items-center justify-center mx-auto mb-4">
+                                <span class="text-white text-xl">🥚</span>
+                            </div>
+                            <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">Egg Production</h3>
+                            <p class="text-sm text-slate-600 dark:text-slate-400">Track and optimize egg production</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Status Indicators -->
+                    <div class="flex flex-wrap justify-center gap-4 mb-6">
+                        <span class="px-4 py-2 bg-chicken-yellow-100 dark:bg-chicken-yellow-900/30 text-chicken-yellow-800 dark:text-chicken-yellow-200 rounded-full text-sm font-medium">
+                            <i class="fas fa-code mr-2"></i>In Development
+                        </span>
+                        <span class="px-4 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 rounded-full text-sm font-medium">
+                            <i class="fas fa-clock mr-2"></i>Coming Soon
+                        </span>
+                        <span class="px-4 py-2 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 rounded-full text-sm font-medium">
+                            <i class="fas fa-rocket mr-2"></i>Advanced Features
+                        </span>
+                    </div>
+                    
+                    <!-- Progress Bar -->
+                    <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-3 mb-4">
+                        <div class="bg-gradient-to-r from-chicken-yellow-500 to-chicken-orange-500 h-3 rounded-full animate-pulse" style="width: 75%"></div>
+                    </div>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">Development Progress: 75% Complete</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modern Footer -->
+    <footer class="bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-t border-slate-200/50 dark:border-slate-700/50 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center space-x-3 mb-4 md:mb-0">
+                    <div class="w-10 h-10 gradient-bg rounded-xl flex items-center justify-center shadow-lg">
+                        <span class="text-white text-lg">🐔</span>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold text-slate-900 dark:text-white">AgriTech Pro</p>
+                        <p class="text-xs text-slate-600 dark:text-slate-400">Chicken Farm Management</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <a href="/privacy" class="text-sm text-slate-600 dark:text-slate-400 hover:text-chicken-yellow-600 dark:hover:text-chicken-yellow-400 transition-colors">Privacy Policy</a>
+                    <a href="/terms" class="text-sm text-slate-600 dark:text-slate-400 hover:text-chicken-yellow-600 dark:hover:text-chicken-yellow-400 transition-colors">Terms of Service</a>
+                    <a href="/support" class="text-sm text-slate-600 dark:text-slate-400 hover:text-chicken-yellow-600 dark:hover:text-chicken-yellow-400 transition-colors">Support</a>
+                </div>
+            </div>
+            <div class="mt-6 pt-6 border-t border-slate-200/50 dark:border-slate-700/50 text-center">
+                <p class="text-xs text-slate-500 dark:text-slate-400">© 2024 AgriTech Pro. All rights reserved. 🐔 Chicken Farm Module - Advanced Poultry Management System</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Chicken Registration Modal -->
+    <div id="chicken-registration-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-slide-up">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-700">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-chicken-yellow-500 rounded-xl flex items-center justify-center">
+                        <span class="text-white text-lg">🐔</span>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white">Register New Chicken</h3>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">Add chicken or batch to the system</p>
+                    </div>
+                </div>
+                <button id="close-registration-modal" class="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                    <svg class="w-6 h-6 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <form id="chicken-registration-form" class="p-6 space-y-6">
+                <!-- Row 1: Chicken ID and Batch Name -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                            <span class="text-lg mr-2">🏷️</span>Chicken ID / Tag Number
+                        </label>
+                        <input type="text" id="chicken-id" name="chicken_id" readonly 
+                               class="w-full px-4 py-3 bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white font-mono text-sm"
+                               placeholder="Auto-generated">
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Format: C + Type + Number (e.g., CB001, CK001, CL001)</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                            <span class="text-lg mr-2">👥</span>Batch / Flock Name
+                        </label>
+                        <input type="text" id="batch-name" name="batch_name" required
+                               class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-chicken-yellow-500 focus:border-chicken-yellow-500 dark:bg-slate-700 dark:text-white"
+                               placeholder="Enter batch or flock name">
+                    </div>
+                </div>
+
+                <!-- Row 2: Type/Category and Breed -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                            <span class="text-lg mr-2">📋</span>Type / Category
+                        </label>
+                        <select id="chicken-type" name="chicken_type" required
+                                class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-chicken-yellow-500 focus:border-chicken-yellow-500 dark:bg-slate-700 dark:text-white">
+                            <option value="">Select Type</option>
+                            <option value="broiler">🥩 Broiler</option>
+                            <option value="kienyeji">🐔 Kienyeji</option>
+                            <option value="layer">🥚 Layer</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                            <span class="text-lg mr-2">🧬</span>Breed Name
+                        </label>
+                        <input type="text" id="breed-name" name="breed_name" required
+                               class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-chicken-yellow-500 focus:border-chicken-yellow-500 dark:bg-slate-700 dark:text-white"
+                               placeholder="Enter breed name">
+                    </div>
+                </div>
+
+                <!-- Row 3: Gender and Date of Hatch -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                            <span class="text-lg mr-2">⚥</span>Gender
+                        </label>
+                        <select id="gender" name="gender" required
+                                class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-chicken-yellow-500 focus:border-chicken-yellow-500 dark:bg-slate-700 dark:text-white">
+                            <option value="">Select Gender</option>
+                            <option value="male">♂️ Male</option>
+                            <option value="female">♀️ Female</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                            <span class="text-lg mr-2">📅</span>Date of Hatch / Acquisition
+                        </label>
+                        <input type="date" id="hatch-date" name="hatch_date" required
+                               class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-chicken-yellow-500 focus:border-chicken-yellow-500 dark:bg-slate-700 dark:text-white">
+                    </div>
+                </div>
+
+                <!-- Row 4: Age and Source -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                            <span class="text-lg mr-2">📊</span>Age (days)
+                        </label>
+                        <input type="number" id="age-days" name="age_days" readonly
+                               class="w-full px-4 py-3 bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white"
+                               placeholder="Auto-calculated">
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Calculated from hatch date</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                            <span class="text-lg mr-2">🏪</span>Source / Supplier
+                        </label>
+                        <input type="text" id="source" name="source" required
+                               class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-chicken-yellow-500 focus:border-chicken-yellow-500 dark:bg-slate-700 dark:text-white"
+                               placeholder="Enter source or supplier">
+                    </div>
+                </div>
+
+                <!-- Row 5: Coop and Quantity -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                            <span class="text-lg mr-2">🏠</span>Coop / House Number
+                        </label>
+                        <select id="coop-number" name="coop_number" required
+                                class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-chicken-yellow-500 focus:border-chicken-yellow-500 dark:bg-slate-700 dark:text-white">
+                            <option value="">Select Coop</option>
+                            <option value="1">Coop 1</option>
+                            <option value="2">Coop 2</option>
+                            <option value="3">Coop 3</option>
+                            <option value="4">Coop 4</option>
+                            <option value="5">Coop 5</option>
+                            <option value="6">Coop 6</option>
+                            <option value="7">Coop 7</option>
+                            <option value="8">Coop 8</option>
+                            <option value="9">Coop 9</option>
+                            <option value="10">Coop 10</option>
+                            <option value="11">Coop 11</option>
+                            <option value="12">Coop 12</option>
+                            <option value="13">Coop 13</option>
+                            <option value="14">Coop 14</option>
+                            <option value="15">Coop 15</option>
+                            <option value="16">Coop 16</option>
+                            <option value="17">Coop 17</option>
+                            <option value="18">Coop 18</option>
+                            <option value="19">Coop 19</option>
+                            <option value="20">Coop 20</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                            <span class="text-lg mr-2">🔢</span>Quantity (if group)
+                        </label>
+                        <input type="number" id="quantity" name="quantity" min="1" value="1" required
+                               class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-chicken-yellow-500 focus:border-chicken-yellow-500 dark:bg-slate-700 dark:text-white"
+                               placeholder="Enter quantity">
+                    </div>
+                </div>
+
+                <!-- Hidden Status Field - Automatically set to Active -->
+                <input type="hidden" id="current-status" name="current_status" value="active">
+
+                <!-- Modal Footer -->
+                <div class="flex justify-end space-x-3 pt-6 border-t border-slate-200 dark:border-slate-700">
+                    <button type="button" id="cancel-registration" 
+                            class="px-6 py-3 text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit" 
+                            class="px-6 py-3 bg-chicken-yellow-600 hover:bg-chicken-yellow-700 text-white rounded-xl transition-colors shadow-lg hover:shadow-xl">
+                        <span class="mr-2">🐔</span>Register Chicken
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Modern Theme Toggle with Smooth Transitions
+        const themeToggle = document.getElementById('theme-toggle');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+        
+        // Check for saved theme preference or default to light mode
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.classList.toggle('dark', currentTheme === 'dark');
+        updateThemeIcon();
+        
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            updateThemeIcon();
+        });
+        
+        function updateThemeIcon() {
+            const isDark = document.documentElement.classList.contains('dark');
+            sunIcon.classList.toggle('hidden', isDark);
+            moonIcon.classList.toggle('hidden', !isDark);
+        }
+
+        // Enhanced User Dropdown with Better UX
+        const userDropdownBtn = document.getElementById('user-dropdown-btn');
+        const userDropdown = document.getElementById('user-dropdown');
+        
+        userDropdownBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            userDropdown.classList.toggle('hidden');
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!userDropdownBtn.contains(e.target) && !userDropdown.contains(e.target)) {
+                userDropdown.classList.add('hidden');
+            }
+        });
+
+        // Enhanced Mobile Sidebar with Better Animations
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const closeSidebarBtn = document.getElementById('close-sidebar');
+        const sidebar = document.getElementById('sidebar');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            sidebar.classList.remove('-translate-x-full');
+            sidebar.classList.add('animate-slide-up');
+        });
+        
+        closeSidebarBtn.addEventListener('click', () => {
+            sidebar.classList.add('-translate-x-full');
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth < 1024) {
+                if (!sidebar.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                    sidebar.classList.add('-translate-x-full');
+                }
+            }
+        });
+
+        // Logout functionality with better error handling
+        document.getElementById('logout-btn').addEventListener('click', async function() {
+            try {
+                const response = await fetch('/api/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    window.location.href = data.redirect;
+                }
+            } catch (error) {
+                console.error('Logout error:', error);
+                // Redirect anyway
+                window.location.href = '/';
+            }
+        });
+
+        // Enhanced Animations and Interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            // Staggered animation for dashboard cards
+            const cards = document.querySelectorAll('.card-hover');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+
+            // Add hover effects to quick action cards
+            const quickActionCards = document.querySelectorAll('.group');
+            quickActionCards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    card.style.transform = 'translateY(-8px)';
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'translateY(0)';
+                });
+            });
+
+            // Add loading states for buttons
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    if (this.classList.contains('bg-chicken-yellow-600')) {
+                        this.style.transform = 'scale(0.95)';
+                        setTimeout(() => {
+                            this.style.transform = 'scale(1)';
+                        }, 150);
+                    }
+                });
+            });
+
+            // Add floating animation to emojis
+            const emojis = document.querySelectorAll('.floating-emoji, .wiggle-emoji');
+            emojis.forEach(emoji => {
+                emoji.addEventListener('mouseenter', () => {
+                    emoji.style.animation = 'bounceGentle 0.5s ease-in-out';
+                });
+                
+                emoji.addEventListener('mouseleave', () => {
+                    emoji.style.animation = 'float 3s ease-in-out infinite';
+                });
+            });
+        });
+
+        // Responsive behavior for sidebar
+        function handleResize() {
+            if (window.innerWidth >= 1024) {
+                sidebar.classList.remove('-translate-x-full');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+            }
+        }
+
+        window.addEventListener('resize', handleResize);
+        handleResize(); // Call on load
+
+        // Add smooth scrolling for better UX
+        document.documentElement.style.scrollBehavior = 'smooth';
+
+        // Add interactive emoji effects
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click effects to emojis
+            const interactiveEmojis = document.querySelectorAll('.wiggle-emoji, .floating-emoji');
+            interactiveEmojis.forEach(emoji => {
+                emoji.addEventListener('click', function() {
+                    this.style.animation = 'wiggle 0.5s ease-in-out';
+                    setTimeout(() => {
+                        this.style.animation = 'float 3s ease-in-out infinite';
+                    }, 500);
+                });
+            });
+        });
+
+        // Chicken Registration Modal Functionality
+        const registrationBtn = document.getElementById('chicken-registration-btn');
+        const registrationModal = document.getElementById('chicken-registration-modal');
+        const closeModalBtn = document.getElementById('close-registration-modal');
+        const cancelBtn = document.getElementById('cancel-registration');
+        const registrationForm = document.getElementById('chicken-registration-form');
+
+        // Open modal
+        registrationBtn.addEventListener('click', () => {
+            registrationModal.classList.remove('hidden');
+            registrationModal.classList.add('flex');
+            generateChickenId();
+        });
+
+        // Close modal functions
+        function closeModal() {
+            registrationModal.classList.add('hidden');
+            registrationModal.classList.remove('flex');
+            registrationForm.reset();
+        }
+
+        closeModalBtn.addEventListener('click', closeModal);
+        cancelBtn.addEventListener('click', closeModal);
+
+        // Close modal when clicking outside
+        registrationModal.addEventListener('click', (e) => {
+            if (e.target === registrationModal) {
+                closeModal();
+            }
+        });
+
+        // Auto-generate Chicken ID based on type
+        function generateChickenId() {
+            const typeSelect = document.getElementById('chicken-type');
+            const chickenIdInput = document.getElementById('chicken-id');
+            
+            // Start from 001 for each type
+            const paddedNum = '001';
+            
+            // Set ID based on selected type
+            if (typeSelect.value === 'broiler') {
+                chickenIdInput.value = `CB${paddedNum}`;
+            } else if (typeSelect.value === 'kienyeji') {
+                chickenIdInput.value = `CK${paddedNum}`;
+            } else if (typeSelect.value === 'layer') {
+                chickenIdInput.value = `CL${paddedNum}`;
+            } else {
+                chickenIdInput.value = `C${paddedNum}`;
+            }
+        }
+
+        // Update Chicken ID when type changes
+        document.getElementById('chicken-type').addEventListener('change', generateChickenId);
+
+        // Auto-calculate age from hatch date
+        document.getElementById('hatch-date').addEventListener('change', function() {
+            const hatchDate = new Date(this.value);
+            const today = new Date();
+            const ageInDays = Math.floor((today - hatchDate) / (24 * 60 * 60 * 1000));
+            
+            if (ageInDays >= 0) {
+                document.getElementById('age-days').value = ageInDays;
+            } else {
+                document.getElementById('age-days').value = 0;
+            }
+        });
+
+        // Form submission
+        registrationForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(registrationForm);
+            
+            // Show loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="mr-2">⏳</span>Registering...';
+            submitBtn.disabled = true;
+            
+            try {
+                // Submit to backend
+                const response = await fetch('/admin/farm/chicken-registration', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Show success message
+                    alert(`✅ ${result.message}\n\nChicken ID: ${result.chicken_id}`);
+                    
+                    // Close modal
+                    closeModal();
+                } else {
+                    // Show error message
+                    alert(`❌ Error: ${result.message}`);
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                alert('❌ Error: Failed to register chicken. Please try again.');
+            } finally {
+                // Reset button state
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Add smooth animations to modal
+        registrationModal.addEventListener('transitionend', function() {
+            if (!this.classList.contains('hidden')) {
+                const modalContent = this.querySelector('.animate-slide-up');
+                modalContent.style.animation = 'slideUp 0.4s ease-out';
+            }
+        });
+    </script>
+</body>
+</html>

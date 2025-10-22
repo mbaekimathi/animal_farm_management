@@ -564,6 +564,11 @@
                             return;
                         }
                         
+                        // Debug: Log the record data
+                        console.log('Processing breeding record:', record);
+                        console.log('mating_date:', record.mating_date, 'type:', typeof record.mating_date);
+                        console.log('expected_due_date:', record.expected_due_date, 'type:', typeof record.expected_due_date);
+                        
                         const form = document.createElement('div');
                         form.className = 'breeding-record-form group bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all duration-200 animate-slide-up';
                         form.style.animationDelay = `${index * 0.1}s`;
@@ -659,22 +664,32 @@
                                         ` : ''}
                                     </div>
                                     
-                                    <!-- Warning (if applicable) -->
-                                    ${record.breeding_status !== 'pregnant' && record.days_remaining_to_cancel !== undefined ? `
-                                        <div class="flex items-center space-x-2 px-4 py-3 bg-gradient-to-r from-orange-100 to-amber-100 dark:from-orange-900/20 dark:to-amber-900/20 text-orange-700 dark:text-orange-300 rounded-xl border border-orange-200 dark:border-orange-700/50 text-sm font-medium mb-4">
-                                            <i class="fas fa-exclamation-triangle text-sm"></i>
-                                            <span>${record.days_remaining_to_cancel} days to cancel</span>
+                                    <!-- Days to Cancel (Number Only) -->
+                                    ${record.breeding_status !== 'pregnant' && record.days_remaining_to_cancel !== undefined && record.days_remaining_to_cancel > 0 ? `
+                                        <div class="flex items-center justify-center w-16 h-16 bg-gradient-to-r from-orange-100 to-amber-100 dark:from-orange-900/20 dark:to-amber-900/20 text-orange-700 dark:text-orange-300 rounded-xl border border-orange-200 dark:border-orange-700/50 font-bold text-2xl mb-4 mx-auto">
+                                            ${record.days_remaining_to_cancel}
                                         </div>
                                     ` : ''}
                                     
-                                    <!-- Action Buttons -->
+                                    <!-- Action Buttons (Icon + Text) -->
                                     <div class="flex flex-col space-y-3">
+                                        <!-- Edit Button -->
+                                        <button onclick="showEditBreedingModal(${record.id}, '${record.sow_tag_id}', '${record.boar_tag_id}', '${record.mating_date || ''}', '${record.expected_due_date || ''}', '${record.breeding_status}')" class="w-full inline-flex items-center justify-center px-4 py-3 bg-gradient-to-r from-blue-100 to-blue-200 hover:from-blue-200 hover:to-blue-300 dark:from-blue-900/20 dark:to-blue-900/30 dark:hover:from-blue-900/30 dark:hover:to-blue-900/40 text-blue-700 dark:text-blue-400 text-sm font-semibold rounded-xl transition-all duration-200 hover:shadow-lg">
+                                            <i class="fas fa-edit mr-2 text-sm"></i>
+                                            Edit Breeding
+                                        </button>
+                                        
+                                        <!-- Delete Button -->
+                                        <button onclick="showDeleteBreedingModal(${record.id}, '${record.sow_tag_id}')" class="w-full inline-flex items-center justify-center px-4 py-3 bg-gradient-to-r from-red-100 to-red-200 hover:from-red-200 hover:to-red-300 dark:from-red-900/20 dark:to-red-900/30 dark:hover:from-red-900/30 dark:hover:to-red-900/40 text-red-700 dark:text-red-400 text-sm font-semibold rounded-xl transition-all duration-200 hover:shadow-lg">
+                                            <i class="fas fa-trash mr-2 text-sm"></i>
+                                            Delete Breeding
+                                        </button>
+                                        
                                         ${record.can_cancel ? 
-                                            `<button onclick="showCancelBreedingModal(${record.id})" class="w-full inline-flex items-center justify-center px-4 py-3 bg-gradient-to-r from-red-100 to-red-200 hover:from-red-200 hover:to-red-300 dark:from-red-900/20 dark:to-red-900/30 dark:hover:from-red-900/30 dark:hover:to-red-900/40 text-red-700 dark:text-red-400 text-sm font-semibold rounded-xl transition-all duration-200 hover:shadow-lg">
+                                            `<button onclick="showCancelBreedingModal(${record.id})" class="w-full inline-flex items-center justify-center px-4 py-3 bg-gradient-to-r from-orange-100 to-orange-200 hover:from-orange-200 hover:to-orange-300 dark:from-orange-900/20 dark:to-orange-900/30 dark:hover:from-orange-900/30 dark:hover:to-orange-900/40 text-orange-700 dark:text-orange-400 text-sm font-semibold rounded-xl transition-all duration-200 hover:shadow-lg">
                                                 <i class="fas fa-times mr-2 text-sm"></i>
                                                 Cancel Breeding
-                                            </button>` : 
-                                            '<span class="w-full inline-flex items-center justify-center px-4 py-3 text-sm font-medium bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 rounded-xl">Cannot Cancel</span>'
+                                            </button>` : ''
                                         }
                                         
                                         ${record.days_to_farrowing !== null && record.days_to_farrowing <= 7 ? 
@@ -739,28 +754,38 @@
                                         
                                         <!-- Right Section: Actions -->
                                         <div class="flex items-center space-x-4">
-                                            <!-- Cancellation Warning -->
-                                            ${record.breeding_status !== 'pregnant' && record.days_remaining_to_cancel !== undefined ? `
-                                                <div class="flex items-center space-x-2 px-3 py-2 bg-gradient-to-r from-orange-100 to-amber-100 dark:from-orange-900/20 dark:to-amber-900/20 text-orange-700 dark:text-orange-300 rounded-lg border border-orange-200 dark:border-orange-700/50 text-sm font-medium">
-                                                    <i class="fas fa-exclamation-triangle text-sm"></i>
-                                                    <span>${record.days_remaining_to_cancel} days to cancel</span>
+                                            <!-- Days to Cancel (Number Only) -->
+                                            ${record.breeding_status !== 'pregnant' && record.days_remaining_to_cancel !== undefined && record.days_remaining_to_cancel > 0 ? `
+                                                <div class="flex items-center justify-center w-12 h-12 bg-gradient-to-r from-orange-100 to-amber-100 dark:from-orange-900/20 dark:to-amber-900/20 text-orange-700 dark:text-orange-300 rounded-xl border border-orange-200 dark:border-orange-700/50 font-bold text-lg">
+                                                    ${record.days_remaining_to_cancel}
                                                 </div>
                                             ` : ''}
                                             
-                                            <!-- Action Buttons -->
-                                            <div class="flex items-center space-x-3">
+                                            <!-- Action Buttons (Icon + Text) -->
+                                            <div class="flex items-center space-x-2">
+                                                <!-- Edit Button -->
+                                                <button onclick="showEditBreedingModal(${record.id}, '${record.sow_tag_id}', '${record.boar_tag_id}', '${record.mating_date || ''}', '${record.expected_due_date || ''}', '${record.breeding_status}')" class="inline-flex items-center px-3 py-2 bg-gradient-to-r from-blue-100 to-blue-200 hover:from-blue-200 hover:to-blue-300 dark:from-blue-900/20 dark:to-blue-900/30 dark:hover:from-blue-900/30 dark:hover:to-blue-900/40 text-blue-700 dark:text-blue-400 text-sm font-semibold rounded-lg transition-all duration-200 hover:shadow-lg">
+                                                    <i class="fas fa-edit mr-2 text-sm"></i>
+                                                    Edit
+                                                </button>
+                                                
+                                                <!-- Delete Button -->
+                                                <button onclick="showDeleteBreedingModal(${record.id}, '${record.sow_tag_id}')" class="inline-flex items-center px-3 py-2 bg-gradient-to-r from-red-100 to-red-200 hover:from-red-200 hover:to-red-300 dark:from-red-900/20 dark:to-red-900/30 dark:hover:from-red-900/30 dark:hover:to-red-900/40 text-red-700 dark:text-red-400 text-sm font-semibold rounded-lg transition-all duration-200 hover:shadow-lg">
+                                                    <i class="fas fa-trash mr-2 text-sm"></i>
+                                                    Delete
+                                                </button>
+                                                
                                                 ${record.can_cancel ? 
-                                                    `<button onclick="showCancelBreedingModal(${record.id})" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-red-100 to-red-200 hover:from-red-200 hover:to-red-300 dark:from-red-900/20 dark:to-red-900/30 dark:hover:from-red-900/30 dark:hover:to-red-900/40 text-red-700 dark:text-red-400 text-sm font-semibold rounded-lg transition-all duration-200 hover:shadow-lg">
+                                                    `<button onclick="showCancelBreedingModal(${record.id})" class="inline-flex items-center px-3 py-2 bg-gradient-to-r from-orange-100 to-orange-200 hover:from-orange-200 hover:to-orange-300 dark:from-orange-900/20 dark:to-orange-900/30 dark:hover:from-orange-900/30 dark:hover:to-orange-900/40 text-orange-700 dark:text-orange-400 text-sm font-semibold rounded-lg transition-all duration-200 hover:shadow-lg">
                                                         <i class="fas fa-times mr-2 text-sm"></i>
                                                         Cancel
-                                                    </button>` : 
-                                                    '<span class="inline-flex items-center px-4 py-2 text-sm font-medium bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 rounded-lg">Cannot Cancel</span>'
+                                                    </button>` : ''
                                                 }
                                                 
                                                 ${record.days_to_farrowing !== null && record.days_to_farrowing <= 7 ? 
-                                                    `<button onclick="showRegisterFarrowingModal(${record.id}, '${record.sow_tag_id}', '${record.boar_tag_id}', '${record.mating_date}')" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-green-100 to-green-200 hover:from-green-200 hover:to-green-300 dark:from-green-900/20 dark:to-green-900/30 dark:hover:from-green-900/30 dark:hover:to-green-900/40 text-green-700 dark:text-green-400 text-sm font-semibold rounded-lg transition-all duration-200 hover:shadow-lg">
+                                                    `<button onclick="showRegisterFarrowingModal(${record.id}, '${record.sow_tag_id}', '${record.boar_tag_id}', '${record.mating_date}')" class="inline-flex items-center px-3 py-2 bg-gradient-to-r from-green-100 to-green-200 hover:from-green-200 hover:to-green-300 dark:from-green-900/20 dark:to-green-900/30 dark:hover:from-green-900/30 dark:hover:to-green-900/40 text-green-700 dark:text-green-400 text-sm font-semibold rounded-lg transition-all duration-200 hover:shadow-lg">
                                                         <i class="fas fa-baby mr-2 text-sm"></i>
-                                                        Register Farrowing
+                                                        Register
                                                     </button>` : ''
                                                 }
                                             </div>
@@ -785,6 +810,64 @@
                 case 'completed': return 'bg-secondary-100 text-secondary-800 dark:bg-secondary-900 dark:text-secondary-200';
                 case 'farrowed': return 'bg-accent-100 text-accent-800 dark:bg-accent-900 dark:text-accent-200';
                 default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200';
+            }
+        }
+
+        function formatDateForInput(dateString) {
+            console.log('formatDateForInput called with:', dateString, 'type:', typeof dateString);
+            
+            if (!dateString || dateString === 'null' || dateString === 'undefined') {
+                console.log('Empty or null date, returning empty string');
+                return '';
+            }
+            
+            try {
+                // Handle different date formats from database
+                let date;
+                
+                if (typeof dateString === 'string') {
+                    // If it's already in YYYY-MM-DD format, return as is
+                    if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+                        console.log('Date already in YYYY-MM-DD format:', dateString);
+                        return dateString;
+                    }
+                    
+                    // Handle JavaScript Date string format like "Wed, 08 Oct 2025 00:00:00 GMT"
+                    if (dateString.includes('GMT') || dateString.includes('UTC')) {
+                        console.log('Creating date from JavaScript Date string:', dateString);
+                        date = new Date(dateString);
+                    }
+                    // If it contains time, extract just the date part
+                    else if (dateString.includes('T')) {
+                        const datePart = dateString.split('T')[0];
+                        console.log('Extracted date part from ISO string:', datePart);
+                        date = new Date(datePart);
+                    } else {
+                        console.log('Creating date from string:', dateString);
+                        date = new Date(dateString);
+                    }
+                } else {
+                    console.log('Creating date from non-string:', dateString);
+                    date = new Date(dateString);
+                }
+                
+                // Check if date is valid
+                if (isNaN(date.getTime())) {
+                    console.error('Invalid date created from:', dateString);
+                    return '';
+                }
+                
+                // Format as YYYY-MM-DD for HTML date input
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                
+                const formattedDate = `${year}-${month}-${day}`;
+                console.log('Formatted date:', formattedDate);
+                return formattedDate;
+            } catch (error) {
+                console.error('Error formatting date:', error, 'Input:', dateString);
+                return '';
             }
         }
 
@@ -1164,6 +1247,324 @@
             } catch (error) {
                 console.error('Error cancelling breeding:', error);
                 alert('Error cancelling breeding. Please try again.');
+            }
+        }
+
+        // Edit Breeding Modal
+        function showEditBreedingModal(breedingId, sowTagId, boarTagId, matingDate, expectedDueDate, breedingStatus) {
+            console.log('showEditBreedingModal called with:');
+            console.log('breedingId:', breedingId);
+            console.log('sowTagId:', sowTagId);
+            console.log('boarTagId:', boarTagId);
+            console.log('matingDate:', matingDate, 'type:', typeof matingDate);
+            console.log('expectedDueDate:', expectedDueDate, 'type:', typeof expectedDueDate);
+            console.log('breedingStatus:', breedingStatus);
+            
+            // Format dates for HTML date inputs
+            const formattedMatingDate = formatDateForInput(matingDate);
+            const formattedExpectedDueDate = formatDateForInput(expectedDueDate);
+            
+            console.log('Formatted mating date:', formattedMatingDate);
+            console.log('Formatted expected due date:', formattedExpectedDueDate);
+            const modalHTML = `
+                <div id="edit-breeding-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-start sm:items-center justify-center p-1 sm:p-4 transition-all duration-300 overflow-y-auto">
+                    <div class="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl lg:rounded-3xl shadow-2xl w-full max-w-2xl mx-1 sm:mx-4 my-2 sm:my-4 max-h-[98vh] sm:max-h-[90vh] transform scale-95 opacity-0 transition-all duration-300">
+                        <!-- Modal Header -->
+                        <div class="relative px-4 sm:px-6 lg:px-8 py-4 sm:py-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-500/5 via-indigo-500/5 to-purple-500/5 rounded-t-2xl sm:rounded-t-3xl">
+                            <div class="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-indigo-500/5 rounded-t-2xl sm:rounded-t-3xl"></div>
+                            <div class="relative flex items-center justify-between">
+                                <div class="flex items-center space-x-3 sm:space-x-4 lg:space-x-6">
+                                    <div class="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-xl">
+                                        <i class="fas fa-edit text-white text-lg sm:text-xl lg:text-2xl"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">Edit Breeding Record</h3>
+                                        <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 font-medium mt-1">Update breeding details</p>
+                                        <div class="flex items-center mt-1 sm:mt-2">
+                                            <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-500 rounded-full mr-1 sm:mr-2 animate-pulse"></div>
+                                            <span class="text-xs sm:text-sm text-blue-600 dark:text-blue-400 font-medium">Live Editing</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button onclick="closeEditBreedingModal()" class="p-2 sm:p-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg sm:rounded-xl transition-all duration-200" aria-label="Close modal">
+                                    <i class="fas fa-times text-lg sm:text-xl"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Modal Body -->
+                        <div class="px-3 sm:px-6 lg:px-8 py-3 sm:py-6 lg:py-8 border-b border-gray-200 dark:border-gray-700">
+                            <form id="edit-breeding-form" class="space-y-3 sm:space-y-6 lg:space-y-8">
+                                <input type="hidden" id="edit-breeding-id" value="${breedingId}">
+                                
+                                <!-- Basic Information Grid -->
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6">
+                                    <div class="group">
+                                        <label class="block text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-300 mb-1 sm:mb-3">
+                                            <i class="fas fa-female text-pink-500 mr-1 sm:mr-2 text-sm"></i>Sow Tag ID
+                                        </label>
+                                        <input type="text" id="edit-sow-tag-id" value="${sowTagId}" readonly 
+                                               class="w-full px-2 sm:px-4 py-2 sm:py-4 border border-gray-300 dark:border-gray-600 rounded-lg sm:rounded-2xl bg-gradient-to-r from-pink-50 to-pink-100 dark:from-pink-900/20 dark:to-pink-800/20 text-gray-900 dark:text-white font-bold text-xs sm:text-base lg:text-lg border-pink-200 dark:border-pink-700/50">
+                                    </div>
+                                    
+                                    <div class="group">
+                                        <label class="block text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-300 mb-1 sm:mb-3">
+                                            <i class="fas fa-male text-blue-500 mr-1 sm:mr-2 text-sm"></i>Boar Tag ID
+                                        </label>
+                                        <input type="text" id="edit-boar-tag-id" value="${boarTagId}" readonly 
+                                               class="w-full px-2 sm:px-4 py-2 sm:py-4 border border-gray-300 dark:border-gray-600 rounded-lg sm:rounded-2xl bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 text-gray-900 dark:text-white font-bold text-xs sm:text-base lg:text-lg border-blue-200 dark:border-blue-700/50">
+                                    </div>
+                                    
+                                    <div class="group">
+                                        <label class="block text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-300 mb-1 sm:mb-3">
+                                            <i class="fas fa-calendar text-purple-500 mr-1 sm:mr-2 text-sm"></i>Mating Date
+                                        </label>
+                                        <input type="date" id="edit-mating-date" value="${formattedMatingDate}" required 
+                                               onchange="calculateExpectedDueDate()"
+                                               class="w-full px-2 sm:px-4 py-2 sm:py-4 border border-gray-300 dark:border-gray-600 rounded-lg sm:rounded-2xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-xs sm:text-base lg:text-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300">
+                                        <p class="text-xs text-blue-600 dark:text-blue-400 mt-1 font-medium">
+                                            <i class="fas fa-info-circle mr-1"></i>Auto-calculates expected due date (114 days)
+                                        </p>
+                                    </div>
+                                    
+                                    <div class="group">
+                                        <label class="block text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-300 mb-1 sm:mb-3">
+                                            <i class="fas fa-clock text-orange-500 mr-1 sm:mr-2 text-sm"></i>Expected Due Date
+                                        </label>
+                                        <input type="date" id="edit-expected-due-date" value="${formattedExpectedDueDate}" 
+                                               onchange="calculateMatingDate()"
+                                               class="w-full px-2 sm:px-4 py-2 sm:py-4 border border-gray-300 dark:border-gray-600 rounded-lg sm:rounded-2xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-xs sm:text-base lg:text-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300">
+                                        <p class="text-xs text-orange-600 dark:text-orange-400 mt-1 font-medium">
+                                            <i class="fas fa-info-circle mr-1"></i>Auto-calculates mating date (114 days earlier)
+                                        </p>
+                                    </div>
+                                    
+                                    <div class="group">
+                                        <label class="block text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-300 mb-1 sm:mb-3">
+                                            <i class="fas fa-heart text-red-500 mr-1 sm:mr-2 text-sm"></i>Breeding Status
+                                        </label>
+                                        <select id="edit-breeding-status" required 
+                                                class="w-full px-2 sm:px-4 py-2 sm:py-4 border border-gray-300 dark:border-gray-600 rounded-lg sm:rounded-2xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-xs sm:text-base lg:text-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300">
+                                            <option value="served" ${breedingStatus === 'served' ? 'selected' : ''}>Served</option>
+                                            <option value="pregnant" ${breedingStatus === 'pregnant' ? 'selected' : ''}>Pregnant</option>
+                                            <option value="cancelled" ${breedingStatus === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+                                            <option value="completed" ${breedingStatus === 'completed' ? 'selected' : ''}>Completed</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- Modal Footer -->
+                        <div class="px-3 sm:px-6 lg:px-8 py-3 sm:py-6 lg:py-8 flex flex-col sm:flex-row gap-2 sm:gap-4">
+                            <button type="button" onclick="closeEditBreedingModal()" class="group flex-1 bg-gray-200 hover:bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300 px-3 sm:px-6 lg:px-8 py-2.5 sm:py-4 rounded-lg sm:rounded-2xl font-bold text-xs sm:text-base lg:text-lg transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                                <i class="fas fa-times mr-2 text-sm"></i>Cancel
+                            </button>
+                            <button type="button" onclick="submitEditBreeding()" class="group flex-1 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-3 sm:px-6 lg:px-8 py-2.5 sm:py-4 rounded-lg sm:rounded-2xl font-bold text-xs sm:text-base lg:text-lg transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                                <i class="fas fa-save mr-2 text-sm"></i>Update Breeding
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            
+            // Animate modal in
+            setTimeout(() => {
+                const modal = document.getElementById('edit-breeding-modal');
+                const modalContent = modal.querySelector('.bg-white');
+                modalContent.style.transform = 'scale(1)';
+                modalContent.style.opacity = '1';
+            }, 10);
+        }
+
+        function closeEditBreedingModal() {
+            const modal = document.getElementById('edit-breeding-modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        async function submitEditBreeding() {
+            const breedingId = document.getElementById('edit-breeding-id').value;
+            const matingDate = document.getElementById('edit-mating-date').value;
+            const expectedDueDate = document.getElementById('edit-expected-due-date').value;
+            const breedingStatus = document.getElementById('edit-breeding-status').value;
+            
+            if (!matingDate) {
+                alert('Please select a mating date');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/breeding/${breedingId}/edit`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        mating_date: matingDate,
+                        expected_due_date: expectedDueDate,
+                        breeding_status: breedingStatus
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Breeding record updated successfully');
+                    closeEditBreedingModal();
+                    window.location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error updating breeding:', error);
+                alert('Error updating breeding. Please try again.');
+            }
+        }
+
+        // Delete Breeding Modal
+        function showDeleteBreedingModal(breedingId, sowTagId) {
+            const modalHTML = `
+                <div id="delete-breeding-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-start sm:items-center justify-center p-1 sm:p-4 transition-all duration-300 overflow-y-auto">
+                    <div class="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl lg:rounded-3xl shadow-2xl w-full max-w-lg mx-1 sm:mx-4 my-2 sm:my-4 max-h-[98vh] sm:max-h-[90vh] transform scale-95 opacity-0 transition-all duration-300">
+                        <!-- Modal Header -->
+                        <div class="relative px-4 sm:px-6 lg:px-8 py-4 sm:py-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-red-500/5 via-pink-500/5 to-rose-500/5 rounded-t-2xl sm:rounded-t-3xl">
+                            <div class="absolute inset-0 bg-gradient-to-r from-red-500/5 to-pink-500/5 rounded-t-2xl sm:rounded-t-3xl"></div>
+                            <div class="relative flex items-center justify-between">
+                                <div class="flex items-center space-x-3 sm:space-x-4 lg:space-x-6">
+                                    <div class="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 bg-gradient-to-br from-red-500 via-pink-500 to-rose-600 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-xl">
+                                        <i class="fas fa-trash text-white text-lg sm:text-xl lg:text-2xl"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">Delete Breeding Record</h3>
+                                        <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 font-medium mt-1">This action cannot be undone</p>
+                                        <div class="flex items-center mt-1 sm:mt-2">
+                                            <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-red-500 rounded-full mr-1 sm:mr-2 animate-pulse"></div>
+                                            <span class="text-xs sm:text-sm text-red-600 dark:text-red-400 font-medium">Permanent Action</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button onclick="closeDeleteBreedingModal()" class="p-2 sm:p-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg sm:rounded-xl transition-all duration-200" aria-label="Close modal">
+                                    <i class="fas fa-times text-lg sm:text-xl"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Modal Body -->
+                        <div class="px-3 sm:px-6 lg:px-8 py-3 sm:py-6 lg:py-8 border-b border-gray-200 dark:border-gray-700">
+                            <div class="text-center">
+                                <div class="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-6 bg-gradient-to-br from-red-100 to-pink-100 dark:from-red-900/20 dark:to-pink-900/20 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-exclamation-triangle text-red-500 text-2xl sm:text-3xl"></i>
+                                </div>
+                                <h4 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-2 sm:mb-4">Are you sure you want to delete this breeding record?</h4>
+                                <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-4 sm:mb-6">
+                                    This will permanently delete the breeding record for <strong>${sowTagId}</strong> and change the sow's status back to <strong>Available</strong>.
+                                </p>
+                                <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700/50 rounded-lg p-3 sm:p-4">
+                                    <p class="text-sm text-red-700 dark:text-red-400 font-medium">
+                                        <i class="fas fa-info-circle mr-2"></i>
+                                        This action cannot be undone. The sow will be available for breeding again.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Modal Footer -->
+                        <div class="px-3 sm:px-6 lg:px-8 py-3 sm:py-6 lg:py-8 flex flex-col sm:flex-row gap-2 sm:gap-4">
+                            <button type="button" onclick="closeDeleteBreedingModal()" class="group flex-1 bg-gray-200 hover:bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300 px-3 sm:px-6 lg:px-8 py-2.5 sm:py-4 rounded-lg sm:rounded-2xl font-bold text-xs sm:text-base lg:text-lg transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                                <i class="fas fa-times mr-2 text-sm"></i>Cancel
+                            </button>
+                            <button type="button" onclick="submitDeleteBreeding(${breedingId})" class="group flex-1 bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white px-3 sm:px-6 lg:px-8 py-2.5 sm:py-4 rounded-lg sm:rounded-2xl font-bold text-xs sm:text-base lg:text-lg transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                                <i class="fas fa-trash mr-2 text-sm"></i>Delete Breeding
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            
+            // Animate modal in
+            setTimeout(() => {
+                const modal = document.getElementById('delete-breeding-modal');
+                const modalContent = modal.querySelector('.bg-white');
+                modalContent.style.transform = 'scale(1)';
+                modalContent.style.opacity = '1';
+            }, 10);
+        }
+
+        function closeDeleteBreedingModal() {
+            const modal = document.getElementById('delete-breeding-modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        async function submitDeleteBreeding(breedingId) {
+            try {
+                const response = await fetch(`/api/breeding/${breedingId}/delete`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Breeding record deleted successfully. The sow is now available for breeding.');
+                    closeDeleteBreedingModal();
+                    window.location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error deleting breeding:', error);
+                alert('Error deleting breeding. Please try again.');
+            }
+        }
+
+        // Auto-calculation functions for breeding dates
+        function calculateExpectedDueDate() {
+            const matingDateInput = document.getElementById('edit-mating-date');
+            const expectedDueDateInput = document.getElementById('edit-expected-due-date');
+            
+            if (matingDateInput && expectedDueDateInput && matingDateInput.value) {
+                const matingDate = new Date(matingDateInput.value);
+                const expectedDueDate = new Date(matingDate);
+                expectedDueDate.setDate(expectedDueDate.getDate() + 114); // 114 days gestation period
+                
+                // Format as YYYY-MM-DD for HTML date input
+                const year = expectedDueDate.getFullYear();
+                const month = String(expectedDueDate.getMonth() + 1).padStart(2, '0');
+                const day = String(expectedDueDate.getDate()).padStart(2, '0');
+                
+                expectedDueDateInput.value = `${year}-${month}-${day}`;
+                
+                console.log('Calculated expected due date:', expectedDueDateInput.value);
+            }
+        }
+
+        function calculateMatingDate() {
+            const matingDateInput = document.getElementById('edit-mating-date');
+            const expectedDueDateInput = document.getElementById('edit-expected-due-date');
+            
+            if (matingDateInput && expectedDueDateInput && expectedDueDateInput.value) {
+                const expectedDueDate = new Date(expectedDueDateInput.value);
+                const matingDate = new Date(expectedDueDate);
+                matingDate.setDate(matingDate.getDate() - 114); // 114 days gestation period
+                
+                // Format as YYYY-MM-DD for HTML date input
+                const year = matingDate.getFullYear();
+                const month = String(matingDate.getMonth() + 1).padStart(2, '0');
+                const day = String(matingDate.getDate()).padStart(2, '0');
+                
+                matingDateInput.value = `${year}-${month}-${day}`;
+                
+                console.log('Calculated mating date:', matingDateInput.value);
             }
         }
     </script>
