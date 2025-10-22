@@ -7,7 +7,7 @@ import secrets
 import socket
 
 app = Flask(__name__)
-app.secret_key = 'your-secret-key-here'
+app.secret_key = os.environ.get('SECRET_KEY', 'your-production-secret-key-change-this')
 
 # Database configuration
 # Auto-detect environment and use appropriate database settings
