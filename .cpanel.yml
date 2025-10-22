@@ -1,0 +1,18 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYMENT_TARGET=/home2/kwetufar/pig-farm-system
+    - /bin/cp -R * $DEPLOYMENT_TARGET/
+    - cd $DEPLOYMENT_TARGET
+    - /usr/local/bin/pip3 install --user -r requirements.txt
+    - /bin/chmod 644 passenger_wsgi.py
+    - /bin/chmod 755 app.py
+    - /bin/chmod 644 requirements.txt
+    - /bin/chmod -R 755 static/
+    - /bin/chmod -R 755 templates/
+    - /bin/touch .htaccess
+    - echo "DirectoryIndex passenger_wsgi.py" > .htaccess
+    - echo "PassengerEnabled On" >> .htaccess
+    - echo "PassengerAppRoot $DEPLOYMENT_TARGET" >> .htaccess
+    - echo "PassengerAppType wsgi" >> .htaccess
+    - echo "PassengerStartupFile passenger_wsgi.py" >> .htaccess
